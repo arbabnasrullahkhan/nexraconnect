@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Video Call - Nexra Connect</title>
+    <link rel="icon" type="image/png" href="../assets/favicon perple.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF2E93;
+            --primary-light: #FF8A00;
+            --secondary: #7B2CBF;
+            --bg-color: #0F172A;
+            --text-light: #ffffff;
+            --glass-bg: rgba(15, 23, 42, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;-webkit-tap-highlight-color:transparent;}
+        body{background-color:var(--bg-color);color:var(--text-light);height:100vh;width:100vw;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+
+        .video-container{position:relative;width:100%;height:100%;background:#000;}
+
+        #remoteVideo{width:100%;height:100%;object-fit:cover;}
+
+        .local-video-wrapper{position:absolute;top:16px;right:16px;width:120px;height:180px;border-radius:18px;overflow:hidden;box-shadow:0 15px 30px rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.12);z-index:10;background:#111;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+        .local-video-wrapper:hover{transform:scale(1.05);}
+        #localVideo{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);}
+
+        /* Top Info Bar */
+        .top-info{position:absolute;top:16px;left:16px;display:flex;gap:8px;z-index:50;}
+        .info-pill{padding:6px 14px;border-radius:20px;font-size:0.8rem;font-weight:700;backdrop-filter:blur(10px);border:1px solid var(--glass-border);}
+        .pill-time{background:rgba(0,0,0,0.4);color:#fff;}
+        .pill-mode{background:rgba(255,46,147,0.2);color:var(--primary);}
+
+        /* Controls */
+        .controls-bar{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:14px;padding:12px 20px;background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:50px;border:1px solid var(--glass-border);box-shadow:0 20px 40px rgba(0,0,0,0.5);z-index:100;animation:slideUp 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+        @keyframes slideUp{from{transform:translate(-50%,50px);opacity:0;}to{transform:translate(-50%,0);opacity:1;}}
+
+        .control-btn{width:50px;height:50px;border-radius:50%;border:none;background:rgba(255,255,255,0.1);color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0;}
+        .control-btn:hover{background:rgba(255,255,255,0.25);transform:translateY(-3px);}
+        .control-btn.active{background:#ef4444;box-shadow:0 0 15px rgba(239,68,68,0.4);}
+        .control-btn svg{width:22px;height:22px;}
+
+        .btn-friend{background:rgba(34,197,94,0.2);border:1px solid rgba(34,197,94,0.3);}
+        .btn-friend:hover{background:rgba(34,197,94,0.4);}
+        .btn-friend.added{background:rgba(34,197,94,0.5);pointer-events:none;}
+
+        .btn-next{background:linear-gradient(135deg,var(--primary),var(--primary-light));font-weight:800;font-size:0.95rem;width:auto;padding:0 24px;border-radius:30px;box-shadow:0 8px 16px rgba(255,46,147,0.3);}
+        .btn-next:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 12px 24px rgba(255,46,147,0.5);}
+
+        .btn-end{background:#ef4444;}
+        .btn-end:hover{background:#dc2626;box-shadow:0 8px 16px rgba(239,68,68,0.3);}
+
+        .btn-retry{background:linear-gradient(135deg,#FFD700,#FF8A00);font-weight:800;font-size:0.85rem;width:auto;padding:0 20px;border-radius:30px;color:#111;box-shadow:0 8px 16px rgba(255,215,0,0.3);}
+        .btn-retry:hover{transform:translateY(-3px) scale(1.05);}
+
+        /* Chat Overlay */
+        .chat-toggle{position:absolute;bottom:100px;left:16px;z-index:50;width:44px;height:44px;border-radius:50%;background:var(--glass-bg);backdrop-filter:blur(10px);border:1px solid var(--glass-border);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s;}
+        .chat-toggle:hover{background:rgba(255,255,255,0.15);}
+        .chat-toggle svg{width:22px;height:22px;}
+
+        .chat-container{position:absolute;bottom:100px;left:16px;width:300px;height:380px;background:rgba(15,23,42,0.6);backdrop-filter:blur(15px);border-radius:20px;border:1px solid var(--glass-border);display:none;flex-direction:column;z-index:50;overflow:hidden;box-shadow:0 15px 30px rgba(0,0,0,0.3);animation:slideRight 0.4s ease;}
+        .chat-container.open{display:flex;}
+        @keyframes slideRight{from{transform:translateX(-30px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+        .chat-close{position:absolute;top:10px;right:10px;background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:1.2rem;z-index:5;}
+        .chat-messages{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-top:36px;}
+        .chat-messages::-webkit-scrollbar{width:4px;}
+        .chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px;}
+
+        .message{max-width:85%;padding:10px 14px;border-radius:16px;font-size:0.9rem;line-height:1.4;word-wrap:break-word;animation:popInMsg 0.3s ease;}
+        @keyframes popInMsg{from{transform:scale(0.9) translateY(8px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
+        .msg-remote{background:rgba(255,255,255,0.1);border-bottom-left-radius:4px;align-self:flex-start;}
+        .msg-local{background:linear-gradient(135deg,var(--secondary),var(--primary));border-bottom-right-radius:4px;align-self:flex-end;}
+
+        .chat-input-wrapper{display:flex;padding:10px 12px;background:rgba(0,0,0,0.3);border-top:1px solid var(--glass-border);}
+        #chatInput{flex:1;background:transparent;border:none;color:white;outline:none;padding:4px 8px;font-size:0.95rem;}
+        #chatInput::placeholder{color:rgba(255,255,255,0.4);}
+        .send-btn{background:transparent;border:none;color:var(--primary-light);cursor:pointer;padding:0 8px;font-weight:800;font-size:0.95rem;transition:color 0.2s;}
+        .send-btn:hover{color:var(--primary);}
+
+        /* Status Overlay */
+        .status-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:5;backdrop-filter:blur(10px);}
+        .spinner{width:56px;height:56px;border:4px solid rgba(255,46,147,0.2);border-top:4px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;}
+        #statusText{font-size:1.3rem;font-weight:600;background:linear-gradient(135deg,#fff,rgba(255,255,255,0.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        @keyframes spin{100%{transform:rotate(360deg);}}
+
+        svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+        /* RESPONSIVE */
+        @media(max-width:480px){
+            .controls-bar{gap:10px;padding:10px 14px;bottom:20px;}
+            .control-btn{width:44px;height:44px;}
+            .btn-next{padding:0 18px;font-size:0.85rem;}
+            .btn-retry{padding:0 14px;font-size:0.8rem;}
+            .chat-container{width:calc(100% - 32px);left:16px;right:16px;height:320px;bottom:80px;}
+            .local-video-wrapper{width:100px;height:150px;top:12px;right:12px;}
+        }
+        @media(min-width:769px){
+            .chat-container{width:350px;height:420px;}
+        }
+        @media(min-width:1025px){
+            .controls-bar{gap:18px;padding:14px 28px;}
+            .control-btn{width:56px;height:56px;}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="video-container">
+        <video id="remoteVideo" autoplay playsinline></video>
+
+        <div class="status-overlay" id="statusOverlay">
+            <div class="spinner"></div>
+            <h3 id="statusText">Connecting securely...</h3>
+        </div>
+
+        <!-- Top Info -->
+        <div class="top-info">
+            <div class="info-pill pill-time" id="callTimer">00:00</div>
+            <div class="info-pill pill-mode" id="modePill">Free</div>
+        </div>
+
+        <div class="local-video-wrapper">
+            <video id="localVideo" autoplay playsinline muted></video>
+        </div>
+
+        <!-- Chat Toggle -->
+        <button class="chat-toggle" id="chatToggle">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
+
+        <!-- Chat -->
+        <div class="chat-container" id="chatContainer">
+            <button class="chat-close" id="chatClose">&times;</button>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-wrapper">
+                <input type="text" id="chatInput" placeholder="Say hello..." autocomplete="off">
+                <button class="send-btn" id="sendBtn">Send</button>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+            <button class="control-btn" id="toggleAudio" title="Mute">
+                <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+            <button class="control-btn" id="toggleVideo" title="Video">
+                <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            </button>
+            <button class="control-btn btn-friend" id="addFriendBtn" title="Add Friend">
+                <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            </button>
+            <button class="control-btn btn-end" id="endBtn" title="End">
+                <svg viewBox="0 0 24 24"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
+            </button>
+            <button class="control-btn btn-retry" id="retryBtn" title="Retry (2 coins)" style="display:none;">🔄 Retry</button>
+            <button class="control-btn btn-next" id="nextBtn" title="Next">Next</button>
+        </div>
+    </div>
+
+    <!-- FIREBASE & WebRTC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, update, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyArd7Q_Jb5cF-6TWf6pVAp_E84tVZrilC0",
+            authDomain: "nexra-finder.firebaseapp.com",
+            databaseURL: "https://nexra-finder-default-rtdb.firebaseio.com",
+            projectId: "nexra-finder",
+            storageBucket: "nexra-finder.firebasestorage.app",
+            messagingSenderId: "863940241308",
+            appId: "1:863940241308:web:a4e8101e7fd3a22c458a59",
+            measurementId: "G-GN3WSWBBDW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        const configuration = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' }
+            ]
+        };
+
+        let peerConnection, localStream, remoteStream, currentUser;
+        let peerUid = null;
+        let callTimerInterval = null;
+        let callSeconds = 0;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('room');
+        const isCaller = urlParams.get('caller') === 'true';
+        const matchMode = urlParams.get('mode') || 'random';
+
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const statusOverlay = document.getElementById('statusOverlay');
+        const statusText = document.getElementById('statusText');
+        const chatMessages = document.getElementById('chatMessages');
+        const modePill = document.getElementById('modePill');
+
+        // Set mode display
+        if (matchMode === 'random') modePill.textContent = '🎲 Free';
+        else if (matchMode === 'interest') modePill.textContent = '🎯 Interest';
+        else if (matchMode === 'premium') modePill.textContent = '👑 Premium';
+
+        if (!roomId) window.location.href = 'home.html';
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                initCall();
+            } else {
+                window.location.href = '../index.html';
+            }
+        });
+
+        async function initCall() {
+            try {
+                // NOISE SUPPRESSION: enhanced audio constraints for crystal clear voice
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user'
+                    },
+                    audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        autoGainControl: true,
+                        sampleRate: 48000,
+                        channelCount: 1
+                    }
+                });
+                localVideo.srcObject = localStream;
+            } catch (err) {
+                console.error("Media access error:", err);
+                statusText.innerText = "Camera/Mic access denied!";
+                return;
+            }
+
+            peerConnection = new RTCPeerConnection(configuration);
+            remoteStream = new MediaStream();
+            remoteVideo.srcObject = remoteStream;
+
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+
+            peerConnection.ontrack = event => {
+                event.streams[0].getTracks().forEach(track => {
+                    remoteStream.addTrack(track);
+                });
+                statusOverlay.style.display = 'none';
+                startCallTimer();
+            };
+
+            const callerCandidatesRef = ref(db, `rooms/${roomId}/callerCandidates`);
+            const calleeCandidatesRef = ref(db, `rooms/${roomId}/calleeCandidates`);
+
+            peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    const candidateRef = push(isCaller ? callerCandidatesRef : calleeCandidatesRef);
+                    set(candidateRef, event.candidate.toJSON());
+                }
+            };
+
+            // Determine peer UID
+            if (isCaller) {
+                const snap = await get(ref(db, 'users/' + currentUser.uid + '/lastMatchedUser'));
+                peerUid = snap.val();
+            }
+
+            if (isCaller) {
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                await set(ref(db, `rooms/${roomId}/offer`), { type: offer.type, sdp: offer.sdp });
+
+                onValue(ref(db, `rooms/${roomId}/answer`), snapshot => {
+                    const answer = snapshot.val();
+                    if (!peerConnection.currentRemoteDescription && answer) {
+                        peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+                    }
+                });
+
+                onChildAdded(calleeCandidatesRef, snapshot => {
+                    peerConnection.addIceCandidate(new RTCIceCandidate(snapshot.val()));
+                });
+            } else {
+                onValue(ref(db, `rooms/${roomId}/offer`), async snapshot => {
+                    const offer = snapshot.val();
+                    if (offer && !peerConnection.currentRemoteDescription) {
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+                        const answer = await peerConnection.createAnswer();
+                        await peerConnection.setLocalDescription(answer);
+                        await set(ref(db, `rooms/${roomId}/answer`), { type: answer.type, sdp: answer.sdp });
+                    }
+                });
+
+                onChildAdded(callerCandidatesRef, snapshot => {
+                    peerConnection.addIceCandidate(new RTCIceCandidate(snapshot.val()));
+                });
+
+                // Get peer UID from room creator
+                onValue(ref(db, `rooms/${roomId}/callerUid`), s => { if (s.val()) peerUid = s.val(); });
+            }
+
+            // Store caller UID so callee can find it
+            if (isCaller) {
+                await set(ref(db, `rooms/${roomId}/callerUid`), currentUser.uid);
+            } else {
+                await set(ref(db, `rooms/${roomId}/calleeUid`), currentUser.uid);
+            }
+
+            // Listen for hangup
+            onValue(ref(db, `rooms/${roomId}/hangup`), snapshot => {
+                if (snapshot.val() === true) handleHangup();
+            });
+
+            setupChat();
+        }
+
+        // Call Timer
+        function startCallTimer() {
+            callTimerInterval = setInterval(() => {
+                callSeconds++;
+                const m = String(Math.floor(callSeconds / 60)).padStart(2, '0');
+                const s = String(callSeconds % 60).padStart(2, '0');
+                document.getElementById('callTimer').textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        // Chat
+        function setupChat() {
+            const messagesRef = ref(db, `rooms/${roomId}/messages`);
+            onChildAdded(messagesRef, snapshot => {
+                const msg = snapshot.val();
+                const div = document.createElement('div');
+                div.classList.add('message', msg.uid === currentUser.uid ? 'msg-local' : 'msg-remote');
+                div.innerText = msg.text;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('chatInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (text && currentUser) {
+                await push(ref(db, `rooms/${roomId}/messages`), { uid: currentUser.uid, text, timestamp: Date.now() });
+                input.value = '';
+            }
+        }
+
+        // Chat Toggle
+        document.getElementById('chatToggle').addEventListener('click', () => {
+            document.getElementById('chatContainer').classList.toggle('open');
+        });
+        document.getElementById('chatClose').addEventListener('click', () => {
+            document.getElementById('chatContainer').classList.remove('open');
+        });
+
+        // Audio/Video Toggle
+        let isAudioMuted = false, isVideoOff = false;
+        document.getElementById('toggleAudio').addEventListener('click', (e) => {
+            isAudioMuted = !isAudioMuted;
+            localStream.getAudioTracks().forEach(t => t.enabled = !isAudioMuted);
+            e.currentTarget.classList.toggle('active');
+        });
+        document.getElementById('toggleVideo').addEventListener('click', (e) => {
+            isVideoOff = !isVideoOff;
+            localStream.getVideoTracks().forEach(t => t.enabled = !isVideoOff);
+            e.currentTarget.classList.toggle('active');
+        });
+
+        // Add Friend
+        document.getElementById('addFriendBtn').addEventListener('click', async () => {
+            if (!peerUid) {
+                // Try to resolve peer UID
+                if (isCaller) {
+                    const s = await get(ref(db, `rooms/${roomId}/calleeUid`));
+                    peerUid = s.val();
+                } else {
+                    const s = await get(ref(db, `rooms/${roomId}/callerUid`));
+                    peerUid = s.val();
+                }
+            }
+            if (!peerUid) { alert('Could not find peer.'); return; }
+
+            // Add each other as friends
+            await set(ref(db, `users/${currentUser.uid}/friends/${peerUid}`), { addedAt: Date.now() });
+            await set(ref(db, `users/${peerUid}/friends/${currentUser.uid}`), { addedAt: Date.now() });
+
+            const btn = document.getElementById('addFriendBtn');
+            btn.classList.add('added');
+            btn.innerHTML = '✓';
+        });
+
+        // Next
+        document.getElementById('nextBtn').addEventListener('click', async () => {
+            // Save the peer for potential retry
+            if (peerUid) {
+                await update(ref(db, 'users/' + currentUser.uid), { lastSkippedUser: peerUid });
+            }
+            // Show retry button briefly? No, just go next
+            await cleanupAndRedirect(`match.html?mode=${matchMode}`);
+        });
+
+        // End Call
+        document.getElementById('endBtn').addEventListener('click', async () => {
+            await cleanupAndRedirect('home.html');
+        });
+
+        // Retry (reconnect with last skipped user)
+        document.getElementById('retryBtn').addEventListener('click', async () => {
+            const snap = await get(ref(db, 'users/' + currentUser.uid));
+            const profile = snap.val();
+            const coins = profile.coins || 0;
+            const lastSkipped = profile.lastSkippedUser;
+
+            if (coins < 2) { alert('You need 2 coins for retry!'); return; }
+            if (!lastSkipped) { alert('No user to retry.'); return; }
+
+            // Deduct coins
+            await update(ref(db, 'users/' + currentUser.uid), { coins: coins - 2 });
+
+            // Create a new room and try to connect
+            const newRoomId = 'retry_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            await update(ref(db, 'users/' + lastSkipped), { roomId: newRoomId });
+            await update(ref(db, 'users/' + currentUser.uid), { status: 'in-call', roomId: newRoomId, lastMatchedUser: lastSkipped });
+            window.location.href = `video-call.html?room=${newRoomId}&caller=true&mode=${matchMode}`;
+        });
+
+        async function cleanupAndRedirect(destination) {
+            clearInterval(callTimerInterval);
+            await set(ref(db, `rooms/${roomId}/hangup`), true);
+            if (localStream) localStream.getTracks().forEach(track => track.stop());
+            if (peerConnection) peerConnection.close();
+
+            if (currentUser) {
+                const isSearching = destination.includes('match');
+                await update(ref(db, 'users/' + currentUser.uid), {
+                    status: isSearching ? 'searching' : 'online',
+                    roomId: null,
+                    matchMode: isSearching ? matchMode : null
+                });
+            }
+            window.location.href = destination;
+        }
+
+        function handleHangup() {
+            clearInterval(callTimerInterval);
+            statusOverlay.style.display = 'flex';
+            statusText.innerText = "Peer left the call.";
+            
+            // Show retry button
+            document.getElementById('retryBtn').style.display = 'flex';
+            
+            if (localStream) localStream.getTracks().forEach(track => track.stop());
+            if (peerConnection) peerConnection.close();
+
+            setTimeout(() => {
+                window.location.href = `match.html?mode=${matchMode}`;
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

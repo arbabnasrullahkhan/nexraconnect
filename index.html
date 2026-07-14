@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexra Connect - Random Video Chat</title>
+    <link rel="icon" type="image/png" href="assets/favicon perple.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF2E93; /* Vibrant Pink */
+            --primary-light: #FF8A00; /* Vibrant Orange */
+            --secondary: #7B2CBF; /* Deep Purple */
+            --bg-color: #FFFFFF;
+            --text-dark: #111827;
+            --text-muted: #6B7280;
+            --card-shadow: 0 25px 50px -12px rgba(123, 44, 191, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Abstract Premium Background Elements */
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.6;
+            animation: drift 15s infinite alternate ease-in-out;
+        }
+
+        .shape-pink {
+            width: 500px; height: 500px;
+            background: rgba(255, 46, 147, 0.2);
+            top: -150px; right: -150px;
+        }
+
+        .shape-purple {
+            width: 600px; height: 600px;
+            background: rgba(123, 44, 191, 0.15);
+            bottom: -200px; left: -200px;
+            animation-delay: -5s;
+        }
+        
+        .shape-orange {
+            width: 300px; height: 300px;
+            background: rgba(255, 138, 0, 0.15);
+            top: 40%; left: 30%;
+            animation-delay: -10s;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, -40px) scale(1.1); }
+        }
+
+        /* Splash Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #FFFFFF;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.87, 0, 0.13, 1), visibility 0.8s;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .splash-logo {
+            width: 120px;
+            height: 120px;
+            animation: popIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .splash-text {
+            margin-top: 1.5rem;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUpFade 0.6s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideUpFade {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        h1 {
+            font-weight: 900;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 20px;
+            border: none;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover::after { opacity: 1; }
+
+        .btn-google {
+            background-color: #FFFFFF;
+            color: var(--text-dark);
+            border: 2px solid #F3F4F6;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .btn-google:hover {
+            border-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(123, 44, 191, 0.1);
+        }
+
+        .btn-anon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            box-shadow: 0 10px 20px rgba(255, 46, 147, 0.3);
+        }
+
+        .btn-anon:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 46, 147, 0.4);
+        }
+
+        .btn img { width: 24px; height: 24px; }
+        .btn svg { width: 24px; height: 24px; }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .loading-overlay.active { opacity: 1; pointer-events: all; }
+
+        .spinner {
+            width: 45px; height: 45px;
+            border: 4px solid rgba(255, 46, 147, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+
+<body>
+
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="assets/favicon perple.png" alt="Nexra Logo" class="splash-logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3114/3114868.png'">
+        <div class="splash-text">Nexra Connect</div>
+    </div>
+
+    <!-- Background Shapes -->
+    <div class="bg-shape shape-pink"></div>
+    <div class="bg-shape shape-purple"></div>
+    <div class="bg-shape shape-orange"></div>
+
+    <div class="container" id="mainContainer">
+        <div class="loading-overlay" id="loading">
+            <div class="spinner"></div>
+        </div>
+
+        <div class="logo-container">
+            <img src="assets/favicon perple.png" alt="Nexra Logo" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3114/3114868.png'">
+        </div>
+
+        <h1>Nexra Connect</h1>
+        <p class="subtitle">Experience real-time random video chat with smart matching.</p>
+
+        <button class="btn btn-google" id="googleLoginBtn">
+            <img src="https://cdn-icons-png.flaticon.com/512/3002/3002219.png" alt="Google">
+            Continue with Google
+        </button>
+
+        <button class="btn btn-anon" id="anonLoginBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Quick Guest Login
+        </button>
+    </div>
+
+    <!-- Firebase SDK Setup -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyArd7Q_Jb5cF-6TWf6pVAp_E84tVZrilC0",
+            authDomain: "nexra-finder.firebaseapp.com",
+            databaseURL: "https://nexra-finder-default-rtdb.firebaseio.com",
+            projectId: "nexra-finder",
+            storageBucket: "nexra-finder.firebasestorage.app",
+            messagingSenderId: "863940241308",
+            appId: "1:863940241308:web:a4e8101e7fd3a22c458a59",
+            measurementId: "G-GN3WSWBBDW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        const loading = document.getElementById('loading');
+        const splashScreen = document.getElementById('splashScreen');
+        const mainContainer = document.getElementById('mainContainer');
+
+        // Splash Screen Logic
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+                setTimeout(() => {
+                    mainContainer.classList.add('show');
+                }, 300); // Wait a bit for splash to fade before sliding up main
+            }, 2000); // Show splash for 2 seconds
+        });
+
+        // Check if user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // If logged in, wait for splash then redirect
+                setTimeout(() => {
+                    window.location.href = 'pages/home.html';
+                }, 2200);
+            }
+        });
+
+        async function handleLogin(method) {
+            loading.classList.add('active');
+            try {
+                let result;
+                if (method === 'google') {
+                    const provider = new GoogleAuthProvider();
+                    result = await signInWithPopup(auth, provider);
+                } else {
+                    result = await signInAnonymously(auth);
+                }
+
+                const user = result.user;
+                await set(ref(db, 'users/' + user.uid), {
+                    uid: user.uid,
+                    displayName: user.displayName || 'Guest User',
+                    isAnonymous: user.isAnonymous,
+                    lastSeen: serverTimestamp()
+                });
+
+                window.location.href = 'pages/home.html';
+            } catch (error) {
+                console.error("Login Error:", error);
+                alert("Authentication failed. Please try again.");
+                loading.classList.remove('active');
+            }
+        }
+
+        document.getElementById('googleLoginBtn').addEventListener('click', () => handleLogin('google'));
+        document.getElementById('anonLoginBtn').addEventListener('click', () => handleLogin('anon'));
+    </script>
+</body>
+
+</html>

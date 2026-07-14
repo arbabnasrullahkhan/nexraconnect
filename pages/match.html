@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Finding Match... - Nexra Connect</title>
+    <link rel="icon" type="image/png" href="../assets/favicon perple.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF2E93;
+            --primary-light: #FF8A00;
+            --secondary: #7B2CBF;
+            --bg-color: #0A0A0F;
+            --text-light: #F9FAFB;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;-webkit-tap-highlight-color:transparent;}
+        body{background-color:var(--bg-color);color:var(--text-light);height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+
+        body::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background-image:radial-gradient(rgba(255,46,147,0.08) 1px,transparent 1px);background-size:30px 30px;z-index:0;}
+
+        /* Watermark */
+        .watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;opacity:0.03;z-index:0;pointer-events:none;}
+
+        /* Mode Badge */
+        .mode-badge{position:absolute;top:24px;left:50%;transform:translateX(-50%);padding:8px 20px;border-radius:20px;font-size:0.85rem;font-weight:700;z-index:100;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.1);}
+        .mode-random{background:rgba(34,197,94,0.15);color:#22C55E;border-color:rgba(34,197,94,0.3);}
+        .mode-interest{background:rgba(99,102,241,0.15);color:#818CF8;border-color:rgba(99,102,241,0.3);}
+        .mode-premium{background:linear-gradient(135deg,rgba(255,46,147,0.15),rgba(255,138,0,0.15));color:#FFD700;border-color:rgba(255,215,0,0.3);}
+
+        .radar-container{position:relative;width:250px;height:250px;display:flex;align-items:center;justify-content:center;margin-bottom:3.5rem;z-index:10;}
+        .user-avatar{width:90px;height:90px;background:linear-gradient(135deg,var(--primary),var(--primary-light));border-radius:50%;z-index:10;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(255,46,147,0.4);position:relative;padding:4px;}
+        .user-avatar-inner{width:100%;height:100%;background:var(--bg-color);border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+        .user-avatar-inner img{width:45px;height:45px;}
+        .pulse{position:absolute;width:100%;height:100%;border-radius:50%;z-index:1;opacity:0;box-sizing:border-box;border:2px solid var(--primary);background:rgba(255,46,147,0.08);animation:pulseAnim 2.5s infinite cubic-bezier(0.215,0.61,0.355,1);}
+        .pulse:nth-child(2){animation-delay:0.8s;border-color:var(--secondary);background:rgba(123,44,191,0.08);}
+        .pulse:nth-child(3){animation-delay:1.6s;border-color:var(--primary-light);background:rgba(255,138,0,0.08);}
+        @keyframes pulseAnim{0%{transform:scale(0.9);opacity:0.8;border-width:4px;}100%{transform:scale(3.5);opacity:0;border-width:1px;}}
+
+        h2{font-weight:900;font-size:2rem;margin-bottom:0.5rem;text-align:center;z-index:10;background:linear-gradient(135deg,#fff,rgba(255,255,255,0.7));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        p.subtitle{color:#9CA3AF;font-size:1rem;text-align:center;animation:blink 1.5s infinite;z-index:10;font-weight:300;}
+        @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+        .cancel-btn{margin-top:2.5rem;padding:14px 36px;border-radius:30px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);color:var(--text-light);font-weight:600;font-size:1rem;cursor:pointer;transition:all 0.3s;z-index:10;}
+        .cancel-btn:hover{background:rgba(239,68,68,0.2);border-color:#ef4444;color:#ffb3b3;transform:scale(1.05);}
+
+        @media(max-width:480px){.radar-container{width:200px;height:200px;margin-bottom:2.5rem;} h2{font-size:1.6rem;}}
+        @media(min-width:1025px){h2{font-size:2.5rem;} .radar-container{width:300px;height:300px;} .user-avatar{width:110px;height:110px;}}
+    </style>
+</head>
+<body>
+
+    <img src="../assets/watermark_orange.png" class="watermark" alt="">
+    <div class="mode-badge" id="modeBadge">🎲 Random Mode</div>
+
+    <div class="radar-container">
+        <div class="pulse"></div>
+        <div class="pulse"></div>
+        <div class="pulse"></div>
+        <div class="user-avatar">
+            <div class="user-avatar-inner">
+                <img src="../assets/favicon perple.png" alt="User" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3114/3114868.png'">
+            </div>
+        </div>
+    </div>
+
+    <h2 id="matchTitle">Scanning for Match...</h2>
+    <p class="subtitle" id="matchSubtitle">Looking for someone nearby</p>
+
+    <button class="cancel-btn" id="cancelBtn">Cancel Search</button>
+
+    <!-- FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, update, onValue, get, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyArd7Q_Jb5cF-6TWf6pVAp_E84tVZrilC0",
+            authDomain: "nexra-finder.firebaseapp.com",
+            databaseURL: "https://nexra-finder-default-rtdb.firebaseio.com",
+            projectId: "nexra-finder",
+            storageBucket: "nexra-finder.firebasestorage.app",
+            messagingSenderId: "863940241308",
+            appId: "1:863940241308:web:a4e8101e7fd3a22c458a59",
+            measurementId: "G-GN3WSWBBDW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchMode = urlParams.get('mode') || 'random';
+
+        // Set badge text based on mode
+        const badge = document.getElementById('modeBadge');
+        const titleEl = document.getElementById('matchTitle');
+        const subtitleEl = document.getElementById('matchSubtitle');
+
+        if (matchMode === 'random') {
+            badge.className = 'mode-badge mode-random';
+            badge.textContent = '🎲 Random Mode';
+            titleEl.textContent = 'Scanning...';
+            subtitleEl.textContent = 'Looking for anyone online';
+        } else if (matchMode === 'interest') {
+            badge.className = 'mode-badge mode-interest';
+            badge.textContent = '🎯 Interest Mode';
+            titleEl.textContent = 'Finding Match...';
+            subtitleEl.textContent = 'Matching by your interests';
+        } else if (matchMode === 'premium') {
+            badge.className = 'mode-badge mode-premium';
+            badge.textContent = '👑 Premium Mode';
+            titleEl.textContent = 'Premium Search...';
+            subtitleEl.textContent = 'Finding opposite gender match';
+        }
+
+        let currentUser = null;
+        let searchInterval = null;
+        let myInterests = [];
+        let myGender = null;
+        let isRedirecting = false;
+
+        document.getElementById('cancelBtn').addEventListener('click', async () => {
+            if (currentUser) {
+                await update(ref(db, 'users/' + currentUser.uid), { status: 'online', roomId: null, matchMode: null });
+            }
+            window.location.href = 'home.html';
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userRef = ref(db, 'users/' + user.uid);
+                onDisconnect(userRef).update({ status: 'offline', roomId: null, matchMode: null });
+
+                await update(userRef, { status: 'searching', roomId: null, matchMode: matchMode });
+
+                const snap = await get(ref(db, 'users/' + user.uid));
+                const profile = snap.exists() ? snap.val() : {};
+                myInterests = profile.interests || [];
+                myGender = profile.gender || null;
+
+                // Listen for room assignment
+                onValue(ref(db, 'users/' + user.uid + '/roomId'), (snapshot) => {
+                    const roomId = snapshot.val();
+                    if (roomId && !isRedirecting) {
+                        isRedirecting = true;
+                        clearInterval(searchInterval);
+                        update(userRef, { status: 'in-call' });
+                        window.location.href = `video-call.html?room=${roomId}&mode=${matchMode}`;
+                    }
+                });
+
+                startSearch();
+            } else {
+                window.location.href = '../index.html';
+            }
+        });
+
+        function startSearch() {
+            searchInterval = setInterval(findMatch, 3000);
+        }
+
+        async function findMatch() {
+            if (isRedirecting) return;
+
+            const snapshot = await get(ref(db, 'users'));
+            if (!snapshot.exists()) return;
+            const users = snapshot.val();
+
+            let candidates = [];
+
+            for (const uid in users) {
+                if (uid === currentUser.uid) continue;
+                const u = users[uid];
+                if (u.status !== 'searching' || u.roomId) continue;
+
+                if (matchMode === 'random') {
+                    // Accept anyone searching (any mode)
+                    candidates.push({ uid, score: Math.random() });
+
+                } else if (matchMode === 'interest') {
+                    // Prefer interest overlap but also accept random searchers
+                    const theirInterests = u.interests || [];
+                    let overlap = 0;
+                    if (myInterests.length > 0 && theirInterests.length > 0) {
+                        overlap = myInterests.filter(i => theirInterests.includes(i)).length;
+                    }
+                    candidates.push({ uid, score: overlap + Math.random() * 0.5 });
+
+                } else if (matchMode === 'premium') {
+                    // Gender filter: match opposite gender only
+                    const theirGender = u.gender;
+                    if (!theirGender || !myGender) continue;
+                    if (myGender === 'male' && theirGender !== 'female') continue;
+                    if (myGender === 'female' && theirGender !== 'male') continue;
+                    candidates.push({ uid, score: Math.random() });
+                }
+            }
+
+            if (candidates.length === 0) return;
+
+            // Sort by score descending
+            candidates.sort((a, b) => b.score - a.score);
+            const bestUid = candidates[0].uid;
+
+            const candidateRoomRef = ref(db, 'users/' + bestUid + '/roomId');
+            const generatedRoomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+            runTransaction(candidateRoomRef, (currentRoomId) => {
+                if (currentRoomId === null) return generatedRoomId;
+                return;
+            }).then(async (result) => {
+                if (result.committed) {
+                    isRedirecting = true;
+                    clearInterval(searchInterval);
+
+                    // Deduct coin for premium mode
+                    if (matchMode === 'premium') {
+                        const coinSnap = await get(ref(db, 'users/' + currentUser.uid + '/coins'));
+                        const coins = coinSnap.val() || 0;
+                        await update(ref(db, 'users/' + currentUser.uid), { coins: Math.max(0, coins - 1) });
+                    }
+
+                    // Store last matched user for retry feature
+                    await update(ref(db, 'users/' + currentUser.uid), {
+                        status: 'in-call',
+                        roomId: generatedRoomId,
+                        lastMatchedUser: bestUid
+                    });
+
+                    window.location.href = `video-call.html?room=${generatedRoomId}&caller=true&mode=${matchMode}`;
+                }
+            }).catch(console.error);
+        }
+    </script>
+</body>
+</html>

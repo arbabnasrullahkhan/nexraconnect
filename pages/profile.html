@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Profile - Nexra Connect</title>
+    <link rel="icon" type="image/png" href="../assets/favicon perple.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF2E93;
+            --primary-light: #FF8A00;
+            --secondary: #7B2CBF;
+            --bg: #0A0A0F;
+            --surface: #15151E;
+            --surface-light: #1E1E2E;
+            --text: #F9FAFB;
+            --text-muted: #9CA3AF;
+            --glass-border: rgba(255,255,255,0.08);
+            --nav-h: 70px;
+            --header-h: 60px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Outfit',sans-serif;-webkit-tap-highlight-color:transparent;}
+        html,body{height:100%;background:var(--bg);color:var(--text);overflow-x:hidden;}
+        body{padding-top:var(--header-h);padding-bottom:var(--nav-h);}
+
+        .header{position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;justify-content:center;padding:0 16px;background:rgba(10,10,15,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);z-index:1000;}
+        .header h2{font-size:1.1rem;font-weight:800;}
+
+        .content{padding:20px 16px;overflow-y:auto;height:calc(100vh - var(--header-h) - var(--nav-h));}
+
+        /* Profile Card */
+        .profile-card{text-align:center;padding:30px 20px;background:var(--surface);border-radius:24px;border:1px solid var(--glass-border);margin-bottom:24px;}
+        .avatar-large{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:900;margin:0 auto 16px;border:3px solid rgba(255,255,255,0.15);color:#fff;}
+        .profile-name{font-size:1.5rem;font-weight:800;margin-bottom:4px;}
+        .profile-email{font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;}
+        .coins-display{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,138,0,0.1));padding:10px 24px;border-radius:20px;border:1px solid rgba(255,215,0,0.3);font-weight:800;color:#FFD700;font-size:1.1rem;}
+
+        /* Sections */
+        .section{background:var(--surface);border-radius:20px;border:1px solid var(--glass-border);padding:20px;margin-bottom:16px;}
+        .section-title{font-size:1rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+        /* Gender Selection */
+        .gender-options{display:flex;gap:12px;}
+        .gender-btn{flex:1;padding:14px;border-radius:16px;border:2px solid var(--glass-border);background:transparent;color:var(--text);font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:6px;}
+        .gender-btn .emoji{font-size:1.8rem;}
+        .gender-btn:hover{border-color:var(--primary);background:rgba(255,46,147,0.05);}
+        .gender-btn.selected{border-color:var(--primary);background:rgba(255,46,147,0.1);box-shadow:0 0 20px rgba(255,46,147,0.15);}
+
+        /* Name Input */
+        .input-field{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--glass-border);background:var(--surface-light);color:var(--text);font-size:1rem;font-weight:600;outline:none;transition:border-color 0.3s;}
+        .input-field:focus{border-color:var(--primary);}
+        .save-btn{width:100%;margin-top:12px;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:800;font-size:1rem;cursor:pointer;transition:all 0.3s;}
+        .save-btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,46,147,0.3);}
+
+        /* Interest Tags */
+        .interest-input-row{display:flex;gap:10px;margin-bottom:12px;}
+        .interest-input-row input{flex:1;}
+        .add-tag-btn{padding:0 20px;border-radius:14px;border:none;background:var(--surface-light);color:var(--text);font-weight:700;cursor:pointer;border:1px solid var(--glass-border);transition:all 0.3s;}
+        .add-tag-btn:hover{background:var(--primary);border-color:var(--primary);}
+        .tags-wrap{display:flex;flex-wrap:wrap;gap:8px;}
+        .tag{background:rgba(99,102,241,0.15);color:#818CF8;padding:8px 14px;border-radius:20px;font-size:0.85rem;font-weight:700;display:flex;align-items:center;gap:6px;animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+        @keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+        .tag .remove{cursor:pointer;font-size:1.1rem;line-height:1;transition:color 0.2s;}
+        .tag .remove:hover{color:#ef4444;}
+
+        /* Logout */
+        .logout-btn{width:100%;padding:14px;border-radius:14px;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.1);color:#ef4444;font-weight:800;font-size:1rem;cursor:pointer;transition:all 0.3s;margin-top:8px;}
+        .logout-btn:hover{background:rgba(239,68,68,0.2);transform:scale(1.02);}
+
+        /* Bottom Nav */
+        .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);display:flex;align-items:center;justify-content:space-around;background:rgba(10,10,15,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--glass-border);z-index:1000;padding-bottom:env(safe-area-inset-bottom);}
+        .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 20px;border-radius:16px;transition:all 0.3s;position:relative;}
+        .nav-item svg{width:24px;height:24px;stroke:var(--text-muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:all 0.3s;}
+        .nav-item span{font-size:0.7rem;font-weight:600;color:var(--text-muted);transition:color 0.3s;}
+        .nav-item.active svg{stroke:var(--primary);}
+        .nav-item.active span{color:var(--primary);}
+        .nav-item.active::before{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:var(--primary);border-radius:0 0 3px 3px;}
+
+        @media(min-width:481px){.content{max-width:540px;margin:0 auto;}}
+        @media(min-width:769px){.content{max-width:600px;} .gender-options{max-width:400px;}}
+        @media(min-width:1025px){.bottom-nav{left:50%;transform:translateX(-50%);max-width:500px;border-radius:24px 24px 0 0;border:1px solid var(--glass-border);border-bottom:none;}}
+    </style>
+</head>
+<body>
+
+    <div class="header"><h2>My Profile</h2></div>
+
+    <div class="content">
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="avatar-large" id="avatarLarge">?</div>
+            <div class="profile-name" id="profileName">Loading...</div>
+            <div class="profile-email" id="profileEmail"></div>
+            <div class="coins-display">💰 <span id="coinsDisplay">0</span> Coins</div>
+        </div>
+
+        <!-- Display Name -->
+        <div class="section">
+            <div class="section-title">✏️ Display Name</div>
+            <input type="text" class="input-field" id="nameInput" placeholder="Enter your name..." autocomplete="off">
+            <button class="save-btn" id="saveNameBtn">Save Name</button>
+        </div>
+
+        <!-- Gender -->
+        <div class="section">
+            <div class="section-title">🧑 Gender</div>
+            <div class="gender-options">
+                <button class="gender-btn" id="btnMale" data-gender="male">
+                    <span class="emoji">👨</span>Male
+                </button>
+                <button class="gender-btn" id="btnFemale" data-gender="female">
+                    <span class="emoji">👩</span>Female
+                </button>
+            </div>
+        </div>
+
+        <!-- Interests -->
+        <div class="section">
+            <div class="section-title">🎯 Interests</div>
+            <div class="interest-input-row">
+                <input type="text" class="input-field" id="interestInput" placeholder="e.g. Gaming, Anime..." autocomplete="off">
+                <button class="add-tag-btn" id="addTagBtn">Add</button>
+            </div>
+            <div class="tags-wrap" id="tagsWrap"></div>
+        </div>
+
+        <!-- Logout -->
+        <button class="logout-btn" id="logoutBtn">🚪 Log Out</button>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="location.href='home.html'">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="location.href='chat.html'">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Chat</span>
+        </div>
+        <div class="nav-item active" onclick="location.href='profile.html'">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profile</span>
+        </div>
+    </div>
+
+    <!-- FIREBASE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, update, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyArd7Q_Jb5cF-6TWf6pVAp_E84tVZrilC0",
+            authDomain: "nexra-finder.firebaseapp.com",
+            databaseURL: "https://nexra-finder-default-rtdb.firebaseio.com",
+            projectId: "nexra-finder",
+            storageBucket: "nexra-finder.firebasestorage.app",
+            messagingSenderId: "863940241308",
+            appId: "1:863940241308:web:a4e8101e7fd3a22c458a59",
+            measurementId: "G-GN3WSWBBDW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let currentUser = null;
+        let interests = [];
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const snap = await get(ref(db, 'users/' + user.uid));
+                const profile = snap.exists() ? snap.val() : {};
+
+                // Initialize coins
+                if (profile.coins === undefined) {
+                    await update(ref(db, 'users/' + user.uid), { coins: 10 });
+                    profile.coins = 10;
+                }
+
+                // UI
+                const name = user.isAnonymous ? 'Guest' : (profile.displayName || user.displayName || 'User');
+                document.getElementById('profileName').textContent = name;
+                document.getElementById('profileEmail').textContent = user.isAnonymous ? 'Anonymous User' : (user.email || '');
+                document.getElementById('avatarLarge').textContent = name[0].toUpperCase();
+                document.getElementById('nameInput').value = profile.displayName || user.displayName || '';
+                document.getElementById('coinsDisplay').textContent = profile.coins || 0;
+
+                // Gender
+                if (profile.gender) {
+                    document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+                    const el = document.getElementById(profile.gender === 'male' ? 'btnMale' : 'btnFemale');
+                    if (el) el.classList.add('selected');
+                }
+
+                // Interests
+                interests = profile.interests || [];
+                renderTags();
+
+                // Live coin update
+                onValue(ref(db, 'users/' + user.uid + '/coins'), (s) => {
+                    document.getElementById('coinsDisplay').textContent = s.val() || 0;
+                });
+            } else {
+                window.location.href = '../index.html';
+            }
+        });
+
+        // Save Name
+        document.getElementById('saveNameBtn').addEventListener('click', async () => {
+            const name = document.getElementById('nameInput').value.trim();
+            if (!name) return;
+            await update(ref(db, 'users/' + currentUser.uid), { displayName: name });
+            if (!currentUser.isAnonymous) {
+                await updateProfile(currentUser, { displayName: name });
+            }
+            document.getElementById('profileName').textContent = name;
+            document.getElementById('avatarLarge').textContent = name[0].toUpperCase();
+            alert('Name saved!');
+        });
+
+        // Gender
+        document.querySelectorAll('.gender-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                await update(ref(db, 'users/' + currentUser.uid), { gender: btn.dataset.gender });
+            });
+        });
+
+        // Interests
+        function addInterest() {
+            const val = document.getElementById('interestInput').value.trim().toLowerCase();
+            if (val && !interests.includes(val) && interests.length < 5) {
+                interests.push(val);
+                document.getElementById('interestInput').value = '';
+                renderTags();
+                update(ref(db, 'users/' + currentUser.uid), { interests });
+            } else if (interests.length >= 5) {
+                alert('Max 5 interests allowed.');
+            }
+        }
+
+        function removeInterest(val) {
+            interests = interests.filter(i => i !== val);
+            renderTags();
+            update(ref(db, 'users/' + currentUser.uid), { interests });
+        }
+
+        function renderTags() {
+            const wrap = document.getElementById('tagsWrap');
+            wrap.innerHTML = '';
+            interests.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = 'tag';
+                div.innerHTML = `${tag} <span class="remove" title="Remove">&times;</span>`;
+                div.querySelector('.remove').addEventListener('click', () => removeInterest(tag));
+                wrap.appendChild(div);
+            });
+        }
+
+        document.getElementById('addTagBtn').addEventListener('click', addInterest);
+        document.getElementById('interestInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') addInterest(); });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => { signOut(auth); });
+    </script>
+</body>
+</html>
