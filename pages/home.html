@@ -4,21 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>Home - Nexra Connect</title>
+    <title>Home - Nexra Connect Pro</title>
     <link rel="icon" type="image/png" href="../assets/favicon perple.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ===== ULTRA PREMIUM iOS VARIABLES (NO MIXED COLORS) ===== */
+        /* ===== ULTRA PREMIUM PRO iOS VARIABLES ===== */
         :root {
             --accent: #0A84FF;        /* Apple Premium Blue */
+            --accent-glow: rgba(10, 132, 255, 0.4);
             --bg-dark: #000000;       /* Pure Black */
-            --glass-bg: rgba(30, 30, 35, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-bg: rgba(28, 28, 30, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.12);
             --text-main: #FFFFFF;
             --text-muted: #8E8E93;
+            --premium: #F5C518;       /* Royal Gold */
             --blur-heavy: blur(40px);
-            --blur-light: blur(20px);
-            --nav-h: 80px;
+            --nav-h: 85px;
             --safe-bottom: env(safe-area-inset-bottom, 24px);
             --safe-top: env(safe-area-inset-top, 20px);
             --spring: cubic-bezier(0.32, 0.72, 0, 1);
@@ -27,128 +28,134 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; width: 100%; }
 
-        /* ===== OPTIMIZED CAMERA BACKGROUND ===== */
+        /* ===== 4K ENHANCED CAMERA BACKGROUND ===== */
         .camera-container { position: fixed; inset: 0; z-index: 0; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        #selfieVideo { width: 100%; height: 100%; object-fit: cover; object-position: center center; transform: scaleX(-1); opacity: 0.95; }
-        /* Smooth Vignette to make UI readable */
-        .camera-overlay { position: fixed; inset: 0; z-index: 1; background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.4) 100%), linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 20%, transparent 65%, rgba(0,0,0,0.85) 100%); pointer-events: none; }
+        
+        /* 
+           Camera AI Enhance Effect via CSS:
+           Increases contrast, saturates colors, brightens, and smooths out low-quality mobile grains 
+        */
+        #selfieVideo { 
+            width: 100%; height: 100%; 
+            object-fit: cover; object-position: center; 
+            transform: scaleX(-1); 
+            filter: contrast(1.12) brightness(1.05) saturate(1.15) hue-rotate(0deg); 
+            -webkit-filter: contrast(1.12) brightness(1.05) saturate(1.15);
+        }
+
+        .camera-overlay { position: fixed; inset: 0; z-index: 1; background: radial-gradient(circle at center, transparent 45%, rgba(0,0,0,0.3) 100%), linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 15%, transparent 60%, rgba(0,0,0,0.9) 100%); pointer-events: none; }
 
         /* ===== DYNAMIC ISLAND HEADER ===== */
         .island-container { position: fixed; top: var(--safe-top); left: 0; right: 0; z-index: 100; display: flex; justify-content: center; padding: 0 16px; margin-top: 10px; }
-        .dynamic-island { background: #000000; border-radius: 40px; height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; width: 100%; max-width: 480px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+        .dynamic-island { background: #000000; border-radius: 40px; height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; width: 100%; max-width: 480px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); }
         
-        /* Island Left: Logo & Online Count */
         .island-left { display: flex; align-items: center; gap: 8px; padding-left: 8px; }
-        .island-logo { width: 28px; height: 28px; border-radius: 50%; }
-        .online-dot { width: 6px; height: 6px; background: #34C759; border-radius: 50%; box-shadow: 0 0 8px #34C759; animation: pulseGreen 2s infinite; }
+        .island-logo { width: 30px; height: 30px; border-radius: 50%; }
+        .online-dot { width: 6px; height: 6px; background: #34C759; border-radius: 50%; box-shadow: 0 0 10px #34C759; animation: pulseGreen 2s infinite; }
         
-        /* Island Center: Solo / Squad Toggle */
-        .mode-switch { display: flex; background: rgba(255,255,255,0.1); border-radius: 30px; padding: 3px; position: relative; }
-        .mode-btn { padding: 6px 16px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.3s var(--spring); background: transparent; color: var(--text-muted); position: relative; z-index: 2; letter-spacing: 0.5px; }
+        .mode-switch { display: flex; background: rgba(255,255,255,0.12); border-radius: 30px; padding: 3px; position: relative; }
+        .mode-btn { padding: 8px 18px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.3s var(--spring); background: transparent; color: var(--text-muted); position: relative; z-index: 2; letter-spacing: 0.5px; }
         .mode-btn.active { color: #000; }
         .mode-indicator { position: absolute; height: calc(100% - 6px); top: 3px; border-radius: 20px; background: #FFFFFF; z-index: 1; transition: all 0.3s var(--spring); }
 
-        /* Island Right: Wallet */
-        .island-right { padding-right: 8px; }
-        .wallet-pill { background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.85rem; color: #FFF; cursor: pointer; transition: 0.2s; }
-        .wallet-pill:hover { background: rgba(255,255,255,0.2); }
-        .wallet-pill svg { stroke: var(--text-main); }
+        .island-right { padding-right: 6px; }
+        .wallet-pill { background: rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 0.85rem; color: #FFF; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
+        .wallet-pill:active { transform: scale(0.95); }
 
-        @keyframes pulseGreen { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } }
+        @keyframes pulseGreen { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
 
-        /* ===== RIGHT FLOATING ACTION BAR ===== */
-        .right-actions { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 14px; }
-        .action-fab { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: var(--blur-light); -webkit-backdrop-filter: var(--blur-light); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; position: relative; color: #fff; }
-        .action-fab svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        /* ===== RIGHT FLOATING ACTIONS (Filters added) ===== */
+        .right-actions { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 16px; }
+        .action-fab { width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: var(--blur-heavy); -webkit-backdrop-filter: var(--blur-heavy); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; position: relative; color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .action-fab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
         .action-fab:active { transform: scale(0.9); }
-        .action-fab:hover { background: rgba(255,255,255,0.15); }
         
-        .fab-premium { background: var(--text-main); color: #000; border: none; }
+        .fab-premium { background: var(--text-main); color: #000; border: none; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
         .fab-premium svg { stroke: #000; fill: #000; }
+        .fab-filter { background: rgba(10, 132, 255, 0.15); border-color: rgba(10, 132, 255, 0.3); color: var(--accent); }
+        
         .badge { position: absolute; top: -2px; right: -2px; background: #FF3B30; color: #fff; font-size: 0.65rem; font-weight: 800; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #000; }
 
-        /* ===== SQUAD SIZE SELECTOR (Elegant) ===== */
-        .squad-selector { position: fixed; bottom: calc(var(--nav-h) + 170px); left: 50%; transform: translateX(-50%) translateY(20px); z-index: 90; display: flex; gap: 8px; background: var(--glass-bg); backdrop-filter: var(--blur-heavy); padding: 8px; border-radius: 24px; border: 1px solid var(--glass-border); opacity: 0; visibility: hidden; transition: all 0.4s var(--spring); }
+        /* ===== SQUAD SIZE SELECTOR ===== */
+        .squad-selector { position: fixed; bottom: calc(var(--nav-h) + 210px); left: 50%; transform: translateX(-50%) translateY(20px); z-index: 90; display: flex; gap: 8px; background: var(--glass-bg); backdrop-filter: var(--blur-heavy); padding: 8px; border-radius: 24px; border: 1px solid var(--glass-border); opacity: 0; visibility: hidden; transition: all 0.4s var(--spring); }
         .squad-selector.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-        .squad-opt { width: 44px; height: 44px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
+        .squad-opt { width: 44px; height: 44px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
         .squad-opt.active { background: #FFFFFF; color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .squad-opt svg { width: 20px; height: 20px; margin-right: 4px; }
 
         /* ===== BOTTOM CONTROLS ===== */
         .bottom-controls { position: fixed; bottom: calc(var(--nav-h) + 20px); left: 0; right: 0; z-index: 100; padding: 0 24px; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; margin: 0 auto; }
 
-        /* Network Status Info */
-        .network-info { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 16px; background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 12px; backdrop-filter: blur(10px); }
-        .network-info svg { width: 14px; height: 14px; stroke: #34C759; }
+        .filters-row { display: flex; gap: 12px; width: 100%; margin-bottom: 20px; }
+        .filter-pill { flex: 1; background: var(--glass-bg); backdrop-filter: var(--blur-heavy); border: 1px solid var(--glass-border); padding: 14px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; white-space: nowrap; }
+        .filter-pill:active { transform: scale(0.96); }
+        .filter-pill svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; }
 
-        .gender-pill { background: var(--glass-bg); backdrop-filter: var(--blur-heavy); border: 1px solid var(--glass-border); padding: 14px 32px; border-radius: 30px; font-size: 0.95rem; font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; margin-bottom: 24px; }
-        .gender-pill:active { transform: scale(0.95); }
-
-        .start-btn { width: 100%; padding: 20px; border-radius: 24px; border: none; background: #FFFFFF; color: #000000; font-weight: 800; font-size: 1.25rem; cursor: pointer; transition: all 0.3s var(--spring); box-shadow: 0 10px 30px rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; overflow: hidden; }
-        .start-btn svg { width: 24px; height: 24px; fill: #000; }
+        .start-btn { width: 100%; padding: 22px; border-radius: 24px; border: none; background: #FFFFFF; color: #000000; font-weight: 900; font-size: 1.3rem; cursor: pointer; transition: all 0.3s var(--spring); box-shadow: 0 10px 40px rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .start-btn svg { width: 26px; height: 26px; fill: #000; }
         .start-btn:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
-        .start-btn.loading { background: rgba(255,255,255,0.8); color: transparent; pointer-events: none; }
         
-        .spinner { position: absolute; width: 24px; height: 24px; border: 3px solid rgba(0,0,0,0.1); border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+        .start-btn.loading { background: rgba(255,255,255,0.8); color: transparent; pointer-events: none; }
+        .spinner { position: absolute; width: 26px; height: 26px; border: 3px solid rgba(0,0,0,0.1); border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
         .start-btn.loading .spinner { display: block; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* ===== iOS FLOATING DOCK ===== */
-        .dock-container { position: fixed; bottom: var(--safe-bottom); left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 400px; height: 65px; background: rgba(20, 20, 25, 0.75); backdrop-filter: var(--blur-heavy); -webkit-backdrop-filter: var(--blur-heavy); border: 1px solid var(--glass-border); border-radius: 35px; z-index: 200; display: flex; justify-content: space-around; align-items: center; padding: 0 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .dock-container { position: fixed; bottom: var(--safe-bottom); left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 440px; height: 70px; background: rgba(28, 28, 30, 0.85); backdrop-filter: var(--blur-heavy); -webkit-backdrop-filter: var(--blur-heavy); border: 1px solid var(--glass-border); border-radius: 35px; z-index: 200; display: flex; justify-content: space-around; align-items: center; padding: 0 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
         
-        .dock-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: var(--text-muted); transition: 0.3s; position: relative; height: 100%; }
-        .dock-item svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.2; transition: 0.3s; }
-        .dock-item span { font-size: 0.65rem; font-weight: 700; transition: 0.3s; }
+        .dock-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: var(--text-muted); transition: 0.3s; height: 100%; }
+        .dock-item svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2.2; transition: 0.3s; }
+        .dock-item span { font-size: 0.7rem; font-weight: 700; transition: 0.3s; }
         
         .dock-item.active { color: #fff; }
-        .dock-item.active svg { stroke: var(--accent); transform: translateY(-2px); }
+        .dock-item.active svg { stroke: var(--accent); transform: translateY(-3px); }
 
         /* ===== ULTRA PREMIUM MODALS ===== */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.4s var(--spring); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.4s var(--spring); }
         .modal-overlay.open { opacity: 1; visibility: visible; }
         
         .modal-sheet { width: 100%; max-width: 500px; background: #1C1C1E; border-radius: 32px 32px 0 0; padding: 24px 24px var(--safe-bottom); transform: translateY(100%); transition: transform 0.5s var(--spring); position: relative; border-top: 1px solid rgba(255,255,255,0.1); }
         .modal-overlay.open .modal-sheet { transform: translateY(0); }
-        .modal-drag { width: 40px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 5px; margin: 0 auto 24px; }
+        .modal-drag { width: 44px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 5px; margin: 0 auto 24px; }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .modal-title { font-size: 1.3rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
-        .modal-close { background: rgba(255,255,255,0.1); border: none; width: 32px; height: 32px; border-radius: 50%; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .modal-close:active { background: rgba(255,255,255,0.2); transform: scale(0.9); }
+        .modal-title { font-size: 1.4rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .modal-close { background: rgba(255,255,255,0.1); border: none; width: 34px; height: 34px; border-radius: 50%; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .modal-close:active { transform: scale(0.9); }
 
-        /* Gender Grid */
-        .gender-grid { display: flex; flex-direction: column; gap: 12px; }
-        .gender-card { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; cursor: pointer; transition: 0.2s; }
-        .gender-card:active { transform: scale(0.98); }
-        .gender-card.selected { border-color: var(--accent); background: rgba(10, 132, 255, 0.1); }
-        .gender-card-left { display: flex; align-items: center; gap: 14px; font-weight: 600; font-size: 1.05rem; }
-        .gender-card-left .emoji { font-size: 1.5rem; }
-        .premium-lock { background: rgba(255,255,255,0.1); color: #fff; padding: 6px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        /* Grid Cards (Used for Gender, Location, Filters) */
+        .grid-list { display: flex; flex-direction: column; gap: 12px; max-height: 50vh; overflow-y: auto; padding-bottom: 10px; }
+        .grid-list::-webkit-scrollbar { display: none; }
+        .option-card { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .option-card:active { transform: scale(0.98); }
+        .option-card.selected { border-color: var(--accent); background: rgba(10, 132, 255, 0.15); box-shadow: 0 10px 25px var(--accent-glow); }
+        .option-card-left { display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 1.1rem; }
+        .option-card-left .emoji { font-size: 1.6rem; }
+        .premium-lock { background: rgba(245, 197, 24, 0.2); color: var(--premium); padding: 6px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; gap: 4px; }
 
-        /* Premium Subscription Grid (Apple Style) */
+        /* Premium Subscription Grid */
         .subs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
         .sub-card { background: rgba(255,255,255,0.05); border: 2px solid transparent; padding: 24px 16px; border-radius: 24px; text-align: center; cursor: pointer; transition: 0.2s; position: relative; }
-        .sub-card.popular { background: rgba(255,255,255,0.08); }
-        .sub-card.popular::before { content: 'POPULAR'; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: #fff; color: #000; font-size: 0.6rem; font-weight: 800; padding: 4px 8px; border-radius: 8px; letter-spacing: 0.5px; }
-        .sub-card.selected { border-color: #fff; background: rgba(255,255,255,0.12); }
-        .sub-duration { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; color: #fff; margin-top: 10px; }
-        .sub-price { font-size: 0.95rem; color: var(--text-muted); font-weight: 500; }
+        .sub-card.popular { background: rgba(245, 197, 24, 0.08); }
+        .sub-card.popular::before { content: 'MOST POPULAR'; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: var(--premium); color: #000; font-size: 0.6rem; font-weight: 900; padding: 4px 8px; border-radius: 8px; }
+        .sub-card.selected { border-color: var(--premium); background: rgba(245, 197, 24, 0.12); }
+        .sub-duration { font-size: 1.3rem; font-weight: 900; margin-bottom: 6px; color: #fff; margin-top: 10px; }
+        .sub-price { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; }
         
-        .sub-features { margin-bottom: 24px; background: rgba(255,255,255,0.03); padding: 16px; border-radius: 20px; }
-        .sub-feature { display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 500; color: #fff; margin-bottom: 12px; }
+        .sub-features { margin-bottom: 24px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; }
+        .sub-feature { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 14px; }
         .sub-feature:last-child { margin-bottom: 0; }
-        .sub-feature svg { width: 18px; height: 18px; stroke: #34C759; }
+        .sub-feature svg { width: 20px; height: 20px; stroke: var(--premium); }
 
-        .btn-subscribe { width: 100%; padding: 20px; border-radius: 24px; border: none; background: #fff; color: #000; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
+        .btn-subscribe { width: 100%; padding: 20px; border-radius: 24px; border: none; background: var(--premium); color: #000; font-weight: 900; font-size: 1.15rem; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 30px rgba(245, 197, 24, 0.4); text-transform: uppercase; }
         .btn-subscribe:active { transform: scale(0.96); }
 
     </style>
 </head>
 <body>
 
-    <!-- 1. OPTIMIZED CAMERA BACKGROUND -->
+    <!-- 1. 4K ENHANCED CAMERA BACKGROUND -->
     <div class="camera-container">
-        <!-- object-fit: cover guarantees full width without stretching, naturally fixing zoom -->
+        <!-- AI Enhanced via CSS Filters (contrast, saturation, brightness) -->
         <video id="selfieVideo" autoplay playsinline muted></video>
     </div>
     <div class="camera-overlay"></div>
@@ -169,24 +176,23 @@
 
             <div class="island-right">
                 <div class="wallet-pill" onclick="location.href='profile.html'">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="3"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="3"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
                     <span id="coinsCount">0</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. RIGHT FLOATING ACTIONS -->
+    <!-- 3. RIGHT ACTIONS (Including Face Filters) -->
     <div class="right-actions">
         <div class="action-fab fab-premium" onclick="openPremiumModal()" title="Nexra Plus">
             <svg viewBox="0 0 24 24"><path d="M2 4l3 12h14l3-12-5 4-5-4-5 4-3-4z"/></svg>
         </div>
+        <div class="action-fab fab-filter" title="Face Filters & AR" onclick="openModal('filterModal')">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
         <div class="action-fab" title="Match History" onclick="location.href='chat.html'">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <div class="action-fab" title="Notifications">
-            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            <div class="badge">2</div>
         </div>
         <div class="action-fab" title="Settings" onclick="location.href='profile.html'">
             <svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -195,22 +201,26 @@
 
     <!-- 4. SQUAD SIZE SELECTOR -->
     <div class="squad-selector" id="squadSelector">
-        <div class="squad-opt active" onclick="setSquadSize(2, this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> 2</div>
+        <div class="squad-opt active" onclick="setSquadSize(2, this)">2</div>
         <div class="squad-opt" onclick="setSquadSize(3, this)">3</div>
         <div class="squad-opt" onclick="setSquadSize(4, this)">4</div>
         <div class="squad-opt" onclick="setSquadSize(6, this)">6</div>
     </div>
 
-    <!-- 5. BOTTOM CONTROLS -->
+    <!-- 5. BOTTOM CONTROLS (Location & Gender) -->
     <div class="bottom-controls">
-        <div class="network-info">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-            Connection: Excellent
+        <div class="filters-row">
+            <!-- Location Button -->
+            <button class="filter-pill" id="locationPill" onclick="openModal('locationModal')">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                Global
+            </button>
+            
+            <!-- Gender Button -->
+            <button class="filter-pill" id="genderPill" onclick="openModal('genderModal')">
+                👫 Both
+            </button>
         </div>
-
-        <button class="gender-pill" id="genderPill" onclick="openGenderModal()">
-            👫 Match: Both Genders
-        </button>
         
         <button class="start-btn" id="startBtn">
             <div class="spinner"></div>
@@ -239,40 +249,93 @@
         <div class="modal-sheet">
             <div class="modal-drag"></div>
             <div class="modal-header">
-                <div class="modal-title">Preferences</div>
+                <div class="modal-title">Gender Preferences</div>
                 <button class="modal-close" onclick="closeModals()">✕</button>
             </div>
-            
-            <div class="gender-grid">
-                <div class="gender-card selected" data-g="both" onclick="selectGender(this)">
-                    <div class="gender-card-left"><span class="emoji">👫</span> Both (Free)</div>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            <div class="grid-list">
+                <div class="option-card selected" data-val="both" onclick="selectPref('gender', this, '👫 Both')">
+                    <div class="option-card-left"><span class="emoji">👫</span> Both (Free)</div>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                 </div>
-                <div class="gender-card" data-g="male" onclick="selectGender(this)">
-                    <div class="gender-card-left"><span class="emoji">👨</span> Male Only</div>
+                <div class="option-card" data-val="male" onclick="selectPref('gender', this, '👨 Male')">
+                    <div class="option-card-left"><span class="emoji">👨</span> Male Only</div>
                     <div class="premium-lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Plus</div>
                 </div>
-                <div class="gender-card" data-g="female" onclick="selectGender(this)">
-                    <div class="gender-card-left"><span class="emoji">👩</span> Female Only</div>
+                <div class="option-card" data-val="female" onclick="selectPref('gender', this, '👩 Female')">
+                    <div class="option-card-left"><span class="emoji">👩</span> Female Only</div>
                     <div class="premium-lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Plus</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 8. PREMIUM SUBSCRIPTION MODAL (Apple App Store Style) -->
+    <!-- 8. LOCATION SELECTOR MODAL (NEW) -->
+    <div class="modal-overlay" id="locationModal" onclick="if(event.target===this) closeModals()">
+        <div class="modal-sheet">
+            <div class="modal-drag"></div>
+            <div class="modal-header">
+                <div class="modal-title">Location Filter</div>
+                <button class="modal-close" onclick="closeModals()">✕</button>
+            </div>
+            <div class="grid-list">
+                <div class="option-card selected" data-val="global" onclick="selectPref('location', this, 'Global')">
+                    <div class="option-card-left"><span class="emoji">🌍</span> Global Match</div>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <div class="option-card" data-val="country" onclick="selectPref('location', this, 'Country')">
+                    <div class="option-card-left"><span class="emoji">🇺🇸</span> Select Country</div>
+                    <div class="premium-lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Plus</div>
+                </div>
+                <div class="option-card" data-val="city" onclick="selectPref('location', this, 'City')">
+                    <div class="option-card-left"><span class="emoji">🏙️</span> Select City / Nearby</div>
+                    <div class="premium-lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Plus</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. FACE FILTERS MODAL (NEW) -->
+    <div class="modal-overlay" id="filterModal" onclick="if(event.target===this) closeModals()">
+        <div class="modal-sheet">
+            <div class="modal-drag"></div>
+            <div class="modal-header">
+                <div class="modal-title">Face Filters & Masks</div>
+                <button class="modal-close" onclick="closeModals()">✕</button>
+            </div>
+            <div class="grid-list">
+                <div class="option-card selected" data-val="none" onclick="selectPref('filter', this, 'None')">
+                    <div class="option-card-left"><span class="emoji">📷</span> Original (Free)</div>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                </div>
+                <div class="option-card" data-val="beauty" onclick="selectPref('filter', this, 'Beauty')">
+                    <div class="option-card-left"><span class="emoji">✨</span> Beauty Smooth Skin</div>
+                    <div class="premium-lock">Plus</div>
+                </div>
+                <div class="option-card" data-val="mask" onclick="selectPref('filter', this, 'AR Mask')">
+                    <div class="option-card-left"><span class="emoji">🐶</span> AR Face Masks</div>
+                    <div class="premium-lock">Plus</div>
+                </div>
+                <div class="option-card" data-val="studio" onclick="selectPref('filter', this, 'Studio')">
+                    <div class="option-card-left"><span class="emoji">💡</span> Studio Lighting</div>
+                    <div class="premium-lock">Plus</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. PREMIUM SUBSCRIPTION MODAL (Redirects to Subscription Page) -->
     <div class="modal-overlay" id="premiumModal" onclick="if(event.target===this) closeModals()">
         <div class="modal-sheet" style="max-width: 550px;">
             <div class="modal-drag"></div>
             <div class="modal-header">
-                <div class="modal-title">Nexra Plus</div>
+                <div class="modal-title" style="color: var(--premium);">Nexra Plus Pro</div>
                 <button class="modal-close" onclick="closeModals()">✕</button>
             </div>
             
             <div class="sub-features">
-                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Access Specific Gender Filters</div>
-                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Priority Global Matching</div>
-                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Zero Ads & Premium Badge</div>
+                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Access Country & City Filters</div>
+                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Beauty Mode & AR Face Masks</div>
+                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Male & Female Specific Matches</div>
             </div>
 
             <div class="subs-grid">
@@ -294,11 +357,12 @@
                 </div>
             </div>
 
-            <button class="btn-subscribe" onclick="alert('Proceeding to Apple/Google Pay...')">Subscribe Now</button>
+            <!-- Redirection integrated here -->
+            <button class="btn-subscribe" onclick="location.href='subscription.html'">Subscribe Now</button>
         </div>
     </div>
 
-    <!-- 9. LOGIC & FIREBASE (100% Intact) -->
+    <!-- 11. LOGIC & FIREBASE (100% Intact with New Variables) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -322,20 +386,28 @@
         let currentUser = null;
         let currentMode = 'solo';
         let squadSize = 2;
-        let selectedGenderPref = 'both';
+        
+        // Match Preferences
+        let selectedGender = 'both';
+        let selectedLocation = 'global';
+        let selectedFilter = 'none';
 
-        // --- CAMERA ZOOM FIX ---
-        // Request higher resolution wide-screen. object-fit: cover handles the correct scaling.
+        // --- 4K CAMERA ENHANCEMENT SCRIPT ---
         async function startCamera() {
             try {
+                // Request 4K/UHD quality. The CSS filters handle the "enhancement" of the colors and lighting.
                 const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 } },
+                    video: { 
+                        facingMode: 'user', 
+                        width: { ideal: 3840, max: 3840 }, 
+                        height: { ideal: 2160, max: 2160 },
+                        frameRate: { ideal: 60 }
+                    },
                     audio: false
                 });
                 document.getElementById('selfieVideo').srcObject = stream;
             } catch (e) {
-                console.log('Camera high-res unavailable:', e);
-                // Fallback for older devices
+                console.log('4K Camera unavailable, falling back:', e);
                 try {
                     const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
                     document.getElementById('selfieVideo').srcObject = fallbackStream;
@@ -358,10 +430,8 @@
                     profile.coins = 10;
                 }
 
-                // Update UI
                 document.getElementById('coinsCount').textContent = profile.coins || 0;
 
-                // Live coins listener
                 onValue(ref(db, 'users/' + user.uid + '/coins'), (s) => {
                     document.getElementById('coinsCount').textContent = s.val() || 0;
                 });
@@ -399,24 +469,39 @@
             el.classList.add('active');
         };
 
-        window.openGenderModal = () => document.getElementById('genderModal').classList.add('open');
+        // Modals
+        window.openModal = (id) => document.getElementById(id).classList.add('open');
         window.openPremiumModal = () => document.getElementById('premiumModal').classList.add('open');
         window.closeModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
 
-        window.selectGender = (el) => {
-            const gender = el.dataset.g;
-            if (gender !== 'both') {
-                // Prevent selection & Open Premium Modal
+        // Generic Option Selection (Checks if premium is required)
+        window.selectPref = (type, el, label) => {
+            const val = el.dataset.val;
+            
+            // Premium Logic Check
+            const isPremium = (val !== 'both' && val !== 'global' && val !== 'none');
+            
+            if (isPremium) {
                 closeModals();
-                setTimeout(() => openPremiumModal(), 350); 
+                setTimeout(() => openPremiumModal(), 350);
                 return;
             }
 
-            // "Both" (Free)
-            document.querySelectorAll('.gender-card').forEach(o => o.classList.remove('selected'));
+            // Update UI & Variables for Free options
+            const parent = el.closest('.grid-list');
+            parent.querySelectorAll('.option-card').forEach(o => o.classList.remove('selected'));
             el.classList.add('selected');
-            selectedGenderPref = gender;
-            document.getElementById('genderPill').innerHTML = '👫 Match: Both Genders';
+
+            if(type === 'gender') {
+                selectedGender = val;
+                document.getElementById('genderPill').innerHTML = label;
+            } else if(type === 'location') {
+                selectedLocation = val;
+                document.getElementById('locationPill').innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> ${label}`;
+            } else if(type === 'filter') {
+                selectedFilter = val;
+            }
+
             setTimeout(() => closeModals(), 200);
         };
 
@@ -431,23 +516,25 @@
             
             let mode = currentMode === 'squad' ? `squad_${squadSize}` : 'random';
 
-            // Premium Gender Checks (Security check)
-            if (selectedGenderPref !== 'both') {
+            // Premium Validation Check before starting
+            if (selectedGender !== 'both' || selectedLocation !== 'global' || selectedFilter !== 'none') {
                 const snap = await get(ref(db, 'users/' + currentUser.uid));
                 const profile = snap.val();
+                
                 if ((profile.coins || 0) < 1) { 
                     openPremiumModal();
                     return;
                 }
-                if (!profile.gender) {
-                    alert('Set your own gender in Profile settings first.');
-                    return;
-                }
                 mode = 'premium';
-                await update(ref(db, 'users/' + currentUser.uid), { matchGenderPref: selectedGenderPref });
+                
+                await update(ref(db, 'users/' + currentUser.uid), { 
+                    matchGenderPref: selectedGender,
+                    matchLocationPref: selectedLocation,
+                    matchFilterPref: selectedFilter
+                });
             }
 
-            // Visual loading state
+            // UI Loading state
             this.classList.add('loading');
             
             await update(ref(db, 'users/' + currentUser.uid), {
@@ -456,7 +543,7 @@
                 searchStartTime: Date.now()
             });
 
-            // Smooth navigation
+            // Navigate to matching screen
             setTimeout(() => {
                 window.location.href = `match.html?mode=${mode}`;
             }, 500);
