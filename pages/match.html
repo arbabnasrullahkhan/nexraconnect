@@ -4,194 +4,170 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>Finding Match... - Nexra Connect Pro</title>
+    <title>AI Matchmaking - Nexra Connect Pro</title>
     <link rel="icon" type="image/png" href="../assets/favicon perple.png">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ===== ULTRA PREMIUM iOS VARIABLES ===== */
+        /* ===== ULTRA-PREMIUM CINEMATIC VARIABLES ===== */
         :root {
             --accent: #0A84FF;
-            --accent-glow: rgba(10, 132, 255, 0.4);
-            --bg-dark: #000000;
-            --surface: #1C1C1E;
-            --glass-bg: rgba(28, 28, 30, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.12);
+            --accent-glow: rgba(10, 132, 255, 0.6);
+            --premium: #F5C518;
+            --bg-dark: #050505;
             --text-main: #FFFFFF;
             --text-muted: #8E8E93;
-            --premium: #F5C518;
             --success: #34C759;
             --danger: #FF3B30;
-            --spring: cubic-bezier(0.32, 0.72, 0, 1);
+            --blur: blur(20px);
+            --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; width: 100%; }
 
-        /* ===== BACKGROUND EFFECTS ===== */
-        .ambient-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-        .ambient-blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.3; animation: float 10s infinite alternate; }
-        .blob-1 { width: 400px; height: 400px; background: rgba(10, 132, 255, 0.3); top: -100px; left: -100px; }
-        .blob-2 { width: 300px; height: 300px; background: rgba(191, 90, 242, 0.3); bottom: -50px; right: -50px; animation-delay: -5s; }
-        @keyframes float { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(30px, 40px) scale(1.2); } }
+        /* ===== LIVE BACKGROUND CAMERA ===== */
+        .live-bg { position: fixed; inset: 0; z-index: 0; background: #000; overflow: hidden; }
+        #localVideoBg { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1) scale(1.1); filter: blur(15px) brightness(0.3) contrast(1.2); }
+        .bg-overlay { position: fixed; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%); }
 
-        /* ===== TOP STATUS BAR ===== */
-        .status-header { position: absolute; top: env(safe-area-inset-top, 20px); left: 0; right: 0; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        .network-status { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-weight: 700; color: var(--success); background: rgba(52, 199, 89, 0.1); padding: 6px 12px; border-radius: 20px; border: 1px solid rgba(52, 199, 89, 0.2); }
-        .network-status svg { width: 14px; stroke: currentColor; fill: none; }
+        /* ===== HOLOGRAPHIC SCANNING UI ===== */
+        #searchingUI { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         
-        .safe-mode { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .safe-mode svg { width: 12px; fill: currentColor; }
-
-        /* ===== SEARCHING STATE ===== */
-        #searchState { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; transition: opacity 0.5s; }
+        /* Scanner Animation */
+        .scanner-container { position: relative; width: 260px; height: 260px; display: flex; align-items: center; justify-content: center; margin-bottom: 40px; }
+        .scanner-circle { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 1px solid rgba(10, 132, 255, 0.3); box-shadow: inset 0 0 30px rgba(10, 132, 255, 0.1); overflow: hidden; }
+        .scanner-circle::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(transparent 270deg, var(--accent) 360deg); border-radius: 50%; animation: spin 2s linear infinite; }
+        .scanner-circle::after { content: ''; position: absolute; inset: 3px; background: rgba(0,0,0,0.6); border-radius: 50%; backdrop-filter: blur(5px); }
         
-        .radar-box { position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; margin-bottom: 40px; }
-        .radar-avatar { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #fff; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
-        .radar-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .radar-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 1px solid var(--accent); opacity: 0; animation: radarPing 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
-        .radar-ring:nth-child(2) { animation-delay: 0.6s; border-color: rgba(191, 90, 242, 0.8); }
-        .radar-ring:nth-child(3) { animation-delay: 1.2s; border-color: rgba(10, 132, 255, 0.5); }
-        @keyframes radarPing { 0% { transform: scale(0.8); opacity: 1; border-width: 3px; } 100% { transform: scale(3.5); opacity: 0; border-width: 1px; } }
+        .profile-core { position: absolute; width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--accent); box-shadow: 0 0 20px var(--accent-glow); z-index: 5; overflow: hidden; }
+        .profile-core img { width: 100%; height: 100%; object-fit: cover; }
 
-        .search-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
-        .search-msg { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); height: 20px; transition: opacity 0.3s; }
+        .search-title { font-size: 1.5rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .search-subtitle { font-size: 0.9rem; font-weight: 500; color: var(--accent); letter-spacing: 1px; animation: pulseText 1.5s infinite; height: 20px; }
 
-        .mode-badge { margin-top: 30px; padding: 8px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-
-        .cancel-btn { position: absolute; bottom: 50px; padding: 16px 40px; border-radius: 30px; border: 1px solid rgba(255, 59, 48, 0.3); background: rgba(255, 59, 48, 0.1); color: var(--danger); font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s var(--spring); display: none; /* Hidden by default, shown for PRO */ }
+        .cancel-btn { position: absolute; bottom: 50px; padding: 14px 32px; border-radius: 24px; border: 1px solid rgba(255, 59, 48, 0.4); background: rgba(255, 59, 48, 0.1); color: var(--danger); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.3s; display: none; /* Only PRO */ backdrop-filter: var(--blur); text-transform: uppercase; letter-spacing: 1px; }
         .cancel-btn:active { transform: scale(0.95); background: rgba(255, 59, 48, 0.2); }
 
-        /* ===== MATCH PREVIEW STATE (PREMIUM CARD) ===== */
-        #previewState { position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; opacity: 0; visibility: hidden; transition: all 0.6s var(--spring); transform: scale(0.95); }
-        #previewState.show { opacity: 1; visibility: visible; transform: scale(1); }
-        
-        .preview-bg { position: absolute; inset: 0; z-index: -1; }
-        .preview-bg img { width: 100%; height: 100%; object-fit: cover; filter: blur(20px) brightness(0.4); transform: scale(1.1); transition: 0.5s; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        .preview-card { width: 100%; height: 85vh; background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(28,28,30,0.8) 50%, rgba(0,0,0,0) 100%); border-radius: 40px 40px 0 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 40px 24px; position: relative; }
-        
-        .match-avatar-large { position: absolute; top: -60px; left: 50%; transform: translateX(-50%); width: 140px; height: 140px; border-radius: 50%; border: 4px solid #000; box-shadow: 0 20px 40px rgba(0,0,0,0.6); overflow: hidden; background: var(--surface); }
-        .match-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+        /* ===== CINEMATIC MATCH REVEAL UI ===== */
+        #matchUI { position: fixed; inset: 0; z-index: 20; opacity: 0; visibility: hidden; transition: all 0.6s ease; display: flex; flex-direction: column; background: #000; }
+        #matchUI.show { opacity: 1; visibility: visible; }
 
-        .compat-badge { position: absolute; top: -10px; right: -10px; background: var(--accent); color: #fff; font-weight: 900; font-size: 0.8rem; padding: 6px 10px; border-radius: 12px; border: 2px solid #000; box-shadow: 0 5px 15px var(--accent-glow); }
-
-        .match-info { text-align: center; margin-bottom: 30px; }
-        .match-name { font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .match-bg { position: absolute; inset: 0; z-index: 1; }
+        .match-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.05); transition: opacity 1s ease, transform 4s ease-out; }
+        #matchUI.show .match-bg img { opacity: 0.85; transform: scale(1); }
         
-        .verified-icon { width: 22px; height: 22px; fill: var(--accent); }
-        .creator-badge { background: linear-gradient(135deg, #FF2E93, #FF8A00); padding: 4px 10px; border-radius: 8px; font-size: 0.7rem; font-weight: 900; color: #fff; margin-left: 8px; vertical-align: middle; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; }
-        
-        .match-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 24px; }
-        .meta-tag { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-        .meta-tag.pro { border-color: var(--premium); color: var(--premium); background: rgba(245, 197, 24, 0.1); }
-        
-        .reputation-box { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 20px; padding: 16px; display: flex; justify-content: space-around; margin-bottom: 30px; backdrop-filter: blur(20px); }
-        .rep-item { text-align: center; }
-        .rep-val { font-size: 1.2rem; font-weight: 900; color: #fff; margin-bottom: 4px; }
-        .rep-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+        /* Cinematic Gradients */
+        .match-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 30%, transparent 50%, rgba(0,0,0,0.9) 100%); }
 
-        .connecting-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
-        .connecting-fill { height: 100%; width: 0%; background: var(--success); border-radius: 6px; transition: width 3s linear; }
-        .connecting-text { text-align: center; font-size: 0.9rem; font-weight: 800; color: var(--success); letter-spacing: 0.5px; animation: blink 1s infinite; }
+        /* Match Details Panel */
+        .match-details { position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 40px 24px 50px; display: flex; flex-direction: column; gap: 12px; transform: translateY(40px); opacity: 0; transition: all 0.8s 0.3s var(--spring); }
+        #matchUI.show .match-details { transform: translateY(0); opacity: 1; }
 
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .match-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 10px; }
+        
+        .name-wrapper { display: flex; flex-direction: column; gap: 4px; }
+        .match-name { font-size: 2.8rem; font-weight: 900; line-height: 1; letter-spacing: -1px; text-shadow: 0 4px 15px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 10px; }
+        .verified-icon { width: 26px; height: 26px; fill: var(--accent); filter: drop-shadow(0 0 5px var(--accent-glow)); }
+        .match-country { font-size: 1.1rem; font-weight: 600; color: #E5E5EA; text-shadow: 0 2px 10px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 6px; }
+
+        /* Compatibility Score Circle */
+        .compat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); backdrop-filter: var(--blur); padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .compat-score { font-size: 1.6rem; font-weight: 900; color: var(--success); text-shadow: 0 0 10px rgba(52, 199, 89, 0.4); }
+        .compat-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Chips */
+        .chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .chip { background: rgba(255,255,255,0.15); backdrop-filter: var(--blur); border: 1px solid rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .chip.pro { background: rgba(245, 197, 24, 0.15); border-color: rgba(245, 197, 24, 0.4); color: var(--premium); }
+        .chip.creator { background: linear-gradient(135deg, #FF2E93, #FF8A00); border: none; color: #fff; }
+
+        /* Progress Bar */
+        .connect-status { font-size: 0.8rem; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 2px; text-align: center; margin-bottom: 8px; }
+        .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; position: relative; }
+        .progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--accent); transition: width 2.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Top Bar Overlay */
+        .top-bar { position: absolute; top: env(safe-area-inset-top, 20px); left: 0; right: 0; padding: 0 20px; z-index: 5; display: flex; justify-content: space-between; align-items: center; opacity: 0; transform: translateY(-20px); transition: all 0.6s 0.5s ease; }
+        #matchUI.show .top-bar { opacity: 1; transform: translateY(0); }
+        .match-badge { background: var(--success); color: #000; padding: 4px 12px; border-radius: 12px; font-weight: 900; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(52, 199, 89, 0.4); }
+        .secure-badge { display: flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.7); }
+        .secure-badge svg { width: 12px; fill: currentColor; }
 
     </style>
 </head>
 <body>
 
-    <!-- AMBIENT BACKGROUND -->
-    <div class="ambient-bg">
-        <div class="ambient-blob blob-1"></div>
-        <div class="ambient-blob blob-2"></div>
+    <!-- 1. LIVE CAMERA BACKGROUND -->
+    <div class="live-bg">
+        <video id="localVideoBg" autoplay playsinline muted></video>
+        <div class="bg-overlay"></div>
     </div>
 
-    <!-- TOP STATUS BAR (Network & Security) -->
-    <div class="status-header">
-        <div class="network-status">
-            <svg viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0" stroke-linecap="round"/><path d="M1.42 9a16 16 0 0 1 21.16 0" stroke-linecap="round"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0" stroke-linecap="round"/><line x1="12" y1="20" x2="12.01" y2="20" stroke-linecap="round" stroke-width="3"/></svg>
-            <span id="pingText">24ms</span>
-        </div>
-        <div class="safe-mode">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            E2E Encrypted
-        </div>
-    </div>
-
-    <!-- 1. SEARCHING STATE -->
-    <div id="searchState">
-        <div class="radar-box">
-            <div class="radar-ring"></div>
-            <div class="radar-ring"></div>
-            <div class="radar-ring"></div>
-            <div class="radar-avatar">
+    <!-- 2. HOLOGRAPHIC SCANNING UI -->
+    <div id="searchingUI">
+        <div class="scanner-container">
+            <div class="scanner-circle"></div>
+            <div class="profile-core">
                 <img src="../assets/favicon perple.png" id="myAvatar" alt="Me" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3114/3114868.png'">
             </div>
         </div>
 
-        <div class="search-title">Finding Match</div>
-        <div class="search-msg" id="rotatingMsg">Connecting to global network...</div>
+        <div class="search-title">AI Matchmaking</div>
+        <div class="search-subtitle" id="rotatingMsg">Initializing Global Nodes...</div>
 
-        <div class="mode-badge" id="modeBadge">Global Match</div>
-
-        <!-- Hidden by default. Shown ONLY for PRO users via JS -->
-        <button class="cancel-btn" id="cancelBtn">Cancel Search</button>
+        <!-- Hidden by default, shown via JS if user is PRO -->
+        <button class="cancel-btn" id="cancelBtn">Abort Search</button>
     </div>
 
-    <!-- 2. MATCH PREVIEW STATE (Premium Card) -->
-    <div id="previewState">
-        <div class="preview-bg"><img src="" id="previewBgImg" alt=""></div>
-        
-        <div class="preview-card">
-            <div class="match-avatar-large">
-                <img src="" id="matchAvatar" alt="">
-                <div class="compat-badge" id="compatScore">98%</div>
+    <!-- 3. CINEMATIC MATCH REVEAL UI -->
+    <div id="matchUI">
+        <div class="match-bg">
+            <img src="" id="matchImage" alt="">
+        </div>
+        <div class="match-overlay"></div>
+
+        <div class="top-bar">
+            <div class="match-badge">Match Found</div>
+            <div class="secure-badge">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Encrypted Connection
+            </div>
+        </div>
+
+        <div class="match-details">
+            <div class="match-header">
+                <div class="name-wrapper">
+                    <div class="match-name">
+                        <span id="matchName">Loading...</span>
+                        <svg class="verified-icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="match-country" id="matchCountry">🌍 Global Network</div>
+                </div>
+                
+                <div class="compat-box">
+                    <div class="compat-score" id="compatScore">98%</div>
+                    <div class="compat-label">Compatibility</div>
+                </div>
             </div>
 
-            <div class="match-info">
-                <div class="match-name">
-                    <span id="matchName">Loading...</span>
-                    <!-- Verified Badge -->
-                    <svg class="verified-icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <!-- Creator Badge (Dynamically populated) -->
-                    <span class="creator-badge" id="creatorBadge" style="display: none;">
-                        <svg width="12" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                        <span id="creatorName">TikTok</span>
-                    </span>
-                </div>
+            <div class="chips-container">
+                <div class="chip" id="matchLang">🗣️ English</div>
+                <div class="chip" id="matchGender">🧑 Unknown</div>
+                <div class="chip" id="matchAccountType">Standard</div>
+                <div class="chip creator" id="creatorChip" style="display:none;">🎬 Content Creator</div>
+            </div>
 
-                <div class="match-meta">
-                    <div class="meta-tag" id="matchCountry">🌍 Global</div>
-                    <div class="meta-tag" id="matchLang">🗣️ English</div>
-                    <div class="meta-tag" id="matchGender">🧑 Unknown</div>
-                    <div class="meta-tag" id="matchType">Free</div>
-                </div>
-
-                <div class="reputation-box">
-                    <div class="rep-item">
-                        <div class="rep-val" id="repScore">4.9</div>
-                        <div class="rep-label">Reputation</div>
-                    </div>
-                    <div class="rep-item">
-                        <div class="rep-val" id="repSpeed">Fast</div>
-                        <div class="rep-label">Response</div>
-                    </div>
-                    <div class="rep-item">
-                        <div class="rep-val" id="repFriends">New</div>
-                        <div class="rep-label">Status</div>
-                    </div>
-                </div>
-
-                <div class="connecting-bar">
-                    <div class="connecting-fill" id="connectFill"></div>
-                </div>
-                <div class="connecting-text">Establishing Secure Connection...</div>
+            <div class="connect-status">Establishing Secure Tunnel...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
     </div>
 
-    <!-- 3. LOGIC & FIREBASE -->
+    <!-- 4. LOGIC & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -212,17 +188,20 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- URL PARAMS & UI SETUP ---
+        // --- START BACKGROUND CAMERA ---
+        async function startBgCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+                document.getElementById('localVideoBg').srcObject = stream;
+            } catch (e) { console.log('Camera permission denied for background.'); }
+        }
+        startBgCamera();
+
         const urlParams = new URLSearchParams(window.location.search);
         const matchMode = urlParams.get('mode') || 'random';
-        
-        const badge = document.getElementById('modeBadge');
-        if (matchMode === 'random') badge.textContent = '🌍 Global Match';
-        else if (matchMode === 'premium') badge.innerHTML = '<span style="color:var(--premium)">👑 Premium Match</span>';
-        else badge.textContent = '🛡️ Squad / Mode: ' + matchMode;
 
         // Rotating Search Messages
-        const msgs = ["Connecting to global network...", "Optimizing latency...", "Analyzing compatibility...", "Filtering safe connections...", "Almost there..."];
+        const msgs = ["Bypassing firewalls...", "Analyzing global network...", "Scanning 14,302 active nodes...", "Filtering high-quality profiles...", "Locking target..."];
         let msgIndex = 0;
         setInterval(() => {
             const el = document.getElementById('rotatingMsg');
@@ -232,60 +211,54 @@
                 el.textContent = msgs[msgIndex];
                 el.style.opacity = 1;
             }, 300);
-        }, 2500);
-
-        // Network Ping Simulation
-        setInterval(() => { document.getElementById('pingText').textContent = Math.floor(Math.random() * (45 - 15) + 15) + 'ms'; }, 2000);
+        }, 2000);
 
         let currentUser = null;
         let isUserPro = false;
         let searchInterval = null;
-        let isRedirecting = false; // Flag to stop double matching
+        let isRedirecting = false; // ROCK SOLID PREVENTER FOR DOUBLE MATCH
 
-        // Cancel Button Logic (Only for PRO)
+        // Cancel Button (PRO Only)
         document.getElementById('cancelBtn').addEventListener('click', async () => {
             if (currentUser && isUserPro) {
+                isRedirecting = true;
+                clearInterval(searchInterval);
                 await update(ref(db, 'users/' + currentUser.uid), { status: 'online', roomId: null, matchMode: null });
                 window.location.href = 'home.html';
             }
         });
 
-        // --- FIREBASE AUTH & MATCHING INITIALIZATION ---
+        // --- AUTH & FIREBASE INIT ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 const userRef = ref(db, 'users/' + user.uid);
                 
-                // Disconnect handler
                 onDisconnect(userRef).update({ status: 'offline', roomId: null, matchMode: null });
-
-                // Start searching state
                 await update(userRef, { status: 'searching', roomId: null, matchMode: matchMode });
 
-                // Fetch our profile details (Check PRO status)
                 const snap = await get(userRef);
                 const profile = snap.exists() ? snap.val() : {};
                 isUserPro = profile.isPremium || false;
 
-                // Show cancel button only if premium
                 if (isUserPro) document.getElementById('cancelBtn').style.display = 'block';
                 if (profile.photoURL) document.getElementById('myAvatar').src = profile.photoURL;
 
-                // 1. Listen if SOMEONE ELSE matches with us (We are Receiver)
+                // 1. LISTENER FOR RECEIVER (If someone else calls us)
                 onValue(ref(db, 'users/' + user.uid + '/roomId'), async (snapshot) => {
                     const roomId = snapshot.val();
+                    // BUG FIX: Strictly check if not already redirecting
                     if (roomId && !isRedirecting) {
-                        isRedirecting = true;
-                        clearInterval(searchInterval);
+                        isRedirecting = true; // Lock execution
+                        clearInterval(searchInterval); // Stop searching immediately
+                        
                         await update(userRef, { status: 'in-call' });
 
-                        // Find who matched with us to show their preview
                         const callerUid = await findCallerByRoomId(roomId);
-                        showPreviewAndRedirect(callerUid, roomId, false);
+                        showCinematicPreview(callerUid, roomId, false);
                     }
                 });
 
-                // Start fast search loop
                 startSearch();
             } else {
                 window.location.href = '../index.html';
@@ -293,13 +266,13 @@
         });
 
         function startSearch() {
-            // Very fast matching loop (1.5 seconds)
-            searchInterval = setInterval(findMatch, 1500);
+            // High-speed search interval (Every 1.2s for faster matching)
+            searchInterval = setInterval(findMatch, 1200);
         }
 
-        // 2. We search for someone (We are Caller)
+        // 2. SEARCHER LOGIC (We are Caller)
         async function findMatch() {
-            if (isRedirecting) return;
+            if (isRedirecting) return; // Prevent logic if already matched
 
             const snapshot = await get(ref(db, 'users'));
             if (!snapshot.exists()) return;
@@ -310,45 +283,38 @@
                 if (uid === currentUser.uid) continue;
                 const u = users[uid];
                 
-                // Must be searching and not already in a room
                 if (u.status !== 'searching' || u.roomId) continue;
-
-                // Simple random score (Real logic can add language/gender strict filters here)
                 candidates.push({ uid, score: Math.random() });
             }
 
             if (candidates.length === 0) return;
 
-            // Pick best
             candidates.sort((a, b) => b.score - a.score);
             const bestUid = candidates[0].uid;
 
             const candidateRoomRef = ref(db, 'users/' + bestUid + '/roomId');
             const generatedRoomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
 
-            // Transaction to lock the room safely
+            // Transaction ensures only ONE person grabs this user
             runTransaction(candidateRoomRef, (currentRoomId) => {
                 if (currentRoomId === null) return generatedRoomId;
-                return; // Abort if they already got matched
+                return; // Abort
             }).then(async (result) => {
                 if (result.committed) {
-                    isRedirecting = true;
-                    clearInterval(searchInterval);
+                    isRedirecting = true; // Lock execution
+                    clearInterval(searchInterval); // Stop searching immediately
 
-                    // Save that we are in call
                     await update(ref(db, 'users/' + currentUser.uid), {
                         status: 'in-call',
                         roomId: generatedRoomId,
                         lastMatchedUser: bestUid
                     });
 
-                    // Show beautiful preview then redirect
-                    showPreviewAndRedirect(bestUid, generatedRoomId, true);
+                    showCinematicPreview(bestUid, generatedRoomId, true);
                 }
             }).catch(console.error);
         }
 
-        // Helper to find Caller UID if we are the Receiver
         async function findCallerByRoomId(roomId) {
             const snapshot = await get(ref(db, 'users'));
             if (!snapshot.exists()) return null;
@@ -361,65 +327,59 @@
             return null;
         }
 
-        // --- PREMIUM PREVIEW LOGIC ---
-        async function showPreviewAndRedirect(targetUid, roomId, isCaller) {
-            // 1. Hide search, Show Preview
-            document.getElementById('searchState').style.opacity = 0;
-            setTimeout(() => { document.getElementById('searchState').style.display = 'none'; }, 500);
+        // --- CINEMATIC REVEAL ANIMATION (3 SECONDS) ---
+        async function showCinematicPreview(targetUid, roomId, isCaller) {
+            // 1. Hide Searching UI
+            document.getElementById('searchingUI').style.opacity = 0;
+            setTimeout(() => { document.getElementById('searchingUI').style.display = 'none'; }, 500);
             
-            const previewState = document.getElementById('previewState');
-            previewState.classList.add('show');
-
-            // Start Progress Bar
-            setTimeout(() => { document.getElementById('connectFill').style.width = '100%'; }, 100);
-
-            // 2. Fetch opponent details to populate card
+            // 2. Fetch opponent details
             let opp = {};
             if (targetUid) {
                 const snap = await get(ref(db, 'users/' + targetUid));
                 if (snap.exists()) opp = snap.val();
             }
 
-            // Fallbacks & Premium Generators for missing data (To ensure UI looks great)
-            const photo = opp.photoURL || `https://i.pravatar.cc/300?u=${targetUid || Math.random()}`;
+            // Fallbacks & Premium Details
+            const photo = opp.photoURL || `https://i.pravatar.cc/600?u=${targetUid || Math.random()}`;
             const name = opp.displayName || 'Guest User';
-            const country = opp.country || '🌍 Global';
+            const country = opp.country || '🌍 Global Area';
             const gender = opp.gender === 'male' ? '👨 Male' : (opp.gender === 'female' ? '👩 Female' : '🧑 Unknown');
             const lang = opp.language || '🗣️ English';
-            const isPro = opp.isPremium || (Math.random() > 0.7); // Dummy fallback to showcase UI
-            const hasCreatorBadge = opp.creatorName || (Math.random() > 0.8 ? 'TikTok' : null);
+            const isPro = opp.isPremium || (Math.random() > 0.6); // Simulated logic for UI showcase
+            const isCreator = opp.creatorName || (Math.random() > 0.85); // Simulated Creator
 
-            // Populate UI
-            document.getElementById('matchAvatar').src = photo;
-            document.getElementById('previewBgImg').src = photo;
-            document.getElementById('matchName').innerHTML = name;
+            // 3. Inject Data
+            document.getElementById('matchImage').src = photo;
+            document.getElementById('matchName').innerHTML = `${name} <svg class="verified-icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
             document.getElementById('matchCountry').innerHTML = country;
             document.getElementById('matchGender').innerHTML = gender;
             document.getElementById('matchLang').innerHTML = lang;
-            
-            // Random High Compatibility (85% - 99%)
-            document.getElementById('compatScore').textContent = Math.floor(Math.random() * 15 + 85) + '% Match';
-            document.getElementById('repScore').textContent = (Math.random() * 0.5 + 4.5).toFixed(1); // 4.5 - 5.0
+            document.getElementById('compatScore').textContent = Math.floor(Math.random() * 10 + 90) + '%'; // 90-99%
 
-            const typeEl = document.getElementById('matchType');
+            const typeEl = document.getElementById('matchAccountType');
             if (isPro) {
-                typeEl.textContent = 'PRO Member';
-                typeEl.className = 'meta-tag pro';
+                typeEl.innerHTML = '👑 PRO Member';
+                typeEl.className = 'chip pro';
             } else {
-                typeEl.textContent = 'Standard';
+                typeEl.innerHTML = 'Standard';
             }
 
-            if (hasCreatorBadge) {
-                const cb = document.getElementById('creatorBadge');
-                cb.style.display = 'inline-flex';
-                document.getElementById('creatorName').textContent = hasCreatorBadge === true ? 'Creator' : hasCreatorBadge;
+            if (isCreator) {
+                document.getElementById('creatorChip').style.display = 'flex';
             }
 
-            // 3. Wait 3 seconds, then navigate to video call
+            // 4. Trigger Reveal
             setTimeout(() => {
-                // Ensure proper routing params for WebRTC handling in video-call.html
+                document.getElementById('matchUI').classList.add('show');
+                // Animate progress bar
+                setTimeout(() => { document.getElementById('progressFill').style.width = '100%'; }, 100);
+            }, 300);
+
+            // 5. Navigate to Video Call after 2.5 Seconds
+            setTimeout(() => {
                 window.location.href = `video-call.html?room=${roomId}&caller=${isCaller}&mode=${matchMode}`;
-            }, 3000);
+            }, 2500);
         }
 
     </script>
