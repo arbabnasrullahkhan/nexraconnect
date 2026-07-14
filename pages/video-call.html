@@ -21,9 +21,9 @@
 
         .video-container{position:relative;width:100%;height:100%;background:#000;}
 
-        #remoteVideo{width:100%;height:100%;object-fit:cover;}
+        #remoteVideo{width:100%;height:100%;object-fit:contain;background:#000;}
 
-        .local-video-wrapper{position:absolute;top:16px;right:16px;width:120px;height:180px;border-radius:18px;overflow:hidden;box-shadow:0 15px 30px rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.12);z-index:10;background:#111;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+        .local-video-wrapper{position:absolute;top:60px;right:12px;width:110px;height:165px;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.12);z-index:10;background:#111;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);cursor:pointer;}
         .local-video-wrapper:hover{transform:scale(1.05);}
         #localVideo{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);}
 
@@ -90,12 +90,20 @@
 
         /* RESPONSIVE */
         @media(max-width:480px){
-            .controls-bar{gap:10px;padding:10px 14px;bottom:20px;}
-            .control-btn{width:44px;height:44px;}
-            .btn-next{padding:0 18px;font-size:0.85rem;}
-            .btn-retry{padding:0 14px;font-size:0.8rem;}
-            .chat-container{width:calc(100% - 32px);left:16px;right:16px;height:320px;bottom:80px;}
-            .local-video-wrapper{width:100px;height:150px;top:12px;right:12px;}
+            .controls-bar{gap:8px;padding:8px 12px;bottom:16px;}
+            .control-btn{width:42px;height:42px;}
+            .control-btn svg{width:20px;height:20px;}
+            .btn-next{padding:0 16px;font-size:0.8rem;}
+            .btn-retry{padding:0 12px;font-size:0.75rem;}
+            .chat-container{width:calc(100% - 24px);left:12px;right:12px;height:280px;bottom:75px;}
+            .local-video-wrapper{width:90px;height:135px;top:50px;right:8px;border-radius:12px;}
+            .top-info{top:12px;left:12px;}
+            .chat-toggle{bottom:80px;left:12px;width:38px;height:38px;}
+        }
+        @media(max-width:360px){
+            .controls-bar{gap:6px;padding:6px 10px;bottom:12px;}
+            .control-btn{width:38px;height:38px;}
+            .local-video-wrapper{width:80px;height:120px;}
         }
         @media(min-width:769px){
             .chat-container{width:350px;height:420px;}
