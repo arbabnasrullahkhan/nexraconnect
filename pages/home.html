@@ -4,210 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>Home - Nexra Connect Ultra Pro</title>
+    <title>Nexra Connect Pro</title>
     <link rel="icon" type="image/png" href="../assets/favicon perple.png">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ===== ULTRA PREMIUM PRO iOS VARIABLES ===== */
+        /* ===== ULTRA COMPACT & PREMIUM iOS VARIABLES ===== */
         :root {
-            --accent: #0A84FF;        /* Apple Premium Blue */
-            --accent-glow: rgba(10, 132, 255, 0.4);
-            --bg-dark: #000000;       /* Pure Black */
-            --glass-bg: rgba(20, 20, 22, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent: #0A84FF;
+            --bg-dark: #000000;
+            --glass-bg: rgba(20, 20, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #FFFFFF;
             --text-muted: #8E8E93;
-            --premium: #F5C518;       /* Royal Gold */
-            --blur-heavy: blur(40px);
-            --nav-h: 85px;
-            --safe-bottom: env(safe-area-inset-bottom, 24px);
-            --safe-top: env(safe-area-inset-top, 20px);
+            --premium: #F5C518;
+            --blur: blur(30px);
+            --nav-h: 65px;
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+            --safe-top: env(safe-area-inset-top, 16px);
             --spring: cubic-bezier(0.32, 0.72, 0, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; width: 100%; }
+        html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; width: 100%; font-size: 14px; /* Scaled down base size */ }
 
-        /* ===== 4K ENHANCED CAMERA BACKGROUND ===== */
-        .camera-container { position: fixed; inset: 0; z-index: 0; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100vw; height: 100vh; }
+        /* ===== CAMERA BACKGROUND ===== */
+        .camera-container { position: fixed; inset: 0; z-index: 0; background: #000; overflow: hidden; }
+        #selfieVideo { width: 100%; height: 100%; object-fit: cover; object-position: center; transform: scaleX(-1); transition: filter 0.3s; }
+        .camera-overlay { position: fixed; inset: 0; z-index: 1; background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 15%, transparent 60%, rgba(0,0,0,0.85) 100%); pointer-events: none; }
+
+        /* ===== COMPACT DYNAMIC ISLAND ===== */
+        .island-container { position: fixed; top: var(--safe-top); left: 0; right: 0; z-index: 100; display: flex; justify-content: center; padding: 0 12px; margin-top: 5px; }
+        .dynamic-island { background: rgba(0,0,0,0.8); backdrop-filter: var(--blur); border-radius: 30px; height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px; width: 100%; max-width: 400px; border: 1px solid var(--glass-border); }
         
-        /* Object Fit Cover guarantees NO STRETCHING at any aspect ratio */
-        #selfieVideo { 
-            width: 100%; height: 100%; 
-            object-fit: cover; object-position: center; 
-            image-rendering: high-quality;
-            transform: scaleX(-1); /* Default Front Camera Mirror */
-            transition: transform 0.5s var(--spring); /* Smooth Zoom transition */
-            filter: contrast(1.05) brightness(1.02) saturate(1.1) drop-shadow(0 0 1px rgba(255,255,255,0.05)); 
-        }
-
-        /* Rule of Thirds Grid */
-        .camera-grid { position: fixed; inset: 0; z-index: 1; pointer-events: none; display: none; border: 1px solid rgba(255,255,255,0.2); }
-        .camera-grid.active { display: block; }
-        .camera-grid::before, .camera-grid::after { content: ''; position: absolute; background: rgba(255,255,255,0.2); }
-        .camera-grid::before { top: 33.33%; bottom: 33.33%; left: 0; right: 0; border-top: 1px solid rgba(255,255,255,0.2); border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .camera-grid::after { left: 33.33%; right: 33.33%; top: 0; bottom: 0; border-left: 1px solid rgba(255,255,255,0.2); border-right: 1px solid rgba(255,255,255,0.2); }
-
-        .camera-overlay { position: fixed; inset: 0; z-index: 2; background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.4) 100%), linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 15%, transparent 60%, rgba(0,0,0,0.95) 100%); pointer-events: none; }
-
-        /* ===== HUD (Heads Up Display) ===== */
-        .hud-top { position: fixed; top: 5px; left: 0; right: 0; z-index: 101; display: flex; justify-content: space-between; padding: 0 24px; font-size: 0.75rem; font-weight: 700; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); pointer-events: none; }
-        .hud-left { display: flex; gap: 12px; }
-        .hud-right { display: flex; gap: 8px; align-items: center; }
-        .hud-right svg { width: 14px; height: 14px; fill: #fff; }
-        .hud-ping { color: #34C759; }
-
-        /* ===== DYNAMIC ISLAND HEADER ===== */
-        .island-container { position: fixed; top: calc(var(--safe-top) + 10px); left: 0; right: 0; z-index: 100; display: flex; justify-content: center; padding: 0 16px; }
-        .dynamic-island { background: #000000; border-radius: 40px; height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; width: 100%; max-width: 480px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); transition: 0.3s; }
+        .island-left { display: flex; align-items: center; gap: 6px; padding-left: 6px; }
+        .island-logo { width: 24px; height: 24px; border-radius: 50%; }
+        .online-dot { width: 6px; height: 6px; background: #34C759; border-radius: 50%; box-shadow: 0 0 8px #34C759; animation: pulse 2s infinite; }
         
-        .island-left { display: flex; align-items: center; gap: 8px; padding-left: 8px; }
-        .island-logo { width: 30px; height: 30px; border-radius: 50%; }
-        .online-dot { width: 6px; height: 6px; background: #34C759; border-radius: 50%; box-shadow: 0 0 10px #34C759; animation: pulseGreen 2s infinite; }
-        
-        .mode-switch { display: flex; background: rgba(255,255,255,0.12); border-radius: 30px; padding: 3px; position: relative; }
-        .mode-btn { padding: 8px 18px; border-radius: 20px; border: none; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.3s var(--spring); background: transparent; color: var(--text-muted); position: relative; z-index: 2; letter-spacing: 0.5px; }
+        .mode-switch { display: flex; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 2px; position: relative; }
+        .mode-btn { padding: 6px 12px; border-radius: 18px; border: none; font-weight: 700; font-size: 0.75rem; cursor: pointer; transition: 0.3s var(--spring); background: transparent; color: var(--text-muted); position: relative; z-index: 2; }
         .mode-btn.active { color: #000; }
-        .mode-indicator { position: absolute; height: calc(100% - 6px); top: 3px; border-radius: 20px; background: #FFFFFF; z-index: 1; transition: all 0.3s var(--spring); }
+        .mode-indicator { position: absolute; height: calc(100% - 4px); top: 2px; border-radius: 18px; background: #FFF; z-index: 1; transition: 0.3s var(--spring); }
 
-        .island-right { padding-right: 6px; }
-        .wallet-pill { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 0.9rem; color: var(--premium); cursor: pointer; transition: 0.2s; border: 1px solid rgba(245, 197, 24, 0.4); box-shadow: 0 0 15px rgba(245, 197, 24, 0.1); }
-        .wallet-pill:active { transform: scale(0.95); }
-        .wallet-pill svg { width: 18px; height: 18px; }
+        .island-right { padding-right: 4px; }
+        .pro-badge { background: linear-gradient(135deg, var(--premium), #D97706); padding: 5px 10px; border-radius: 16px; font-weight: 800; font-size: 0.7rem; color: #000; cursor: pointer; box-shadow: 0 4px 10px rgba(245, 197, 24, 0.4); }
 
-        @keyframes pulseGreen { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
 
-        /* ===== PRO CAMERA CONTROLS (Left Panel) ===== */
-        .left-actions { position: fixed; left: 16px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 12px; }
-        .pro-tool { width: 42px; height: 42px; border-radius: 21px; background: var(--glass-bg); backdrop-filter: var(--blur-heavy); -webkit-backdrop-filter: var(--blur-heavy); display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid var(--glass-border); color: #fff; transition: 0.2s; }
-        .pro-tool:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
-        .pro-tool.active-tool { color: var(--premium); border-color: var(--premium); background: rgba(245, 197, 24, 0.15); }
-        .pro-tool svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; }
+        /* ===== HARDWARE CONTROLS (LEFT) ===== */
+        .left-actions { position: fixed; left: 12px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+        .hw-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: var(--blur); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; transition: 0.2s; }
+        .hw-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .hw-btn:active { transform: scale(0.85); }
+        .hw-btn.disabled { background: rgba(255, 59, 48, 0.2); color: #FF3B30; border-color: rgba(255, 59, 48, 0.5); }
 
         /* ===== RIGHT FLOATING ACTIONS ===== */
-        .right-actions { position: fixed; right: 16px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 12px; }
-        .action-fab { width: 46px; height: 46px; border-radius: 23px; border: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: var(--blur-heavy); -webkit-backdrop-filter: var(--blur-heavy); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; position: relative; color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .action-fab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-        .action-fab:active { transform: scale(0.9); }
-        
-        .fab-premium { background: var(--text-main); color: #000; border: none; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        .right-actions { position: fixed; right: 12px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+        .action-fab { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--glass-bg); backdrop-filter: var(--blur); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; transition: 0.2s; position: relative; }
+        .action-fab svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .action-fab:active { transform: scale(0.85); }
+        .fab-premium { background: var(--premium); color: #000; border: none; }
         .fab-premium svg { stroke: #000; fill: #000; }
-        .fab-filter { background: rgba(10, 132, 255, 0.15); border-color: rgba(10, 132, 255, 0.3); color: var(--accent); }
+        .badge { position: absolute; top: -2px; right: -2px; background: #FF3B30; color: #fff; font-size: 0.6rem; font-weight: 800; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #000; }
+
+        /* ===== BOTTOM AREA (Filters, Pills, Start Btn) ===== */
+        .bottom-area { position: fixed; bottom: calc(var(--nav-h) + 10px); left: 0; right: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; margin: 0 auto; padding: 0 12px; }
+
+        /* Squad Selector */
+        .squad-selector { display: flex; gap: 6px; background: var(--glass-bg); backdrop-filter: var(--blur); padding: 6px; border-radius: 20px; border: 1px solid var(--glass-border); opacity: 0; visibility: hidden; margin-bottom: 12px; transition: 0.3s; transform: scale(0.9); }
+        .squad-selector.show { opacity: 1; visibility: visible; transform: scale(1); }
+        .squad-opt { width: 36px; height: 36px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+        .squad-opt.active { background: #FFF; color: #000; }
+
+        /* Snapchat-style Filter Carousel */
+        .filter-carousel { width: 100vw; max-width: 500px; display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 16px; scroll-snap-type: x mandatory; scrollbar-width: none; margin-bottom: 5px; }
+        .filter-carousel::-webkit-scrollbar { display: none; }
+        .filter-item { min-width: 60px; height: 60px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 2px solid var(--glass-border); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; scroll-snap-align: center; transition: 0.2s; position: relative; backdrop-filter: var(--blur); }
+        .filter-item .emoji { font-size: 1.5rem; }
+        .filter-item span { font-size: 0.6rem; font-weight: 700; margin-top: 2px; }
+        .filter-item.active { border-color: var(--accent); background: rgba(10, 132, 255, 0.2); transform: scale(1.1); }
+        .filter-item.premium::after { content: 'PRO'; position: absolute; top: -4px; right: -4px; background: var(--premium); color: #000; font-size: 0.5rem; font-weight: 900; padding: 2px 4px; border-radius: 6px; }
+
+        /* Preference Pills (Gender, Location, Lang) */
+        .prefs-row { display: flex; gap: 8px; width: 100%; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+        .prefs-row::-webkit-scrollbar { display: none; }
+        .pref-pill { flex: 1; min-width: max-content; background: var(--glass-bg); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 10px 14px; border-radius: 16px; font-size: 0.8rem; font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+        .pref-pill:active { transform: scale(0.95); }
+        .pref-pill svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+        /* Start Button */
+        .start-btn { width: 100%; padding: 16px; border-radius: 20px; border: none; background: #FFFFFF; color: #000; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.2s var(--spring); box-shadow: 0 8px 25px rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .start-btn svg { width: 20px; height: 20px; fill: #000; }
+        .start-btn:active { transform: scale(0.95); }
+        .start-btn.loading { background: rgba(255,255,255,0.7); color: transparent; pointer-events: none; }
         
-        .badge { position: absolute; top: -2px; right: -2px; background: #FF3B30; color: #fff; font-size: 0.65rem; font-weight: 800; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #000; }
-
-        /* ===== CAMERA ZOOM CONTROLLER (iOS Style) ===== */
-        .zoom-controller { position: fixed; bottom: calc(var(--nav-h) + 215px); left: 50%; transform: translateX(-50%); z-index: 95; display: flex; background: rgba(0,0,0,0.6); backdrop-filter: var(--blur-heavy); padding: 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); gap: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .zoom-btn { width: 38px; height: 38px; border-radius: 50%; border: none; background: transparent; color: #fff; font-weight: 800; font-size: 0.8rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .zoom-btn.active { background: var(--premium); color: #000; box-shadow: 0 0 15px rgba(245, 197, 24, 0.4); transform: scale(1.1); }
-        
-        /* ===== SQUAD SIZE SELECTOR ===== */
-        .squad-selector { position: fixed; bottom: calc(var(--nav-h) + 275px); left: 50%; transform: translateX(-50%) translateY(20px); z-index: 90; display: flex; gap: 8px; background: var(--glass-bg); backdrop-filter: var(--blur-heavy); padding: 8px; border-radius: 24px; border: 1px solid var(--glass-border); opacity: 0; visibility: hidden; transition: all 0.4s var(--spring); }
-        .squad-selector.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-        .squad-opt { width: 44px; height: 44px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
-        .squad-opt.active { background: #FFFFFF; color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-
-        /* ===== BOTTOM CONTROLS ===== */
-        .bottom-controls { position: fixed; bottom: calc(var(--nav-h) + 20px); left: 0; right: 0; z-index: 100; padding: 0 24px; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; margin: 0 auto; }
-
-        .filters-row { display: flex; gap: 12px; width: 100%; margin-bottom: 20px; }
-        .filter-pill { flex: 1; background: var(--glass-bg); backdrop-filter: var(--blur-heavy); border: 1px solid var(--glass-border); padding: 14px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; white-space: nowrap; }
-        .filter-pill:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
-        .filter-pill svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-
-        .start-btn { width: 100%; padding: 22px; border-radius: 24px; border: none; background: #FFFFFF; color: #000000; font-weight: 900; font-size: 1.3rem; cursor: pointer; transition: all 0.3s var(--spring); box-shadow: 0 10px 40px rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .start-btn svg { width: 26px; height: 26px; fill: #000; }
-        .start-btn:active { transform: scale(0.96); box-shadow: 0 5px 15px rgba(255,255,255,0.1); }
-        
-        .start-btn.loading { background: rgba(255,255,255,0.8); color: transparent; pointer-events: none; }
-        .spinner { position: absolute; width: 26px; height: 26px; border: 3px solid rgba(0,0,0,0.1); border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+        .spinner { position: absolute; width: 22px; height: 22px; border: 3px solid rgba(0,0,0,0.1); border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
         .start-btn.loading .spinner { display: block; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ===== iOS FLOATING DOCK ===== */
-        .dock-container { position: fixed; bottom: var(--safe-bottom); left: 50%; transform: translateX(-50%); width: calc(100% - 32px); max-width: 440px; height: 70px; background: rgba(20, 20, 22, 0.85); backdrop-filter: var(--blur-heavy); -webkit-backdrop-filter: var(--blur-heavy); border: 1px solid var(--glass-border); border-radius: 35px; z-index: 200; display: flex; justify-content: space-around; align-items: center; padding: 0 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
-        
-        .dock-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: var(--text-muted); transition: 0.3s; height: 100%; }
-        .dock-item svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2.2; transition: 0.3s; }
-        .dock-item span { font-size: 0.7rem; font-weight: 700; transition: 0.3s; }
-        
+        /* ===== COMPACT iOS DOCK ===== */
+        .dock-container { position: fixed; bottom: var(--safe-bottom); left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 400px; height: 58px; background: rgba(20, 20, 22, 0.85); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); border-radius: 30px; z-index: 200; display: flex; justify-content: space-around; align-items: center; padding: 0 8px; }
+        .dock-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; color: var(--text-muted); transition: 0.3s; height: 100%; }
+        .dock-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; transition: 0.3s; }
+        .dock-item span { font-size: 0.6rem; font-weight: 700; transition: 0.3s; }
         .dock-item.active { color: #fff; }
-        .dock-item.active svg { stroke: var(--accent); transform: translateY(-3px); }
+        .dock-item.active svg { stroke: var(--accent); transform: translateY(-2px); }
 
-        /* ===== ULTRA PREMIUM MODALS ===== */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(25px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.4s var(--spring); }
+        /* ===== COMPACT MODALS ===== */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); z-index: 1000; display: flex; align-items: flex-end; justify-content: center; opacity: 0; visibility: hidden; transition: 0.3s var(--spring); }
         .modal-overlay.open { opacity: 1; visibility: visible; }
         
-        .modal-sheet { width: 100%; max-width: 500px; background: #1C1C1E; border-radius: 32px 32px 0 0; padding: 24px 24px var(--safe-bottom); transform: translateY(100%); transition: transform 0.5s var(--spring); position: relative; border-top: 1px solid rgba(255,255,255,0.1); max-height: 85vh; display: flex; flex-direction: column; }
+        .modal-sheet { width: 100%; max-width: 500px; background: #1C1C1E; border-radius: 28px 28px 0 0; padding: 20px 20px var(--safe-bottom); transform: translateY(100%); transition: 0.4s var(--spring); border-top: 1px solid rgba(255,255,255,0.1); max-height: 85vh; display: flex; flex-direction: column; }
         .modal-overlay.open .modal-sheet { transform: translateY(0); }
-        .modal-drag { width: 44px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 5px; margin: 0 auto 24px; flex-shrink: 0; }
+        .modal-drag { width: 36px; height: 4px; background: rgba(255,255,255,0.3); border-radius: 4px; margin: 0 auto 16px; }
         
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-shrink: 0; }
-        .modal-title { font-size: 1.4rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
-        .modal-close { background: rgba(255,255,255,0.1); border: none; width: 34px; height: 34px; border-radius: 50%; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .modal-close:active { transform: scale(0.9); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-title { font-size: 1.1rem; font-weight: 800; color: #fff; }
+        .modal-close { background: rgba(255,255,255,0.1); border: none; width: 28px; height: 28px; border-radius: 50%; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        .grid-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-bottom: 10px; }
+        .grid-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-bottom: 10px; }
         .grid-list::-webkit-scrollbar { display: none; }
-        .option-card { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        .option-card { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(255,255,255,0.06); border: 1px solid transparent; border-radius: 16px; cursor: pointer; transition: 0.2s; }
         .option-card:active { transform: scale(0.98); }
-        .option-card.selected { border-color: var(--accent); background: rgba(10, 132, 255, 0.15); box-shadow: 0 10px 25px var(--accent-glow); }
-        .option-card-left { display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 1.1rem; }
-        .option-card-left .emoji { font-size: 1.6rem; }
-        
-        .premium-lock { background: rgba(245, 197, 24, 0.2); color: var(--premium); padding: 6px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; gap: 4px; border: 1px solid rgba(245, 197, 24, 0.3); }
-        
-        /* Premium Subscription Grid */
-        .subs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; flex-shrink: 0; }
-        .sub-card { background: rgba(255,255,255,0.05); border: 2px solid transparent; padding: 24px 16px; border-radius: 24px; text-align: center; cursor: pointer; transition: 0.2s; position: relative; }
-        .sub-card.popular { background: rgba(245, 197, 24, 0.08); }
-        .sub-card.popular::before { content: 'MOST POPULAR'; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); background: var(--premium); color: #000; font-size: 0.6rem; font-weight: 900; padding: 4px 8px; border-radius: 8px; }
-        .sub-card.selected { border-color: var(--premium); background: rgba(245, 197, 24, 0.12); }
-        .sub-duration { font-size: 1.3rem; font-weight: 900; margin-bottom: 6px; color: #fff; margin-top: 10px; }
-        .sub-price { font-size: 0.95rem; color: var(--text-muted); font-weight: 600; }
-        
-        .sub-features { margin-bottom: 24px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; }
-        .sub-feature { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 14px; }
-        .sub-feature:last-child { margin-bottom: 0; }
-        .sub-feature svg { width: 20px; height: 20px; stroke: var(--premium); }
-
-        .btn-subscribe { width: 100%; padding: 20px; border-radius: 24px; border: none; background: var(--premium); color: #000; font-weight: 900; font-size: 1.15rem; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 30px rgba(245, 197, 24, 0.4); text-transform: uppercase; flex-shrink: 0; }
-        .btn-subscribe:active { transform: scale(0.96); }
-
-        .range-wrap { padding: 10px 0; }
-        input[type=range] { width: 100%; accent-color: var(--accent); }
+        .option-card.selected { border-color: var(--accent); background: rgba(10, 132, 255, 0.15); }
+        .option-card-left { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.95rem; }
+        .option-card-left .emoji { font-size: 1.3rem; }
+        .premium-lock { background: rgba(245, 197, 24, 0.2); color: var(--premium); padding: 4px 8px; border-radius: 10px; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; gap: 4px; }
 
     </style>
 </head>
 <body>
 
-    <!-- 1. 4K ENHANCED CAMERA BACKGROUND (No Stretch, Fixed Aspect) -->
+    <!-- 1. ENHANCED CAMERA -->
     <div class="camera-container">
-        <div class="camera-grid" id="cameraGrid"></div>
+        <!-- Default CSS Filter, dynamically changed by Snapchat carousel -->
         <video id="selfieVideo" autoplay playsinline muted></video>
     </div>
     <div class="camera-overlay"></div>
 
-    <!-- HUD TOP INFO -->
-    <div class="hud-top">
-        <div class="hud-left">
-            <span id="sysTime">12:00</span>
-            <span style="display:flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" fill="none"/></svg> E2E Encrypted</span>
-        </div>
-        <div class="hud-right">
-            <span class="hud-ping">24ms Ping</span>
-            <span>5G</span>
-            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="16" height="10" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="22" y1="11" x2="22" y2="13" stroke="currentColor" stroke-width="2"/></svg>
-        </div>
-    </div>
-
-    <!-- 2. DYNAMIC ISLAND HEADER -->
+    <!-- 2. COMPACT DYNAMIC ISLAND -->
     <div class="island-container">
         <div class="dynamic-island">
             <div class="island-left">
                 <img src="../assets/favicon perple.png" class="island-logo" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3114/3114868.png'">
-                <div class="online-dot" title="Live Users"></div>
-                <span style="font-size: 0.75rem; font-weight: 800; color: #fff; margin-left:4px;">1M+</span>
+                <div class="online-dot"></div>
             </div>
             
             <div class="mode-switch" id="modeSwitch">
@@ -217,137 +156,135 @@
             </div>
 
             <div class="island-right">
-                <!-- Wallet with 3D Coin SVG -->
-                <div class="wallet-pill" onclick="location.href='profile.html'">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="10" fill="url(#paint0_linear_coin)" stroke="#FDE047" stroke-width="1.5"/>
-                        <circle cx="12" cy="12" r="6" fill="#FDE047" opacity="0.3"/>
-                        <path d="M12 7v10M10 9h4M10 15h4" stroke="#713F12" stroke-width="2" stroke-linecap="round"/>
-                        <defs><linearGradient id="paint0_linear_coin" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#FDE047"/><stop offset="1" stop-color="#EAB308"/></linearGradient></defs>
-                    </svg>
-                    <span id="coinsCount">0</span>
-                </div>
+                <div class="pro-badge" id="proBadge" onclick="location.href='subscription.html'">GET PRO</div>
             </div>
         </div>
     </div>
 
-    <!-- 3. PRO CAMERA CONTROLS (Left Panel) -->
+    <!-- 3. HARDWARE CONTROLS (LEFT) -->
     <div class="left-actions">
-        <!-- Switch Camera Front/Back -->
-        <div class="pro-tool" title="Switch Camera" onclick="toggleCamera()">
-            <svg viewBox="0 0 24 24"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+        <div class="hw-btn" onclick="switchCamera()" title="Switch Camera">
+            <svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
         </div>
-        <div class="pro-tool" id="micBtn" title="Mic On/Off" onclick="this.classList.toggle('active-tool')">
-            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <div class="hw-btn" id="micBtn" onclick="toggleMic()" title="Mic">
+            <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
         </div>
-        <div class="pro-tool" title="Flash" onclick="this.classList.toggle('active-tool')">
-            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <div class="pro-tool" title="Grid Lines" onclick="document.getElementById('cameraGrid').classList.toggle('active'); this.classList.toggle('active-tool')">
-            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
-        </div>
-        <div class="pro-tool" title="HDR 4K Mode" onclick="this.classList.toggle('active-tool')">
-            <svg viewBox="0 0 24 24"><text x="3" y="16" fill="currentColor" stroke="none" font-weight="900" font-size="10">HD</text></svg>
-        </div>
-        <div class="pro-tool" title="Anti-Screenshot Protection" onclick="this.classList.toggle('active-tool')">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="hw-btn" id="videoBtn" onclick="toggleVideo()" title="Video">
+            <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
         </div>
     </div>
 
-    <!-- 4. RIGHT ACTIONS (Filters, Premium, History, Settings) -->
+    <!-- 4. RIGHT ACTIONS -->
     <div class="right-actions">
-        <div class="action-fab fab-premium" onclick="openPremiumModal()" title="Nexra Plus Pro">
+        <div class="action-fab fab-premium" onclick="location.href='subscription.html'">
             <svg viewBox="0 0 24 24"><path d="M2 4l3 12h14l3-12-5 4-5-4-5 4-3-4z"/></svg>
         </div>
-        <div class="action-fab fab-filter" title="Face Filters & AR Mask" onclick="openModal('filterModal')">
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <div class="action-fab" onclick="shareApp()">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         </div>
-        <div class="action-fab" title="Match History" onclick="location.href='chat.html'">
+        <div class="action-fab" onclick="location.href='chat.html'">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <div class="action-fab" title="Advanced Match Settings" onclick="openModal('settingsModal')">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            <div class="badge">!</div>
+        <div class="action-fab" onclick="location.href='profile.html'">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <div class="badge">1</div>
         </div>
     </div>
 
-    <!-- 5. ZOOM CONTROLLER (0.5x, 1x, 2x, 4x, 10x) -->
-    <div class="zoom-controller">
-        <button class="zoom-btn" onclick="setZoom(0.5, this)">.5</button>
-        <button class="zoom-btn active" onclick="setZoom(1, this)">1x</button>
-        <button class="zoom-btn" onclick="setZoom(2, this)">2</button>
-        <button class="zoom-btn" onclick="setZoom(4, this)">4</button>
-        <button class="zoom-btn" onclick="setZoom(10, this)">10</button>
-    </div>
+    <!-- 5. BOTTOM AREA -->
+    <div class="bottom-area">
+        
+        <!-- Squad Selector (Hidden by default) -->
+        <div class="squad-selector" id="squadSelector">
+            <div class="squad-opt active" onclick="setSquadSize(2, this)">2</div>
+            <div class="squad-opt" onclick="setSquadSize(3, this)">3</div>
+            <div class="squad-opt" onclick="setSquadSize(4, this)">4</div>
+            <div class="squad-opt" onclick="setSquadSize(6, this)">6</div>
+        </div>
 
-    <!-- 6. SQUAD SIZE SELECTOR -->
-    <div class="squad-selector" id="squadSelector">
-        <div class="squad-opt active" onclick="setSquadSize(2, this)">2</div>
-        <div class="squad-opt" onclick="setSquadSize(3, this)">3</div>
-        <div class="squad-opt" onclick="setSquadSize(4, this)">4</div>
-        <div class="squad-opt" onclick="setSquadSize(6, this)">6</div>
-    </div>
+        <!-- Snapchat Filter Carousel -->
+        <div class="filter-carousel" id="filterCarousel">
+            <div class="filter-item active" data-css="none" onclick="applyFilter(this)">
+                <span class="emoji">🚫</span><span>None</span>
+            </div>
+            <div class="filter-item" data-css="contrast(1.2) saturate(1.2) brightness(1.1)" onclick="applyFilter(this)">
+                <span class="emoji">✨</span><span>Beauty</span>
+            </div>
+            <div class="filter-item premium" data-css="sepia(0.5) hue-rotate(-30deg) contrast(1.1)" onclick="applyFilter(this)">
+                <span class="emoji">🎞️</span><span>Vintage</span>
+            </div>
+            <div class="filter-item premium" data-css="saturate(2) hue-rotate(90deg) contrast(1.2)" onclick="applyFilter(this)">
+                <span class="emoji">👾</span><span>Cyber</span>
+            </div>
+            <div class="filter-item premium" data-css="grayscale(1) contrast(1.5) brightness(1.1)" onclick="applyFilter(this)">
+                <span class="emoji">🎬</span><span>Studio</span>
+            </div>
+            <div class="filter-item premium" data-css="invert(0.1) saturate(1.5) hue-rotate(45deg)" onclick="applyFilter(this)">
+                <span class="emoji">🌸</span><span>Anime</span>
+            </div>
+        </div>
 
-    <!-- 7. BOTTOM CONTROLS -->
-    <div class="bottom-controls">
-        <div class="filters-row">
-            <button class="filter-pill" id="locationPill" onclick="openModal('locationModal')">
+        <!-- Matching Preferences Pills -->
+        <div class="prefs-row">
+            <button class="pref-pill" id="locationPill" onclick="openModal('locationModal'); vibrate();">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 Global
             </button>
-            <button class="filter-pill" id="genderPill" onclick="openModal('genderModal')">
+            <button class="pref-pill" id="genderPill" onclick="openModal('genderModal'); vibrate();">
                 👫 Both
+            </button>
+            <button class="pref-pill" id="langPill" onclick="openModal('langModal'); vibrate();">
+                🗣️ Any Lang
             </button>
         </div>
         
-        <button class="start-btn" id="startBtn">
+        <button class="start-btn" id="startBtn" onclick="startMatching()">
             <div class="spinner"></div>
             <span>Start Matching</span>
         </button>
     </div>
 
-    <!-- 8. iOS FLOATING DOCK -->
+    <!-- 6. COMPACT iOS DOCK -->
     <nav class="dock-container">
-        <div class="dock-item active" onclick="location.href='home.html'">
+        <div class="dock-item active" onclick="location.href='home.html'; vibrate();">
             <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>Home</span>
         </div>
-        <div class="dock-item" onclick="location.href='chat.html'">
+        <div class="dock-item" onclick="location.href='chat.html'; vibrate();">
             <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             <span>Chats</span>
         </div>
-        <div class="dock-item" onclick="location.href='profile.html'">
+        <div class="dock-item" onclick="location.href='profile.html'; vibrate();">
             <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>Profile</span>
         </div>
     </nav>
 
-    <!-- MODAL: GENDER -->
+    <!-- 7. GENDER MODAL -->
     <div class="modal-overlay" id="genderModal" onclick="if(event.target===this) closeModals()">
         <div class="modal-sheet">
             <div class="modal-drag"></div>
             <div class="modal-header">
-                <div class="modal-title">Gender Preferences</div>
+                <div class="modal-title">Gender Match</div>
                 <button class="modal-close" onclick="closeModals()">✕</button>
             </div>
             <div class="grid-list">
                 <div class="option-card selected" data-val="both" onclick="selectPref('gender', this, '👫 Both')">
-                    <div class="option-card-left"><span class="emoji">👫</span> Both Genders <span style="font-size:0.75rem; color:#34C759; margin-left:6px; padding:2px 8px; background:rgba(52, 199, 89, 0.15); border-radius:8px;">FREE</span></div>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                    <div class="option-card-left"><span class="emoji">👫</span> Both (Free)</div>
                 </div>
                 <div class="option-card" data-val="male" onclick="selectPref('gender', this, '👨 Male')">
                     <div class="option-card-left"><span class="emoji">👨</span> Male Only</div>
-                    <div class="premium-lock">1 Coin/Call</div>
+                    <div class="premium-lock">PRO</div>
                 </div>
                 <div class="option-card" data-val="female" onclick="selectPref('gender', this, '👩 Female')">
                     <div class="option-card-left"><span class="emoji">👩</span> Female Only</div>
-                    <div class="premium-lock">1 Coin/Call</div>
+                    <div class="premium-lock">PRO</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: LOCATION -->
+    <!-- 8. LOCATION MODAL -->
     <div class="modal-overlay" id="locationModal" onclick="if(event.target===this) closeModals()">
         <div class="modal-sheet">
             <div class="modal-drag"></div>
@@ -357,124 +294,53 @@
             </div>
             <div class="grid-list">
                 <div class="option-card selected" data-val="global" onclick="selectPref('location', this, 'Global')">
-                    <div class="option-card-left"><span class="emoji">🌍</span> Global Match <span style="font-size:0.75rem; color:#34C759; margin-left:6px; padding:2px 8px; background:rgba(52, 199, 89, 0.15); border-radius:8px;">FREE</span></div>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                    <div class="option-card-left"><span class="emoji">🌍</span> Global Match (Free)</div>
                 </div>
                 <div class="option-card" data-val="country" onclick="selectPref('location', this, 'Country')">
                     <div class="option-card-left"><span class="emoji">🇺🇸</span> Select Country</div>
-                    <div class="premium-lock">1 Coin/Call</div>
+                    <div class="premium-lock">PRO</div>
                 </div>
                 <div class="option-card" data-val="city" onclick="selectPref('location', this, 'City')">
-                    <div class="option-card-left"><span class="emoji">🏙️</span> Select City / Nearby</div>
-                    <div class="premium-lock">1 Coin/Call</div>
+                    <div class="option-card-left"><span class="emoji">🏙️</span> Select City/Nearby</div>
+                    <div class="premium-lock">PRO</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: FACE FILTERS -->
-    <div class="modal-overlay" id="filterModal" onclick="if(event.target===this) closeModals()">
+    <!-- 9. LANGUAGE MODAL -->
+    <div class="modal-overlay" id="langModal" onclick="if(event.target===this) closeModals()">
         <div class="modal-sheet">
             <div class="modal-drag"></div>
             <div class="modal-header">
-                <div class="modal-title">Face Filters & Masks</div>
+                <div class="modal-title">Language Filter</div>
                 <button class="modal-close" onclick="closeModals()">✕</button>
             </div>
             <div class="grid-list">
-                <div class="option-card selected" data-val="none" onclick="selectPref('filter', this, 'None')">
-                    <div class="option-card-left"><span class="emoji">📷</span> Original <span style="font-size:0.75rem; color:#34C759; margin-left:6px; padding:2px 8px; background:rgba(52, 199, 89, 0.15); border-radius:8px;">FREE</span></div>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+                <div class="option-card selected" data-val="any" onclick="selectPref('lang', this, '🗣️ Any Lang')">
+                    <div class="option-card-left"><span class="emoji">🗣️</span> Any Language (Free)</div>
                 </div>
-                <div class="option-card" data-val="beauty" onclick="selectPref('filter', this, 'Beauty')">
-                    <div class="option-card-left"><span class="emoji">✨</span> AI Beauty Smooth</div>
-                    <div class="premium-lock">1 Coin/Call</div>
+                <div class="option-card" data-val="en" onclick="selectPref('lang', this, '🇬🇧 English')">
+                    <div class="option-card-left"><span class="emoji">🇬🇧</span> English</div>
+                    <div class="premium-lock">PRO</div>
                 </div>
-                <div class="option-card" data-val="mask" onclick="selectPref('filter', this, 'Mask')">
-                    <div class="option-card-left"><span class="emoji">🐶</span> AR Face Masks</div>
-                    <div class="premium-lock">1 Coin/Call</div>
+                <div class="option-card" data-val="hi" onclick="selectPref('lang', this, '🇮🇳 Hindi/Urdu')">
+                    <div class="option-card-left"><span class="emoji">🇮🇳</span> Hindi / Urdu</div>
+                    <div class="premium-lock">PRO</div>
                 </div>
-                <div class="option-card" data-val="studio" onclick="selectPref('filter', this, 'Studio')">
-                    <div class="option-card-left"><span class="emoji">💡</span> Studio Lighting & Blur</div>
-                    <div class="premium-lock">1 Coin/Call</div>
+                <div class="option-card" data-val="es" onclick="selectPref('lang', this, '🇪🇸 Spanish')">
+                    <div class="option-card-left"><span class="emoji">🇪🇸</span> Spanish</div>
+                    <div class="premium-lock">PRO</div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: ADVANCED SETTINGS -->
-    <div class="modal-overlay" id="settingsModal" onclick="if(event.target===this) closeModals()">
-        <div class="modal-sheet">
-            <div class="modal-drag"></div>
-            <div class="modal-header">
-                <div class="modal-title">Advanced Filters <span style="font-size:0.7rem; color:var(--premium);">PRO</span></div>
-                <button class="modal-close" onclick="closeModals()">✕</button>
-            </div>
-            <div class="grid-list" style="gap: 20px;">
-                <div>
-                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-                        <span style="font-weight:700;color:#fff;">Age Range</span>
-                        <span style="color:var(--accent);font-weight:700;">18 - 35</span>
-                    </div>
-                    <div class="range-wrap"><input type="range" min="18" max="99" value="35" onclick="openPremiumModal()"></div>
-                </div>
-                <div>
-                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-                        <span style="font-weight:700;color:#fff;">Language Preference</span>
-                        <span style="color:var(--text-muted);font-weight:600;">English Only</span>
-                    </div>
-                    <button class="filter-pill" style="width:100%; border:1px solid rgba(255,255,255,0.1);" onclick="openPremiumModal()">Select Language</button>
-                </div>
-                <div>
-                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-                        <span style="font-weight:700;color:#fff;">Interest Tags</span>
-                        <span style="color:var(--text-muted);font-weight:600;">Gaming, Music</span>
-                    </div>
-                    <button class="filter-pill" style="width:100%; border:1px solid rgba(255,255,255,0.1);" onclick="openPremiumModal()">Edit Interests</button>
+                <div class="option-card" data-val="ar" onclick="selectPref('lang', this, '🇸🇦 Arabic')">
+                    <div class="option-card-left"><span class="emoji">🇸🇦</span> Arabic</div>
+                    <div class="premium-lock">PRO</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: PREMIUM SUBSCRIPTION (Redirects) -->
-    <div class="modal-overlay" id="premiumModal" onclick="if(event.target===this) closeModals()">
-        <div class="modal-sheet" style="max-width: 550px;">
-            <div class="modal-drag"></div>
-            <div class="modal-header">
-                <div class="modal-title" style="color: var(--premium);">Nexra Plus Pro</div>
-                <button class="modal-close" onclick="closeModals()">✕</button>
-            </div>
-            
-            <div class="sub-features">
-                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Access Country, City & Age Filters</div>
-                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> AI Beauty Mode & AR Masks</div>
-                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Male & Female Specific Matches (1 Coin)</div>
-            </div>
-
-            <div class="subs-grid">
-                <div class="sub-card" onclick="selectPlan(this)">
-                    <div class="sub-duration">10 Coins</div>
-                    <div class="sub-price">$2.99</div>
-                </div>
-                <div class="sub-card popular selected" onclick="selectPlan(this)">
-                    <div class="sub-duration">50 Coins</div>
-                    <div class="sub-price">$9.99</div>
-                </div>
-                <div class="sub-card" onclick="selectPlan(this)">
-                    <div class="sub-duration">Premium 1M</div>
-                    <div class="sub-price">$19.99</div>
-                </div>
-                <div class="sub-card" onclick="selectPlan(this)">
-                    <div class="sub-duration">Lifetime</div>
-                    <div class="sub-price">$49.99</div>
-                </div>
-            </div>
-
-            <!-- REDIRECTION TO SUBSCRIPTION PAGE -->
-            <button class="btn-subscribe" onclick="location.href='subscription.html'">Recharge / Subscribe</button>
-        </div>
-    </div>
-
-    <!-- 11. LOGIC & FIREBASE -->
+    <!-- 10. LOGIC & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -496,95 +362,65 @@
         const db = getDatabase(app);
 
         let currentUser = null;
+        let isUserPro = false; // REAL SUBSCRIPTION LOGIC
+        
         let currentMode = 'solo';
         let squadSize = 2;
         let selectedGender = 'both';
         let selectedLocation = 'global';
-        let selectedFilter = 'none';
-        
-        let videoStream = null;
-        let currentFacingMode = 'user'; // 'user' (Front) or 'environment' (Back)
-        let currentZoomLevel = 1;
+        let selectedLang = 'any';
+        let currentStream = null;
+        let facingMode = 'user';
 
-        // HUD Time update
-        setInterval(() => {
-            const d = new Date();
-            document.getElementById('sysTime').innerText = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }, 1000);
-
-        // --- 4K CAMERA INIT WITH ADVANCED ZOOM SUPPORT ---
-        async function initCamera() {
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop());
-            }
+        // --- HARDWARE CONTROLS (Mic, Video, Camera Switch) ---
+        async function startCamera() {
+            if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); }
             try {
-                videoStream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: currentFacingMode,
-                        width: { ideal: 3840 }, 
-                        height: { ideal: 2160 },
-                        aspectRatio: { ideal: 16/9 }
-                    },
-                    audio: false
+                currentStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: facingMode, width: { ideal: 1280 } },
+                    audio: true
                 });
-                
-                const videoEl = document.getElementById('selfieVideo');
-                videoEl.srcObject = videoStream;
-                applyZoom();
-            } catch (e) {
-                console.log('High-res camera unavailable, falling back:', e);
-                try {
-                    videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode }, audio: false });
-                    document.getElementById('selfieVideo').srcObject = videoStream;
-                    applyZoom();
-                } catch(err) {}
-            }
+                document.getElementById('selfieVideo').srcObject = currentStream;
+            } catch (e) { console.log('Camera error:', e); }
         }
-        initCamera();
+        startCamera();
 
-        // --- TOGGLE FRONT/BACK CAMERA ---
-        window.toggleCamera = () => {
-            currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
-            initCamera();
+        window.switchCamera = () => {
+            vibrate();
+            facingMode = facingMode === 'user' ? 'environment' : 'user';
+            document.getElementById('selfieVideo').style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+            startCamera();
         };
 
-        // --- CAMERA ZOOM (0.5x, 1x, 2x, 4x, 10x) ---
-        window.setZoom = async (level, btnEl) => {
-            currentZoomLevel = level;
-            document.querySelectorAll('.zoom-btn').forEach(b => b.classList.remove('active'));
-            btnEl.classList.add('active');
-            applyZoom();
-        };
-
-        async function applyZoom() {
-            const videoEl = document.getElementById('selfieVideo');
-            const track = videoStream?.getVideoTracks()[0];
-            let flip = (currentFacingMode === 'user') ? 'scaleX(-1)' : 'scaleX(1)';
-
-            // Attempt Native Hardware Zoom if supported (mostly on Chrome Android / some iOS Safari)
-            if (track) {
-                const capabilities = track.getCapabilities();
-                if (capabilities.zoom) {
-                    try {
-                        // Hardware zoom usually can't go below 1. So if 0.5x, we reset native to 1
-                        let hardwareZoom = currentZoomLevel < 1 ? 1 : currentZoomLevel;
-                        await track.applyConstraints({ advanced: [{ zoom: hardwareZoom }] });
-                        
-                        // If hardware zoom succeeds, CSS scale stays at 1 so we don't double zoom
-                        videoEl.style.transform = `scale(1) ${flip}`;
-                        return;
-                    } catch (e) { console.log('Native zoom failed, using CSS digital zoom', e); }
+        window.toggleMic = () => {
+            vibrate();
+            if(!currentStream) return;
+            const audioTrack = currentStream.getAudioTracks()[0];
+            if(audioTrack) {
+                audioTrack.enabled = !audioTrack.enabled;
+                const btn = document.getElementById('micBtn');
+                if(audioTrack.enabled) {
+                    btn.classList.remove('disabled');
+                    btn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>`;
+                } else {
+                    btn.classList.add('disabled');
+                    btn.innerHTML = `<svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/></svg>`;
                 }
             }
+        };
 
-            // Fallback: Digital CSS Zoom
-            // CSS scale cannot go below 1 without showing black borders unless we crop, 
-            // but object-fit: cover prevents crop issues. We cap CSS scale at 1 minimum.
-            let cssScaleVal = currentZoomLevel < 1 ? 1 : currentZoomLevel; 
-            videoEl.style.transform = `scale(${cssScaleVal}) ${flip}`;
-        }
+        window.toggleVideo = () => {
+            vibrate();
+            if(!currentStream) return;
+            const videoTrack = currentStream.getVideoTracks()[0];
+            if(videoTrack) {
+                videoTrack.enabled = !videoTrack.enabled;
+                const btn = document.getElementById('videoBtn');
+                btn.classList.toggle('disabled', !videoTrack.enabled);
+            }
+        };
 
-        // --- FIREBASE LOGIC & COIN SYSTEM (3 Coins for First Time) ---
+        // --- FIREBASE LOGIC (Real Subscription) ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -593,25 +429,42 @@
                 const snap = await get(ref(db, 'users/' + user.uid));
                 const profile = snap.exists() ? snap.val() : {};
 
-                // Exactly 3 coins for new users as requested
-                if (profile.coins === undefined) {
-                    await update(ref(db, 'users/' + user.uid), { coins: 3 });
-                    profile.coins = 3;
+                // Replace Coins with Premium logic
+                if (profile.isPremium === undefined) {
+                    await update(ref(db, 'users/' + user.uid), { isPremium: false });
+                    isUserPro = false;
+                } else {
+                    isUserPro = profile.isPremium;
                 }
 
-                document.getElementById('coinsCount').textContent = profile.coins || 0;
-                
-                // Live listener for UI update
-                onValue(ref(db, 'users/' + user.uid + '/coins'), (s) => {
-                    document.getElementById('coinsCount').textContent = s.val() || 0;
+                // Update UI based on PRO status
+                if (isUserPro) {
+                    document.getElementById('proBadge').textContent = 'PRO MEMBER';
+                    document.getElementById('proBadge').style.background = 'var(--premium)';
+                }
+
+                onValue(ref(db, 'users/' + user.uid + '/isPremium'), (s) => {
+                    isUserPro = s.val() || false;
                 });
             } else {
                 window.location.href = '../index.html';
             }
         });
 
-        // --- UI CONTROLS ---
+        // --- UI & UX LOGIC ---
+        window.vibrate = () => {
+            if (navigator.vibrate) navigator.vibrate(15);
+        };
+
+        window.shareApp = () => {
+            vibrate();
+            if(navigator.share) {
+                navigator.share({ title: 'Nexra Connect', text: 'Join me on Nexra!', url: window.location.origin });
+            } else { alert("Link copied to clipboard!"); }
+        };
+
         window.setMode = (mode) => {
+            vibrate();
             currentMode = mode;
             const btnSolo = document.getElementById('btnSolo');
             const btnSquad = document.getElementById('btnSquad');
@@ -619,116 +472,89 @@
             const squadSel = document.getElementById('squadSelector');
 
             if(mode === 'solo') {
-                btnSolo.classList.add('active');
-                btnSquad.classList.remove('active');
-                indicator.style.left = '0';
-                indicator.style.width = '50%';
+                btnSolo.classList.add('active'); btnSquad.classList.remove('active');
+                indicator.style.left = '0'; indicator.style.width = '50%';
                 squadSel.classList.remove('show');
             } else {
-                btnSquad.classList.add('active');
-                btnSolo.classList.remove('active');
-                indicator.style.left = '50%';
-                indicator.style.width = '50%';
+                btnSquad.classList.add('active'); btnSolo.classList.remove('active');
+                indicator.style.left = '50%'; indicator.style.width = '50%';
                 squadSel.classList.add('show');
             }
         };
 
-        window.setSquadSize = (size, el) => {
-            squadSize = size;
-            document.querySelectorAll('.squad-opt').forEach(o => o.classList.remove('active'));
-            el.classList.add('active');
-        };
-
-        window.openModal = (id) => document.getElementById(id).classList.add('open');
-        window.openPremiumModal = () => document.getElementById('premiumModal').classList.add('open');
+        window.setSquadSize = (size, el) => { vibrate(); squadSize = size; document.querySelectorAll('.squad-opt').forEach(o => o.classList.remove('active')); el.classList.add('active'); };
+        
+        window.openModal = (id) => { vibrate(); document.getElementById(id).classList.add('open'); };
         window.closeModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
 
+        // Filter Carousel Logic (Snapchat style)
+        window.applyFilter = (el) => {
+            vibrate();
+            if(el.classList.contains('premium') && !isUserPro) {
+                window.location.href = 'subscription.html';
+                return;
+            }
+            document.querySelectorAll('.filter-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            const cssFilter = el.dataset.css;
+            document.getElementById('selfieVideo').style.filter = cssFilter;
+            document.getElementById('selfieVideo').style.webkitFilter = cssFilter;
+        };
+
+        // Generic Option Selection (Checks real subscription)
         window.selectPref = (type, el, label) => {
+            vibrate();
             const val = el.dataset.val;
+            const isFree = (val === 'both' || val === 'global' || val === 'any');
             
-            // Check if feature is Premium
-            const isPremium = (val !== 'both' && val !== 'global' && val !== 'none');
-            
-            // If the user clicks a premium feature, let them select it in the UI, 
-            // but we will charge them the coin upon clicking "Start Matching".
-            // No strict block here so they can explore the UI, but we could block it if needed.
-            // For now, let's allow selection so they know what they are paying for.
+            if (!isFree && !isUserPro) {
+                closeModals();
+                setTimeout(() => window.location.href = 'subscription.html', 200);
+                return;
+            }
 
             const parent = el.closest('.grid-list');
             parent.querySelectorAll('.option-card').forEach(o => o.classList.remove('selected'));
             el.classList.add('selected');
 
-            if(type === 'gender') {
-                selectedGender = val;
-                // If it's free, show free. If paid, don't show text here, just icon.
-                document.getElementById('genderPill').innerHTML = isPremium ? `${label} (1 Coin)` : label;
-            } else if(type === 'location') {
-                selectedLocation = val;
-                document.getElementById('locationPill').innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> ${isPremium ? label + ' (1 Coin)' : label}`;
-            } else if(type === 'filter') {
-                selectedFilter = val;
-            }
+            if(type === 'gender') { selectedGender = val; document.getElementById('genderPill').innerHTML = label; } 
+            else if(type === 'location') { selectedLocation = val; document.getElementById('locationPill').innerHTML = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> ${label.split(' ')[1]}`; }
+            else if(type === 'lang') { selectedLang = val; document.getElementById('langPill').innerHTML = label; }
 
-            setTimeout(() => closeModals(), 250);
+            setTimeout(() => closeModals(), 200);
         };
 
-        window.selectPlan = (el) => {
-            document.querySelectorAll('.sub-card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-
-        // --- START MATCHING & COIN DEDUCTION LOGIC ---
-        document.getElementById('startBtn').addEventListener('click', async function() {
+        // --- START MATCHING ---
+        window.startMatching = async () => {
+            vibrate();
             if (!currentUser) return;
             
             let mode = currentMode === 'squad' ? `squad_${squadSize}` : 'random';
-            let isPremiumCall = (selectedGender !== 'both' || selectedLocation !== 'global' || selectedFilter !== 'none');
-            
-            // Deduction Logic
-            if (isPremiumCall) {
-                // Determine Cost (1 for Solo, 2 for Squad)
-                let cost = (currentMode === 'solo') ? 1 : 2;
-                
-                const snap = await get(ref(db, 'users/' + currentUser.uid));
-                const profile = snap.val();
-                let currentCoins = profile.coins || 0;
-                
-                if (currentCoins < cost) { 
-                    openPremiumModal(); // Not enough coins, open purchase screen
-                    return;
-                }
-                
-                if (!profile.gender && selectedGender !== 'both') {
-                    alert('Please set your own gender in Profile settings before filtering.');
-                    return;
-                }
-                
-                mode = 'premium';
-                
-                // Deduct Coins in Firebase
-                await update(ref(db, 'users/' + currentUser.uid), { 
-                    coins: currentCoins - cost,
-                    matchGenderPref: selectedGender,
-                    matchLocationPref: selectedLocation,
-                    matchFilterPref: selectedFilter
-                });
+
+            // Final Subscription verification
+            if ((selectedGender !== 'both' || selectedLocation !== 'global' || selectedLang !== 'any') && !isUserPro) {
+                window.location.href = 'subscription.html';
+                return;
             }
 
-            // Visual Loading Status
-            this.classList.add('loading');
+            if (selectedGender !== 'both' || selectedLocation !== 'global') {
+                const snap = await get(ref(db, 'users/' + currentUser.uid));
+                const profile = snap.val();
+                if (!profile.gender) { alert('Please set your own gender in Profile settings first.'); return; }
+                mode = 'premium';
+                await update(ref(db, 'users/' + currentUser.uid), { matchGenderPref: selectedGender, matchLocationPref: selectedLocation, matchLangPref: selectedLang });
+            }
+
+            document.getElementById('startBtn').classList.add('loading');
             
-            // Set searching state
             await update(ref(db, 'users/' + currentUser.uid), {
                 status: 'searching',
                 matchMode: mode,
                 searchStartTime: Date.now()
             });
 
-            // Smooth Redirect to Matching Engine
-            setTimeout(() => {
-                window.location.href = `match.html?mode=${mode}`;
-            }, 600);
-        });
+            setTimeout(() => { window.location.href = `match.html?mode=${mode}`; }, 400);
+        };
     </script>
 </body>
 </html>
