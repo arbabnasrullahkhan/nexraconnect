@@ -29,19 +29,19 @@
         html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; width: 100%; }
 
         /* ===== 4K ENHANCED CAMERA BACKGROUND ===== */
-        .camera-container { position: fixed; inset: 0; z-index: 0; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .camera-container { position: fixed; inset: 0; z-index: 0; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; width: 100vw; height: 100vh; }
         
-        /* Fixed Stretch & Dots */
+        /* Object Fit Cover guarantees NO STRETCHING at any aspect ratio */
         #selfieVideo { 
             width: 100%; height: 100%; 
             object-fit: cover; object-position: center; 
             image-rendering: high-quality;
-            transform: scaleX(-1); /* Default Front Camera */
-            transition: transform 0.4s var(--spring);
+            transform: scaleX(-1); /* Default Front Camera Mirror */
+            transition: transform 0.5s var(--spring); /* Smooth Zoom transition */
             filter: contrast(1.05) brightness(1.02) saturate(1.1) drop-shadow(0 0 1px rgba(255,255,255,0.05)); 
         }
 
-        /* Rule of Thirds Grid (Hidden by default) */
+        /* Rule of Thirds Grid */
         .camera-grid { position: fixed; inset: 0; z-index: 1; pointer-events: none; display: none; border: 1px solid rgba(255,255,255,0.2); }
         .camera-grid.active { display: block; }
         .camera-grid::before, .camera-grid::after { content: ''; position: absolute; background: rgba(255,255,255,0.2); }
@@ -50,7 +50,7 @@
 
         .camera-overlay { position: fixed; inset: 0; z-index: 2; background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.4) 100%), linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 15%, transparent 60%, rgba(0,0,0,0.95) 100%); pointer-events: none; }
 
-        /* ===== HUD (Heads Up Display - Top Realism) ===== */
+        /* ===== HUD (Heads Up Display) ===== */
         .hud-top { position: fixed; top: 5px; left: 0; right: 0; z-index: 101; display: flex; justify-content: space-between; padding: 0 24px; font-size: 0.75rem; font-weight: 700; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.8); pointer-events: none; }
         .hud-left { display: flex; gap: 12px; }
         .hud-right { display: flex; gap: 8px; align-items: center; }
@@ -71,8 +71,9 @@
         .mode-indicator { position: absolute; height: calc(100% - 6px); top: 3px; border-radius: 20px; background: #FFFFFF; z-index: 1; transition: all 0.3s var(--spring); }
 
         .island-right { padding-right: 6px; }
-        .wallet-pill { background: rgba(255,255,255,0.15); padding: 8px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 0.85rem; color: #FFF; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
+        .wallet-pill { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 0.9rem; color: var(--premium); cursor: pointer; transition: 0.2s; border: 1px solid rgba(245, 197, 24, 0.4); box-shadow: 0 0 15px rgba(245, 197, 24, 0.1); }
         .wallet-pill:active { transform: scale(0.95); }
+        .wallet-pill svg { width: 18px; height: 18px; }
 
         @keyframes pulseGreen { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
 
@@ -95,13 +96,13 @@
         
         .badge { position: absolute; top: -2px; right: -2px; background: #FF3B30; color: #fff; font-size: 0.65rem; font-weight: 800; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #000; }
 
-        /* ===== CAMERA ZOOM CONTROLLER (Center Bottom) ===== */
-        .zoom-controller { position: fixed; bottom: calc(var(--nav-h) + 215px); left: 50%; transform: translateX(-50%); z-index: 95; display: flex; background: rgba(0,0,0,0.75); backdrop-filter: var(--blur-heavy); padding: 4px; border-radius: 30px; border: 1px solid var(--glass-border); gap: 2px; }
-        .zoom-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: transparent; color: #fff; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
-        .zoom-btn.active { background: var(--accent); color: #fff; box-shadow: 0 0 15px var(--accent-glow); }
+        /* ===== CAMERA ZOOM CONTROLLER (iOS Style) ===== */
+        .zoom-controller { position: fixed; bottom: calc(var(--nav-h) + 215px); left: 50%; transform: translateX(-50%); z-index: 95; display: flex; background: rgba(0,0,0,0.6); backdrop-filter: var(--blur-heavy); padding: 5px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); gap: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .zoom-btn { width: 38px; height: 38px; border-radius: 50%; border: none; background: transparent; color: #fff; font-weight: 800; font-size: 0.8rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .zoom-btn.active { background: var(--premium); color: #000; box-shadow: 0 0 15px rgba(245, 197, 24, 0.4); transform: scale(1.1); }
         
         /* ===== SQUAD SIZE SELECTOR ===== */
-        .squad-selector { position: fixed; bottom: calc(var(--nav-h) + 270px); left: 50%; transform: translateX(-50%) translateY(20px); z-index: 90; display: flex; gap: 8px; background: var(--glass-bg); backdrop-filter: var(--blur-heavy); padding: 8px; border-radius: 24px; border: 1px solid var(--glass-border); opacity: 0; visibility: hidden; transition: all 0.4s var(--spring); }
+        .squad-selector { position: fixed; bottom: calc(var(--nav-h) + 275px); left: 50%; transform: translateX(-50%) translateY(20px); z-index: 90; display: flex; gap: 8px; background: var(--glass-bg); backdrop-filter: var(--blur-heavy); padding: 8px; border-radius: 24px; border: 1px solid var(--glass-border); opacity: 0; visibility: hidden; transition: all 0.4s var(--spring); }
         .squad-selector.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
         .squad-opt { width: 44px; height: 44px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
         .squad-opt.active { background: #FFFFFF; color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
@@ -146,7 +147,6 @@
         .modal-close { background: rgba(255,255,255,0.1); border: none; width: 34px; height: 34px; border-radius: 50%; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .modal-close:active { transform: scale(0.9); }
 
-        /* Scrollable List for heavy features */
         .grid-list { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; padding-bottom: 10px; }
         .grid-list::-webkit-scrollbar { display: none; }
         .option-card { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; cursor: pointer; transition: 0.2s; }
@@ -154,8 +154,9 @@
         .option-card.selected { border-color: var(--accent); background: rgba(10, 132, 255, 0.15); box-shadow: 0 10px 25px var(--accent-glow); }
         .option-card-left { display: flex; align-items: center; gap: 14px; font-weight: 700; font-size: 1.1rem; }
         .option-card-left .emoji { font-size: 1.6rem; }
-        .premium-lock { background: rgba(245, 197, 24, 0.2); color: var(--premium); padding: 6px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; gap: 4px; }
-
+        
+        .premium-lock { background: rgba(245, 197, 24, 0.2); color: var(--premium); padding: 6px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; display: flex; align-items: center; gap: 4px; border: 1px solid rgba(245, 197, 24, 0.3); }
+        
         /* Premium Subscription Grid */
         .subs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; flex-shrink: 0; }
         .sub-card { background: rgba(255,255,255,0.05); border: 2px solid transparent; padding: 24px 16px; border-radius: 24px; text-align: center; cursor: pointer; transition: 0.2s; position: relative; }
@@ -173,7 +174,6 @@
         .btn-subscribe { width: 100%; padding: 20px; border-radius: 24px; border: none; background: var(--premium); color: #000; font-weight: 900; font-size: 1.15rem; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 30px rgba(245, 197, 24, 0.4); text-transform: uppercase; flex-shrink: 0; }
         .btn-subscribe:active { transform: scale(0.96); }
 
-        /* Range Slider */
         .range-wrap { padding: 10px 0; }
         input[type=range] { width: 100%; accent-color: var(--accent); }
 
@@ -181,7 +181,7 @@
 </head>
 <body>
 
-    <!-- 1. 4K ENHANCED CAMERA BACKGROUND (No Stretch, High Quality) -->
+    <!-- 1. 4K ENHANCED CAMERA BACKGROUND (No Stretch, Fixed Aspect) -->
     <div class="camera-container">
         <div class="camera-grid" id="cameraGrid"></div>
         <video id="selfieVideo" autoplay playsinline muted></video>
@@ -217,43 +217,44 @@
             </div>
 
             <div class="island-right">
+                <!-- Wallet with 3D Coin SVG -->
                 <div class="wallet-pill" onclick="location.href='profile.html'">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="3"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="url(#paint0_linear_coin)" stroke="#FDE047" stroke-width="1.5"/>
+                        <circle cx="12" cy="12" r="6" fill="#FDE047" opacity="0.3"/>
+                        <path d="M12 7v10M10 9h4M10 15h4" stroke="#713F12" stroke-width="2" stroke-linecap="round"/>
+                        <defs><linearGradient id="paint0_linear_coin" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#FDE047"/><stop offset="1" stop-color="#EAB308"/></linearGradient></defs>
+                    </svg>
                     <span id="coinsCount">0</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. PRO CAMERA CONTROLS (Left side 10+ Features) -->
+    <!-- 3. PRO CAMERA CONTROLS (Left Panel) -->
     <div class="left-actions">
         <!-- Switch Camera Front/Back -->
         <div class="pro-tool" title="Switch Camera" onclick="toggleCamera()">
             <svg viewBox="0 0 24 24"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
         </div>
-        <!-- Mic Toggle -->
         <div class="pro-tool" id="micBtn" title="Mic On/Off" onclick="this.classList.toggle('active-tool')">
             <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
         </div>
-        <!-- Flash/Torch -->
         <div class="pro-tool" title="Flash" onclick="this.classList.toggle('active-tool')">
             <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
-        <!-- Grid View -->
         <div class="pro-tool" title="Grid Lines" onclick="document.getElementById('cameraGrid').classList.toggle('active'); this.classList.toggle('active-tool')">
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
         </div>
-        <!-- HDR Mode (Simulated) -->
         <div class="pro-tool" title="HDR 4K Mode" onclick="this.classList.toggle('active-tool')">
             <svg viewBox="0 0 24 24"><text x="3" y="16" fill="currentColor" stroke="none" font-weight="900" font-size="10">HD</text></svg>
         </div>
-        <!-- Security Shield (Anti Screenshot) -->
         <div class="pro-tool" title="Anti-Screenshot Protection" onclick="this.classList.toggle('active-tool')">
             <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
     </div>
 
-    <!-- 4. RIGHT ACTIONS (Filters, Premium, History, Extra Settings) -->
+    <!-- 4. RIGHT ACTIONS (Filters, Premium, History, Settings) -->
     <div class="right-actions">
         <div class="action-fab fab-premium" onclick="openPremiumModal()" title="Nexra Plus Pro">
             <svg viewBox="0 0 24 24"><path d="M2 4l3 12h14l3-12-5 4-5-4-5 4-3-4z"/></svg>
@@ -287,7 +288,7 @@
         <div class="squad-opt" onclick="setSquadSize(6, this)">6</div>
     </div>
 
-    <!-- 7. BOTTOM CONTROLS (Location & Gender) -->
+    <!-- 7. BOTTOM CONTROLS -->
     <div class="bottom-controls">
         <div class="filters-row">
             <button class="filter-pill" id="locationPill" onclick="openModal('locationModal')">
@@ -331,16 +332,16 @@
             </div>
             <div class="grid-list">
                 <div class="option-card selected" data-val="both" onclick="selectPref('gender', this, '👫 Both')">
-                    <div class="option-card-left"><span class="emoji">👫</span> Both Genders (Free)</div>
+                    <div class="option-card-left"><span class="emoji">👫</span> Both Genders <span style="font-size:0.75rem; color:#34C759; margin-left:6px; padding:2px 8px; background:rgba(52, 199, 89, 0.15); border-radius:8px;">FREE</span></div>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                 </div>
                 <div class="option-card" data-val="male" onclick="selectPref('gender', this, '👨 Male')">
                     <div class="option-card-left"><span class="emoji">👨</span> Male Only</div>
-                    <div class="premium-lock">Plus Pro</div>
+                    <div class="premium-lock">1 Coin/Call</div>
                 </div>
                 <div class="option-card" data-val="female" onclick="selectPref('gender', this, '👩 Female')">
                     <div class="option-card-left"><span class="emoji">👩</span> Female Only</div>
-                    <div class="premium-lock">Plus Pro</div>
+                    <div class="premium-lock">1 Coin/Call</div>
                 </div>
             </div>
         </div>
@@ -356,16 +357,16 @@
             </div>
             <div class="grid-list">
                 <div class="option-card selected" data-val="global" onclick="selectPref('location', this, 'Global')">
-                    <div class="option-card-left"><span class="emoji">🌍</span> Global Match</div>
+                    <div class="option-card-left"><span class="emoji">🌍</span> Global Match <span style="font-size:0.75rem; color:#34C759; margin-left:6px; padding:2px 8px; background:rgba(52, 199, 89, 0.15); border-radius:8px;">FREE</span></div>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                 </div>
                 <div class="option-card" data-val="country" onclick="selectPref('location', this, 'Country')">
                     <div class="option-card-left"><span class="emoji">🇺🇸</span> Select Country</div>
-                    <div class="premium-lock">Plus Pro</div>
+                    <div class="premium-lock">1 Coin/Call</div>
                 </div>
                 <div class="option-card" data-val="city" onclick="selectPref('location', this, 'City')">
                     <div class="option-card-left"><span class="emoji">🏙️</span> Select City / Nearby</div>
-                    <div class="premium-lock">Plus Pro</div>
+                    <div class="premium-lock">1 Coin/Call</div>
                 </div>
             </div>
         </div>
@@ -381,26 +382,26 @@
             </div>
             <div class="grid-list">
                 <div class="option-card selected" data-val="none" onclick="selectPref('filter', this, 'None')">
-                    <div class="option-card-left"><span class="emoji">📷</span> Original (Free)</div>
+                    <div class="option-card-left"><span class="emoji">📷</span> Original <span style="font-size:0.75rem; color:#34C759; margin-left:6px; padding:2px 8px; background:rgba(52, 199, 89, 0.15); border-radius:8px;">FREE</span></div>
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
                 </div>
                 <div class="option-card" data-val="beauty" onclick="selectPref('filter', this, 'Beauty')">
                     <div class="option-card-left"><span class="emoji">✨</span> AI Beauty Smooth</div>
-                    <div class="premium-lock">Plus Pro</div>
+                    <div class="premium-lock">1 Coin/Call</div>
                 </div>
                 <div class="option-card" data-val="mask" onclick="selectPref('filter', this, 'Mask')">
                     <div class="option-card-left"><span class="emoji">🐶</span> AR Face Masks</div>
-                    <div class="premium-lock">Plus Pro</div>
+                    <div class="premium-lock">1 Coin/Call</div>
                 </div>
                 <div class="option-card" data-val="studio" onclick="selectPref('filter', this, 'Studio')">
                     <div class="option-card-left"><span class="emoji">💡</span> Studio Lighting & Blur</div>
-                    <div class="premium-lock">Plus Pro</div>
+                    <div class="premium-lock">1 Coin/Call</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: ADVANCED SETTINGS (Age, Interest, Language) -->
+    <!-- MODAL: ADVANCED SETTINGS -->
     <div class="modal-overlay" id="settingsModal" onclick="if(event.target===this) closeModals()">
         <div class="modal-sheet">
             <div class="modal-drag"></div>
@@ -446,20 +447,20 @@
             <div class="sub-features">
                 <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Access Country, City & Age Filters</div>
                 <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> AI Beauty Mode & AR Masks</div>
-                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Unlimited Gender Matches & Zero Ads</div>
+                <div class="sub-feature"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg> Male & Female Specific Matches (1 Coin)</div>
             </div>
 
             <div class="subs-grid">
                 <div class="sub-card" onclick="selectPlan(this)">
-                    <div class="sub-duration">1 Week</div>
-                    <div class="sub-price">$4.99</div>
+                    <div class="sub-duration">10 Coins</div>
+                    <div class="sub-price">$2.99</div>
                 </div>
                 <div class="sub-card popular selected" onclick="selectPlan(this)">
-                    <div class="sub-duration">1 Month</div>
+                    <div class="sub-duration">50 Coins</div>
                     <div class="sub-price">$9.99</div>
                 </div>
                 <div class="sub-card" onclick="selectPlan(this)">
-                    <div class="sub-duration">3 Months</div>
+                    <div class="sub-duration">Premium 1M</div>
                     <div class="sub-price">$19.99</div>
                 </div>
                 <div class="sub-card" onclick="selectPlan(this)">
@@ -469,7 +470,7 @@
             </div>
 
             <!-- REDIRECTION TO SUBSCRIPTION PAGE -->
-            <button class="btn-subscribe" onclick="location.href='subscription.html'">Subscribe Now</button>
+            <button class="btn-subscribe" onclick="location.href='subscription.html'">Recharge / Subscribe</button>
         </div>
     </div>
 
@@ -503,7 +504,7 @@
         
         let videoStream = null;
         let currentFacingMode = 'user'; // 'user' (Front) or 'environment' (Back)
-        let currentZoom = 1;
+        let currentZoomLevel = 1;
 
         // HUD Time update
         setInterval(() => {
@@ -511,13 +512,12 @@
             document.getElementById('sysTime').innerText = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }, 1000);
 
-        // --- 4K CAMERA INIT WITH FACING MODE ---
+        // --- 4K CAMERA INIT WITH ADVANCED ZOOM SUPPORT ---
         async function initCamera() {
             if (videoStream) {
                 videoStream.getTracks().forEach(track => track.stop());
             }
             try {
-                // High-res constraints, object-fit: cover in CSS prevents stretch
                 videoStream = await navigator.mediaDevices.getUserMedia({
                     video: { 
                         facingMode: currentFacingMode,
@@ -527,11 +527,12 @@
                     },
                     audio: false
                 });
+                
                 const videoEl = document.getElementById('selfieVideo');
                 videoEl.srcObject = videoStream;
-                applyZoom(); // Apply current zoom level to new stream
+                applyZoom();
             } catch (e) {
-                console.log('4K Camera unavailable, falling back:', e);
+                console.log('High-res camera unavailable, falling back:', e);
                 try {
                     videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: currentFacingMode }, audio: false });
                     document.getElementById('selfieVideo').srcObject = videoStream;
@@ -548,29 +549,42 @@
         };
 
         // --- CAMERA ZOOM (0.5x, 1x, 2x, 4x, 10x) ---
-        window.setZoom = (level, btnEl) => {
-            currentZoom = level;
-            // Update Buttons
+        window.setZoom = async (level, btnEl) => {
+            currentZoomLevel = level;
             document.querySelectorAll('.zoom-btn').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
             applyZoom();
         };
 
-        function applyZoom() {
+        async function applyZoom() {
             const videoEl = document.getElementById('selfieVideo');
-            // Standard CSS Scale logic. 
-            // 0.5x is simulated by resetting to 1 if the camera natively shoots wide, 
-            // otherwise actual 0.5 requires multiple hardware lenses which CSS can't physically spawn.
-            // But for UI simulation and scaling > 1, CSS transform scale works perfectly.
-            let scaleVal = currentZoom < 1 ? 1 : currentZoom; 
-            
-            // Mirror flip logic for front camera
+            const track = videoStream?.getVideoTracks()[0];
             let flip = (currentFacingMode === 'user') ? 'scaleX(-1)' : 'scaleX(1)';
-            
-            videoEl.style.transform = `scale(${scaleVal}) ${flip}`;
+
+            // Attempt Native Hardware Zoom if supported (mostly on Chrome Android / some iOS Safari)
+            if (track) {
+                const capabilities = track.getCapabilities();
+                if (capabilities.zoom) {
+                    try {
+                        // Hardware zoom usually can't go below 1. So if 0.5x, we reset native to 1
+                        let hardwareZoom = currentZoomLevel < 1 ? 1 : currentZoomLevel;
+                        await track.applyConstraints({ advanced: [{ zoom: hardwareZoom }] });
+                        
+                        // If hardware zoom succeeds, CSS scale stays at 1 so we don't double zoom
+                        videoEl.style.transform = `scale(1) ${flip}`;
+                        return;
+                    } catch (e) { console.log('Native zoom failed, using CSS digital zoom', e); }
+                }
+            }
+
+            // Fallback: Digital CSS Zoom
+            // CSS scale cannot go below 1 without showing black borders unless we crop, 
+            // but object-fit: cover prevents crop issues. We cap CSS scale at 1 minimum.
+            let cssScaleVal = currentZoomLevel < 1 ? 1 : currentZoomLevel; 
+            videoEl.style.transform = `scale(${cssScaleVal}) ${flip}`;
         }
 
-        // --- FIREBASE LOGIC ---
+        // --- FIREBASE LOGIC & COIN SYSTEM (3 Coins for First Time) ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -579,12 +593,15 @@
                 const snap = await get(ref(db, 'users/' + user.uid));
                 const profile = snap.exists() ? snap.val() : {};
 
+                // Exactly 3 coins for new users as requested
                 if (profile.coins === undefined) {
-                    await update(ref(db, 'users/' + user.uid), { coins: 10 });
-                    profile.coins = 10;
+                    await update(ref(db, 'users/' + user.uid), { coins: 3 });
+                    profile.coins = 3;
                 }
 
                 document.getElementById('coinsCount').textContent = profile.coins || 0;
+                
+                // Live listener for UI update
                 onValue(ref(db, 'users/' + user.uid + '/coins'), (s) => {
                     document.getElementById('coinsCount').textContent = s.val() || 0;
                 });
@@ -629,13 +646,13 @@
         window.selectPref = (type, el, label) => {
             const val = el.dataset.val;
             
-            // Premium Lock Validation
+            // Check if feature is Premium
             const isPremium = (val !== 'both' && val !== 'global' && val !== 'none');
-            if (isPremium) {
-                closeModals();
-                setTimeout(() => openPremiumModal(), 350);
-                return;
-            }
+            
+            // If the user clicks a premium feature, let them select it in the UI, 
+            // but we will charge them the coin upon clicking "Start Matching".
+            // No strict block here so they can explore the UI, but we could block it if needed.
+            // For now, let's allow selection so they know what they are paying for.
 
             const parent = el.closest('.grid-list');
             parent.querySelectorAll('.option-card').forEach(o => o.classList.remove('selected'));
@@ -643,15 +660,16 @@
 
             if(type === 'gender') {
                 selectedGender = val;
-                document.getElementById('genderPill').innerHTML = label;
+                // If it's free, show free. If paid, don't show text here, just icon.
+                document.getElementById('genderPill').innerHTML = isPremium ? `${label} (1 Coin)` : label;
             } else if(type === 'location') {
                 selectedLocation = val;
-                document.getElementById('locationPill').innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> ${label}`;
+                document.getElementById('locationPill').innerHTML = `<svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.5;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> ${isPremium ? label + ' (1 Coin)' : label}`;
             } else if(type === 'filter') {
                 selectedFilter = val;
             }
 
-            setTimeout(() => closeModals(), 200);
+            setTimeout(() => closeModals(), 250);
         };
 
         window.selectPlan = (el) => {
@@ -659,38 +677,54 @@
             el.classList.add('selected');
         }
 
-        // --- START MATCHING ---
+        // --- START MATCHING & COIN DEDUCTION LOGIC ---
         document.getElementById('startBtn').addEventListener('click', async function() {
             if (!currentUser) return;
             
             let mode = currentMode === 'squad' ? `squad_${squadSize}` : 'random';
-
-            // Double check for premium features bypassing
-            if (selectedGender !== 'both' || selectedLocation !== 'global' || selectedFilter !== 'none') {
+            let isPremiumCall = (selectedGender !== 'both' || selectedLocation !== 'global' || selectedFilter !== 'none');
+            
+            // Deduction Logic
+            if (isPremiumCall) {
+                // Determine Cost (1 for Solo, 2 for Squad)
+                let cost = (currentMode === 'solo') ? 1 : 2;
+                
                 const snap = await get(ref(db, 'users/' + currentUser.uid));
                 const profile = snap.val();
+                let currentCoins = profile.coins || 0;
                 
-                if ((profile.coins || 0) < 1) { 
-                    openPremiumModal();
+                if (currentCoins < cost) { 
+                    openPremiumModal(); // Not enough coins, open purchase screen
                     return;
                 }
+                
+                if (!profile.gender && selectedGender !== 'both') {
+                    alert('Please set your own gender in Profile settings before filtering.');
+                    return;
+                }
+                
                 mode = 'premium';
                 
+                // Deduct Coins in Firebase
                 await update(ref(db, 'users/' + currentUser.uid), { 
+                    coins: currentCoins - cost,
                     matchGenderPref: selectedGender,
                     matchLocationPref: selectedLocation,
                     matchFilterPref: selectedFilter
                 });
             }
 
+            // Visual Loading Status
             this.classList.add('loading');
             
+            // Set searching state
             await update(ref(db, 'users/' + currentUser.uid), {
                 status: 'searching',
                 matchMode: mode,
                 searchStartTime: Date.now()
             });
 
+            // Smooth Redirect to Matching Engine
             setTimeout(() => {
                 window.location.href = `match.html?mode=${mode}`;
             }, 600);
