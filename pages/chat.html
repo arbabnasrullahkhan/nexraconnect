@@ -58,16 +58,19 @@
         .messages-area::-webkit-scrollbar{width:4px;}
         .messages-area::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px;}
 
-        .chat-msg{max-width:80%;padding:10px 16px;border-radius:18px;font-size:0.95rem;line-height:1.4;word-wrap:break-word;animation:msgIn 0.3s ease;}
+        .chat-msg{max-width:80%;padding:12px 18px;border-radius:20px;font-size:0.95rem;line-height:1.4;word-wrap:break-word;animation:msgIn 0.3s ease;position:relative;}
         @keyframes msgIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
         .chat-msg.mine{align-self:flex-end;background:linear-gradient(135deg,var(--secondary),var(--primary));border-bottom-right-radius:4px;}
-        .chat-msg.theirs{align-self:flex-start;background:var(--surface-light);border-bottom-left-radius:4px;}
+        .chat-msg.theirs{align-self:flex-start;background:var(--surface-light);border-bottom-left-radius:4px;border:1px solid var(--glass-border);}
+        .msg-time{font-size:0.65rem;opacity:0.6;margin-top:6px;display:block;text-align:right;}
 
-        .chat-input-bar{display:flex;gap:10px;padding-top:12px;border-top:1px solid var(--glass-border);margin-top:auto;}
+        .chat-input-bar{display:flex;align-items:center;gap:10px;padding-top:12px;border-top:1px solid var(--glass-border);margin-top:auto;}
+        .gift-btn{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,138,0,0.15));color:#FFD700;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.2s;border:1px solid rgba(255,215,0,0.3);}
+        .gift-btn:hover{transform:scale(1.1);background:linear-gradient(135deg,rgba(255,215,0,0.25),rgba(255,138,0,0.25));}
         .chat-input-bar input{flex:1;padding:12px 16px;border-radius:20px;border:1px solid var(--glass-border);background:var(--surface);color:var(--text);font-size:1rem;outline:none;transition:border-color 0.3s;}
         .chat-input-bar input:focus{border-color:var(--primary);}
         .chat-input-bar input::placeholder{color:var(--text-muted);}
-        .chat-send-btn{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.2s;}
+        .chat-send-btn{width:44px;height:44px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.2s;box-shadow:0 4px 12px rgba(255,46,147,0.3);}
         .chat-send-btn:hover{transform:scale(1.1);}
         .chat-send-btn svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
 
@@ -113,6 +116,7 @@
             </div>
             <div class="messages-area" id="messagesArea"></div>
             <div class="chat-input-bar">
+                <button class="gift-btn" title="Send Gift">🎁</button>
                 <input type="text" id="msgInput" placeholder="Type a message..." autocomplete="off">
                 <button class="chat-send-btn" id="sendMsgBtn">
                     <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -213,20 +217,32 @@
             document.getElementById('chatHeaderName').textContent = friendName;
             document.getElementById('chatAvatar').textContent = friendName[0].toUpperCase();
 
-            const messagesArea = document.getElementById('messagesArea');
-            messagesArea.innerHTML = '';
+            loadMessages();
+        }
 
-            // Generate chat ID (sorted UIDs for consistency)
-            const chatId = [currentUser.uid, friendId].sort().join('_');
-            const messagesRef = ref(db, 'chats/' + chatId + '/messages');
-
-            onChildAdded(messagesRef, (snapshot) => {
-                const msg = snapshot.val();
-                const div = document.createElement('div');
-                div.className = 'chat-msg ' + (msg.uid === currentUser.uid ? 'mine' : 'theirs');
-                div.textContent = msg.text;
-                messagesArea.appendChild(div);
-                messagesArea.scrollTop = messagesArea.scrollHeight;
+        function loadMessages() {
+            onValue(ref(db, `messages/${currentChatFriendId}`), snapshot => {
+                const msgs = snapshot.val() || {};
+                const area = document.getElementById('messagesArea');
+                area.innerHTML = '';
+                Object.values(msgs).forEach(m => {
+                    const isMine = m.sender === currentUser.uid;
+                    const div = document.createElement('div');
+                    div.className = `chat-msg ${isMine ? 'mine' : 'theirs'}`;
+                    
+                    const timeStr = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+                    
+                    if(m.isGift) {
+                        div.innerHTML = `🎁 <b>${m.text}</b> <span class="msg-time">${timeStr}</span>`;
+                        div.style.background = 'linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,138,0,0.2))';
+                        div.style.border = '1px solid rgba(255,215,0,0.4)';
+                        if(isMine) div.style.color = '#fff';
+                    } else {
+                        div.innerHTML = `${m.text} <span class="msg-time">${timeStr}</span>`;
+                    }
+                    area.appendChild(div);
+                });
+                area.scrollTop = area.scrollHeight;
             });
         }
 
@@ -244,16 +260,40 @@
             if (!text || !currentChatFriendId) return;
 
             const chatId = [currentUser.uid, currentChatFriendId].sort().join('_');
-            await push(ref(db, 'chats/' + chatId + '/messages'), {
-                uid: currentUser.uid,
+            await push(ref(db, `messages/${currentChatFriendId}`), { // Using the same path as loadMessages for simplicity
+                sender: currentUser.uid,
                 text: text,
                 timestamp: Date.now()
             });
             input.value = '';
         }
 
+        // Send Gift (Premium)
+        async function sendGift() {
+            if(!currentChatFriendId) return;
+            const snap = await get(ref(db, 'users/' + currentUser.uid + '/coins'));
+            const coins = snap.val() || 0;
+            
+            if(coins < 5) {
+                alert("You need 5 coins to send a gift!");
+                return;
+            }
+            
+            // Deduct coins
+            await update(ref(db, 'users/' + currentUser.uid), { coins: coins - 5 });
+            
+            // Send gift message
+            await push(ref(db, `messages/${currentChatFriendId}`), {
+                sender: currentUser.uid,
+                text: "Sent a Premium Gift! 🎁",
+                isGift: true,
+                timestamp: Date.now()
+            });
+        }
+
         document.getElementById('sendMsgBtn').addEventListener('click', sendMsg);
         document.getElementById('msgInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg(); });
+        document.querySelector('.gift-btn').addEventListener('click', sendGift);
     </script>
 </body>
 </html>
