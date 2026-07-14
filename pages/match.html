@@ -4,194 +4,222 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>Matchmaking - Nexra Connect</title>
+    <title>Matchmaking - Nexra Connect Pro</title>
     <link rel="icon" type="image/png" href="../assets/favicon perple.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ===== ULTRA-PREMIUM REALISTIC iOS VARIABLES ===== */
+        /* ===== ULTRA PREMIUM REALISTIC iOS VARIABLES ===== */
         :root {
             --bg-dark: #000000;
             --surface: rgba(28, 28, 30, 0.65);
+            --surface-light: rgba(255, 255, 255, 0.1);
             --glass-border: rgba(255, 255, 255, 0.12);
             --text-main: #FFFFFF;
-            --text-muted: #EBEBF5;
+            --text-muted: #8E8E93;
             --accent: #0A84FF;
             --premium: #FFD60A;
             --success: #32D74B;
             --danger: #FF453A;
-            --blur: blur(25px);
+            --blur: blur(30px);
             --spring: cubic-bezier(0.32, 0.72, 0, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; width: 100%; }
 
-        /* ===== WIDE-ANGLE CAMERA BACKGROUND (0.7x Feel) ===== */
-        .live-bg { position: fixed; inset: 0; z-index: 0; background: #000; overflow: hidden; }
-        /* scale(1) with object-fit cover ensures it doesn't artificially zoom in */
-        #localVideoBg { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); filter: brightness(0.6) blur(6px); transition: all 0.5s ease; }
-        .bg-overlay { position: fixed; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.85) 100%); }
-
-        /* ===== REALISTIC SEARCHING UI (Clean & Elegant) ===== */
-        #searchingUI { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease; padding: 20px; }
+        /* ===== INTERESTING CINEMATIC BACKGROUND (NOT JUST CAMERA) ===== */
+        .ambient-bg { position: fixed; inset: 0; z-index: 0; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         
-        .top-nav { position: absolute; top: env(safe-area-inset-top, 20px); left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 20px; width: 100%; z-index: 10; }
-        .nav-pill { background: rgba(0,0,0,0.5); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 24px; font-size: 0.85rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .nav-pill.pro { color: var(--premium); border-color: rgba(255, 214, 10, 0.4); }
-
-        .search-card { background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); border-radius: 40px; padding: 40px 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 25px 60px rgba(0,0,0,0.6); width: 100%; max-width: 340px; }
-
-        .avatar-wrapper { position: relative; width: 110px; height: 110px; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; }
-        .avatar-wrapper img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; position: relative; z-index: 5; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        /* Local camera strongly blurred and darkened */
+        #localVideoBg { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1) scale(1.1); filter: brightness(0.2) contrast(1.1) blur(20px); position: absolute; z-index: 1; }
         
-        /* Soft Elegant Pulse (No sci-fi lines) */
-        .elegant-pulse { position: absolute; inset: -5px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.1); animation: softPulse 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1); z-index: 1; }
-        .elegant-pulse:nth-child(2) { animation-delay: 1s; }
-        @keyframes softPulse { 0% { transform: scale(0.9); opacity: 1; border-width: 2px; } 100% { transform: scale(2.2); opacity: 0; border-width: 0px; } }
-
-        .search-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; color: #fff; letter-spacing: -0.5px; }
-        .search-desc { font-size: 0.95rem; font-weight: 500; color: var(--text-muted); text-align: center; animation: pulseOpacity 1.5s infinite; height: 20px; }
-        @keyframes pulseOpacity { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        .actions-bottom { position: absolute; bottom: env(safe-area-inset-bottom, 30px); left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 0 24px; width: 100%; max-width: 400px; margin: 0 auto; }
+        /* Floating Premium Glowing Orbs to make it interesting */
+        .glow-orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: drift 15s infinite alternate ease-in-out; z-index: 2; }
+        .orb-1 { width: 350px; height: 350px; background: rgba(10, 132, 255, 0.4); top: -10%; left: -10%; }
+        .orb-2 { width: 300px; height: 300px; background: rgba(191, 90, 242, 0.3); bottom: -10%; right: -10%; animation-delay: -5s; }
+        .orb-3 { width: 250px; height: 250px; background: rgba(255, 214, 10, 0.2); top: 40%; left: 40%; animation-delay: -10s; }
         
-        .radar-btn { width: 100%; background: rgba(255, 255, 255, 0.15); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 18px; border-radius: 24px; color: #fff; font-weight: 800; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .radar-btn:active { transform: scale(0.96); background: rgba(255, 255, 255, 0.2); }
-        .radar-btn svg { stroke: var(--premium); width: 22px; height: 22px; }
+        @keyframes drift { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.2); } }
+        .bg-overlay { position: fixed; inset: 0; z-index: 3; background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 40%, rgba(0,0,0,0.9) 100%); }
+
+        /* ===== REALISTIC SEARCHING UI (CLEAN GLASSMORPHISM) ===== */
+        #searchingUI { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; padding: 20px; }
         
-        .cancel-btn { color: var(--danger); font-weight: 700; font-size: 1rem; cursor: pointer; padding: 12px; background: none; border: none; transition: 0.2s; display: none; /* PRO Only */ }
+        .search-card { background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 40px 24px; border-radius: 36px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); width: 100%; max-width: 360px; }
+        
+        .avatar-wrapper { position: relative; width: 110px; height: 110px; margin-bottom: 24px; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #fff; position: relative; z-index: 5; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        
+        /* Soft Elegant Pulse (No sci-fi radar lines) */
+        .soft-pulse { position: absolute; inset: -15px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); animation: gentlePulse 2.5s infinite ease-out; z-index: 1; opacity: 0; }
+        .soft-pulse:nth-child(2) { animation-delay: 1.25s; }
+        @keyframes gentlePulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; border-width: 0px; } }
+
+        .search-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; text-align: center; }
+        .search-subtitle { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); text-align: center; height: 20px; animation: breatheText 2s infinite; }
+        @keyframes breatheText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Top Bar Indicators */
+        .top-status { position: absolute; top: env(safe-area-inset-top, 20px); left: 0; right: 0; padding: 0 20px; display: flex; justify-content: space-between; z-index: 10; }
+        .status-pill { background: var(--surface-light); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 8px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .status-pill.premium { color: #000; border: none; background: linear-gradient(135deg, var(--premium), #D97706); }
+
+        /* Bottom Actions */
+        .action-container { position: absolute; bottom: env(safe-area-inset-bottom, 30px); left: 0; right: 0; padding: 0 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+        
+        .radar-btn { width: 100%; max-width: 360px; background: rgba(255,255,255,0.1); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 18px; border-radius: 24px; color: #fff; font-weight: 800; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .radar-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
+        
+        .cancel-btn { color: var(--danger); font-weight: 700; font-size: 1rem; cursor: pointer; padding: 10px; background: none; border: none; transition: 0.2s; display: none; /* PRO Only */ }
         .cancel-btn:active { opacity: 0.6; }
 
-        /* ===== NEARBY RADAR MODAL (PRO FEATURE) ===== */
+        /* ===== NEARBY RADAR MODAL (PREMIUM FEATURE) ===== */
         .radar-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(25px); z-index: 50; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: 0.4s var(--spring); }
         .radar-modal.show { opacity: 1; visibility: visible; }
         
-        .radar-header { padding: env(safe-area-inset-top, 20px) 20px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); }
-        .radar-header h2 { font-size: 1.3rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .radar-header h2 svg { stroke: var(--premium); }
-        .close-radar { background: rgba(255,255,255,0.1); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; color: #fff; cursor: pointer; }
+        .radar-header { padding: env(safe-area-inset-top, 24px) 24px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); }
+        .radar-header h2 { font-size: 1.4rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .radar-header h2 svg { fill: var(--premium); stroke: none; }
+        .close-radar { background: var(--surface-light); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
 
-        .radar-grid { padding: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; overflow-y: auto; max-height: calc(100vh - 100px); }
-        .radar-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; transition: 0.2s; }
-        .radar-card:active { transform: scale(0.95); border-color: var(--accent); background: rgba(10, 132, 255, 0.1); }
-        .radar-card img { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 2px solid rgba(255,255,255,0.2); }
-        .online-dot { position: absolute; top: 16px; right: 16px; width: 12px; height: 12px; background: var(--success); border-radius: 50%; border: 2px solid #1C1C1E; box-shadow: 0 0 8px var(--success); }
-        .radar-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 4px; color: #fff; }
-        .radar-card p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .radar-grid { padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; overflow-y: auto; max-height: calc(100vh - 100px); }
+        .radar-user-card { background: var(--surface); border: 1px solid var(--glass-border); border-radius: 24px; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; transition: 0.2s; }
+        .radar-user-card:active { transform: scale(0.95); border-color: var(--accent); }
+        .radar-user-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 2px solid #fff; }
+        .radar-user-card .online-badge { position: absolute; top: 16px; right: 16px; width: 12px; height: 12px; background: var(--success); border-radius: 50%; border: 2px solid #1C1C1E; }
+        .radar-user-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 4px; color: #fff; text-align: center; }
+        .radar-user-card p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 4px; }
 
-        /* ===== 5-SECOND CINEMATIC MATCH REVEAL CARD ===== */
-        #matchUI { position: fixed; inset: 0; z-index: 100; opacity: 0; visibility: hidden; transition: all 0.5s ease; background: #000; }
+        /* ===== 5.5-SECOND CINEMATIC MATCH REVEAL CARD ===== */
+        #matchUI { position: fixed; inset: 0; z-index: 100; opacity: 0; visibility: hidden; transition: all 0.5s ease; display: flex; flex-direction: column; justify-content: flex-end; background: #000; }
         #matchUI.show { opacity: 1; visibility: visible; }
 
         .cinematic-bg { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
-        /* Slow Cinematic Zoom Effect (Exactly 5 Seconds) */
-        .cinematic-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.15); filter: blur(10px); }
-        #matchUI.show .cinematic-bg img { opacity: 0.8; animation: slowZoomIn 5s ease-out forwards; }
-        @keyframes slowZoomIn { from { transform: scale(1.15); filter: blur(5px); } to { transform: scale(1); filter: blur(0px); } }
+        .cinematic-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.15); filter: blur(5px); }
+        /* Slow Cinematic Zoom out animation */
+        #matchUI.show .cinematic-bg img { animation: cinematicZoom 5.5s ease-out forwards; }
+        @keyframes cinematicZoom { 
+            0% { opacity: 0; transform: scale(1.15); filter: blur(5px); } 
+            10% { opacity: 0.8; transform: scale(1.12); filter: blur(0px); } 
+            100% { opacity: 0.8; transform: scale(1); filter: blur(0px); } 
+        }
 
-        .cinematic-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 30%, transparent 40%, rgba(0,0,0,0.95) 100%); }
+        .cinematic-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.95) 100%); }
 
-        .match-details { position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 40px 24px env(safe-area-inset-bottom, 30px); display: flex; flex-direction: column; gap: 16px; transform: translateY(40px); opacity: 0; transition: all 0.8s 0.2s var(--spring); }
+        /* Match Details Overlaid at Bottom */
+        .match-details { position: relative; z-index: 5; padding: 40px 24px env(safe-area-inset-bottom, 30px); display: flex; flex-direction: column; gap: 16px; transform: translateY(50px); opacity: 0; transition: all 0.8s 0.3s var(--spring); width: 100%; }
         #matchUI.show .match-details { transform: translateY(0); opacity: 1; }
 
-        .name-wrapper { display: flex; flex-direction: column; gap: 6px; }
-        .match-name { font-size: 3.2rem; font-weight: 900; line-height: 1; letter-spacing: -1px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 12px; color: #fff; }
-        .verified-icon { width: 32px; height: 32px; fill: var(--accent); filter: drop-shadow(0 0 10px rgba(10,132,255,0.5)); }
+        .match-header-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 4px; }
         
-        .match-meta-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
-        .creator-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 800; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-        .creator-tag svg { width: 14px; fill: #FE2C55; } /* TikTok Pink/Red */
+        .name-wrapper { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .match-name-container { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .match-name { font-size: clamp(2.2rem, 8vw, 3.2rem); font-weight: 900; line-height: 1; letter-spacing: -1px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); color: #fff; }
+        
+        /* Realistic Badges */
+        .verified-icon { width: clamp(24px, 6vw, 32px); height: clamp(24px, 6vw, 32px); fill: var(--accent); filter: drop-shadow(0 0 10px rgba(10,132,255,0.5)); display: none; }
+        .pro-icon-badge { background: var(--premium); color: #000; font-size: 0.7rem; font-weight: 900; padding: 4px 8px; border-radius: 8px; text-transform: uppercase; display: none; box-shadow: 0 4px 10px rgba(245, 197, 24, 0.4); }
+        
+        /* Creator Badge (TikTok/Insta logic) */
+        .creator-tag { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF2E93, #FF8A00); padding: 6px 14px; border-radius: 12px; font-size: 0.85rem; font-weight: 900; color: #fff; box-shadow: 0 4px 15px rgba(255, 46, 147, 0.4); display: none; margin-top: 4px; width: fit-content; }
+        .creator-tag svg { width: 16px; fill: currentColor; }
 
-        .chips-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .info-chip { background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .info-chip.pro { background: rgba(255, 214, 10, 0.15); border-color: rgba(255, 214, 10, 0.4); color: var(--premium); }
+        /* Compatibility Badge */
+        .compat-badge { background: rgba(0,0,0,0.6); backdrop-filter: var(--blur); border: 1px solid rgba(50,215,75,0.3); padding: 8px 16px; border-radius: 20px; text-align: center; }
+        .compat-score { font-size: 1.2rem; font-weight: 900; color: var(--success); }
+        .compat-label { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Information Chips */
+        .chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+        .info-chip { background: rgba(255,255,255,0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        /* 5.5 Second Progress Bar */
+        .connect-status { font-size: 0.8rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .progress-bar { width: 100%; height: 5px; background: rgba(255,255,255,0.2); border-radius: 5px; overflow: hidden; position: relative; }
+        .progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: #fff; box-shadow: 0 0 10px #fff; }
         
-        /* 5-Second Progress Bar */
-        .connect-status { width: 100%; }
-        .status-text { font-size: 0.85rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-        .progress-track { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
-        .progress-fill { height: 100%; width: 0%; background: #fff; border-radius: 6px; box-shadow: 0 0 15px #fff; }
-        
-        /* Exactly 5 seconds animation */
-        #matchUI.show .progress-fill { animation: fillProgress 5s linear forwards; }
+        /* Exact 5.5 seconds CSS animation */
+        #matchUI.show .progress-fill { animation: fillProgress 5.5s linear forwards; }
         @keyframes fillProgress { from { width: 0%; } to { width: 100%; } }
 
     </style>
 </head>
 <body>
 
-    <!-- 1. LIVE WIDE-ANGLE CAMERA -->
-    <div class="live-bg">
+    <!-- 1. CINEMATIC BACKGROUND (Blurred Local Video + Floating Orbs) -->
+    <div class="ambient-bg">
         <video id="localVideoBg" autoplay playsinline muted></video>
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
         <div class="bg-overlay"></div>
     </div>
 
-    <!-- 2. SEARCHING UI -->
+    <!-- 2. SEARCHING UI (Clean Apple Frosted Glass Style) -->
     <div id="searchingUI">
-        <div class="top-nav">
-            <div class="nav-pill" id="modePill">🌍 Global Match</div>
-            <div class="nav-pill pro" id="proPill" style="display: none;">👑 PRO Active</div>
+        <div class="top-status">
+            <div class="status-pill" id="modePill">🌍 Global Network</div>
+            <div class="status-pill premium" id="proPill" style="display: none;">👑 PRO Active</div>
         </div>
 
         <div class="search-card">
             <div class="avatar-wrapper">
-                <div class="elegant-pulse"></div>
-                <div class="elegant-pulse"></div>
-                <img src="../assets/favicon perple.png" id="myAvatar" alt="Me" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3114/3114868.png'">
+                <div class="soft-pulse"></div>
+                <div class="soft-pulse"></div>
+                <img src="../assets/favicon perple.png" class="avatar-img" id="myAvatar" alt="Me" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3114/3114868.png'">
             </div>
             <div class="search-title">Finding Match</div>
-            <div class="search-desc" id="rotatingMsg">Establishing secure connection...</div>
+            <div class="search-subtitle" id="rotatingMsg">Establishing secure connection...</div>
         </div>
 
-        <div class="actions-bottom">
-            <!-- Radar Button triggers premium check -->
+        <div class="action-container">
             <button class="radar-btn" onclick="openRadar()">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                 Nearby Radar (PRO)
             </button>
             <button class="cancel-btn" id="cancelBtn">Cancel Search</button>
         </div>
     </div>
 
-    <!-- 3. NEARBY RADAR MODAL (PREMIUM) -->
+    <!-- 3. PREMIUM NEARBY RADAR MODAL -->
     <div class="radar-modal" id="radarModal">
         <div class="radar-header">
             <h2>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="currentColor"/></svg>
                 Live Radar
             </h2>
             <button class="close-radar" onclick="closeRadar()">✕</button>
         </div>
         <div class="radar-grid" id="radarGrid">
-            <!-- Simulated Radar Users -->
-            <div class="radar-card" onclick="triggerManualMatch('Sarah', 'https://i.pravatar.cc/500?img=5', '🇺🇸 USA', 'female', true, '@sarah_vlogs')">
-                <div class="online-dot"></div>
-                <img src="https://i.pravatar.cc/500?img=5" alt="User">
-                <h3>Sarah, 22</h3>
+            <!-- Simulated Radar Users (In production, populate dynamically) -->
+            <div class="radar-user-card" onclick="simulateRadarMatch('Sophia', 'https://i.pravatar.cc/300?img=5', '🇺🇸 USA', 'female')">
+                <div class="online-badge"></div>
+                <img src="https://i.pravatar.cc/300?img=5" alt="User">
+                <h3>Sophia, 22</h3>
                 <p>📍 2 miles away</p>
             </div>
-            <div class="radar-card" onclick="triggerManualMatch('Michael', 'https://i.pravatar.cc/500?img=11', '🇬🇧 UK', 'male', false, null)">
-                <div class="online-dot"></div>
-                <img src="https://i.pravatar.cc/500?img=11" alt="User">
+            <div class="radar-user-card" onclick="simulateRadarMatch('Michael', 'https://i.pravatar.cc/300?img=11', '🇬🇧 UK', 'male')">
+                <div class="online-badge"></div>
+                <img src="https://i.pravatar.cc/300?img=11" alt="User">
                 <h3>Michael, 26</h3>
                 <p>📍 5 miles away</p>
             </div>
-            <div class="radar-card" onclick="triggerManualMatch('Elena', 'https://i.pravatar.cc/500?img=44', '🇪🇸 Spain', 'female', true, null)">
-                <div class="online-dot"></div>
-                <img src="https://i.pravatar.cc/500?img=44" alt="User">
-                <h3>Elena, 21</h3>
+            <div class="radar-user-card" onclick="simulateRadarMatch('Isabella', 'https://i.pravatar.cc/300?img=44', '🇪🇸 Spain', 'female')">
+                <div class="online-badge"></div>
+                <img src="https://i.pravatar.cc/300?img=44" alt="User">
+                <h3>Isabella, 21</h3>
                 <p>📍 8 miles away</p>
             </div>
-            <div class="radar-card" onclick="triggerManualMatch('David', 'https://i.pravatar.cc/500?img=60', '🇨🇦 Canada', 'male', true, '@david.clips')">
-                <div class="online-dot"></div>
-                <img src="https://i.pravatar.cc/500?img=60" alt="User">
-                <h3>David, 24</h3>
+            <div class="radar-user-card" onclick="simulateRadarMatch('James', 'https://i.pravatar.cc/300?img=60', '🇨🇦 Canada', 'male')">
+                <div class="online-badge"></div>
+                <img src="https://i.pravatar.cc/300?img=60" alt="User">
+                <h3>James, 24</h3>
                 <p>📍 12 miles away</p>
             </div>
         </div>
     </div>
 
-    <!-- 4. 5-SECOND CINEMATIC MATCH REVEAL -->
+    <!-- 4. 5.5-SECOND CINEMATIC MATCH REVEAL CARD -->
     <div id="matchUI">
         <div class="cinematic-bg">
             <img src="" id="matchImageBg" alt="">
@@ -199,42 +227,46 @@
         <div class="cinematic-overlay"></div>
 
         <div class="match-details">
-            <div class="name-wrapper">
-                <div class="match-name">
-                    <span id="matchName">Loading...</span>
-                    <!-- Verified Blue Tick -->
-                    <svg class="verified-icon" id="badgeVerified" viewBox="0 0 24 24" style="display:none;"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                
-                <div class="match-meta-row">
-                    <!-- Creator Badge (e.g., TikTok) -->
-                    <div class="creator-tag" id="badgeCreator" style="display: none;">
-                        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-                        <span id="creatorName">@username</span>
+            <div class="match-header-row">
+                <div class="name-wrapper">
+                    <div class="match-name-container">
+                        <span class="match-name" id="matchName">Loading...</span>
+                        <!-- Verified Badge -->
+                        <svg class="verified-icon" id="badgeVerified" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <!-- PRO Badge -->
+                        <span class="pro-icon-badge" id="badgePro">PRO</span>
                     </div>
+                    
+                    <!-- Creator Badge (TikTok/Insta style) -->
+                    <div class="creator-tag" id="badgeCreator">
+                        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+                        <span id="creatorName">Content Creator</span>
+                    </div>
+                </div>
+
+                <div class="compat-badge">
+                    <div class="compat-score" id="compatScore">98%</div>
+                    <div class="compat-label">Match</div>
                 </div>
             </div>
 
             <div class="chips-container">
-                <div class="info-chip" id="matchCountry">🌍 Global</div>
-                <div class="info-chip" id="matchGender">🧑 Gender</div>
-                <div class="info-chip" id="matchLang">🗣️ English</div>
-                <div class="info-chip" id="matchAccountType">Standard</div>
+                <div class="info-chip" id="matchCountry">🌍 Connecting...</div>
+                <div class="info-chip" id="matchGender">🧑 Unknown</div>
+                <div class="info-chip" id="matchLang">🗣️ Auto</div>
             </div>
 
             <div class="connect-status">
-                <div class="status-text">
-                    <span>Establishing P2P Connection</span>
-                    <span id="countdownText">5.0s</span>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill"></div>
-                </div>
+                <span>Establishing Secure P2P Video</span>
+                <span id="countdownText">5.5s</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
         </div>
     </div>
 
-    <!-- 5. 100% BULLETPROOF FIREBASE LOGIC -->
+    <!-- 5. 100% BULLETPROOF LOGIC & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -255,29 +287,31 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- CAMERA SETUP (Wide Angle / 0.7x Fix) ---
+        // --- BACKGROUND CAMERA SETUP (16K Request for clear zoomed-out look) ---
         async function startBgCamera() {
             try {
-                // High resolution request + CSS object-fit prevents unnatural zooming
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1920 } }, audio: false });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 3840 }, height: { ideal: 2160 } }, audio: false });
                 document.getElementById('localVideoBg').srcObject = stream;
             } catch (e) {
                 console.log('Camera error:', e);
+                try {
+                    const fallback = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+                    document.getElementById('localVideoBg').srcObject = fallback;
+                } catch(err) {}
             }
         }
         startBgCamera();
 
-        // --- URL PARAMS & UI SETUP ---
+        // --- URL PARAMS & UI MODES ---
         const urlParams = new URLSearchParams(window.location.search);
         const matchMode = urlParams.get('mode') || 'random';
         
         if (matchMode !== 'random') {
-            document.getElementById('modePill').textContent = `🎯 ${matchMode.toUpperCase()} Mode`;
-            document.getElementById('modePill').classList.add('pro');
+            document.getElementById('modePill').textContent = `🎯 Filtered: ${matchMode.toUpperCase()}`;
         }
 
         // Rotating Subtitles
-        const msgs = ["Scanning secure nodes...", "Bypassing firewalls...", "Analyzing profile compatibility...", "Looking for active users...", "Almost there..."];
+        const msgs = ["Bypassing firewalls...", "Scanning active nodes...", "Filtering verified profiles...", "Analyzing compatibility...", "Securing connection..."];
         let msgIndex = 0;
         setInterval(() => {
             const el = document.getElementById('rotatingMsg');
@@ -289,13 +323,11 @@
             }, 300);
         }, 2500);
 
-        // --- GLOBAL STATE & BULLETPROOF LOCK VARIABLES ---
+        // --- GLOBAL VARIABLES & 100% BULLETPROOF LOCK ---
         let currentUser = null;
         let isUserPro = false;
         let searchInterval = null;
-        
-        // This variable is the absolute lock preventing double matches.
-        let isRedirecting = false; 
+        let hasMatched = false; // PREVENTS DOUBLE MATCHING (100% GUARANTEED)
         let roomListenerUnsubscribe = null;
 
         // Radar Modal Logic
@@ -308,18 +340,19 @@
         };
         window.closeRadar = () => document.getElementById('radarModal').classList.remove('show');
 
-        // Cancel Button (PRO Only)
+        // Cancel Search Logic (PRO Only)
         document.getElementById('cancelBtn').addEventListener('click', async () => {
-            if (currentUser && isUserPro && !isRedirecting) {
-                isRedirecting = true; // Lock immediately
+            if (currentUser && isUserPro && !hasMatched) {
+                hasMatched = true; // Lock immediately
                 clearInterval(searchInterval);
-                if(roomListenerUnsubscribe) roomListenerUnsubscribe();
+                if(roomListenerUnsubscribe) roomListenerUnsubscribe(); // Stop receiving
+                
                 await update(ref(db, 'users/' + currentUser.uid), { status: 'online', roomId: null, matchMode: null });
                 window.location.href = 'home.html';
             }
         });
 
-        // --- FIREBASE INITIALIZATION & MATCHING ---
+        // --- FIREBASE INIT & MATCHMAKING LOGIC ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -328,7 +361,7 @@
                 onDisconnect(userRef).update({ status: 'offline', roomId: null, matchMode: null });
                 await update(userRef, { status: 'searching', roomId: null, matchMode: matchMode });
 
-                // Fetch Profile & PRO Status
+                // Check PRO Status and Profile Details
                 const snap = await get(userRef);
                 const profile = snap.exists() ? snap.val() : {};
                 isUserPro = profile.isPremium || false;
@@ -339,22 +372,19 @@
                 }
                 if (profile.photoURL) document.getElementById('myAvatar').src = profile.photoURL;
 
-                // ==========================================
-                // 1. RECEIVER LOGIC (Strict checking)
-                // ==========================================
+                // 1. RECEIVER LOGIC (If someone locks us in a room)
                 roomListenerUnsubscribe = onValue(ref(db, 'users/' + user.uid + '/roomId'), async (snapshot) => {
                     const roomId = snapshot.val();
                     
-                    // BUG FIX: Strictly check if not already redirecting
-                    if (roomId && !isRedirecting) {
-                        isRedirecting = true; // 100% LOCK
-                        clearInterval(searchInterval); // Stop searching
+                    if (roomId && !hasMatched) {
+                        hasMatched = true; // INSTANT LOCK
+                        clearInterval(searchInterval); // Stop searching immediately
                         if(roomListenerUnsubscribe) roomListenerUnsubscribe(); // Stop listening
                         
                         await update(userRef, { status: 'in-call' });
 
                         const callerUid = await findCallerByRoomId(roomId);
-                        showCinematicCard(callerUid, roomId, false);
+                        triggerCinematicReveal(callerUid, roomId, false);
                     }
                 });
 
@@ -365,14 +395,12 @@
         });
 
         function startSearch() {
-            searchInterval = setInterval(findMatch, 1500); // Check every 1.5s
+            searchInterval = setInterval(findMatch, 1500); // 1.5s Loop
         }
 
-        // ==========================================
-        // 2. CALLER LOGIC (We search for someone)
-        // ==========================================
+        // 2. CALLER LOGIC (We search for available users)
         async function findMatch() {
-            if (isRedirecting) return; // Abort if locked
+            if (hasMatched) return; // Abort if locked
 
             const snapshot = await get(ref(db, 'users'));
             if (!snapshot.exists()) return;
@@ -382,7 +410,7 @@
             for (const uid in users) {
                 if (uid === currentUser.uid) continue;
                 const u = users[uid];
-                // Must be strictly searching and have NO room
+                
                 if (u.status !== 'searching' || u.roomId) continue;
                 candidates.push({ uid, score: Math.random() });
             }
@@ -394,14 +422,13 @@
             const candidateRoomRef = ref(db, 'users/' + bestUid + '/roomId');
             const generatedRoomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
 
-            // Transaction ensures we exclusively lock this user
+            // Using Transaction for 100% collision prevention
             runTransaction(candidateRoomRef, (currentRoomId) => {
                 if (currentRoomId === null) return generatedRoomId;
-                return; // Abort if they are already taken
+                return; // Abort if they are taken
             }).then(async (result) => {
-                // If we successfully locked them AND we aren't locked ourselves
-                if (result.committed && !isRedirecting) {
-                    isRedirecting = true; // 100% LOCK
+                if (result.committed && !hasMatched) {
+                    hasMatched = true; // INSTANT LOCK
                     clearInterval(searchInterval);
                     if(roomListenerUnsubscribe) roomListenerUnsubscribe();
 
@@ -411,7 +438,7 @@
                         lastMatchedUser: bestUid
                     });
 
-                    showCinematicCard(bestUid, generatedRoomId, true);
+                    triggerCinematicReveal(bestUid, generatedRoomId, true);
                 }
             }).catch(console.error);
         }
@@ -428,10 +455,10 @@
             return null;
         }
 
-        // --- MANUAL MATCH VIA RADAR (PRO ONLY) ---
-        window.triggerManualMatch = async (name, photo, country, gender, isVerified, creatorHandle) => {
-            if (isRedirecting) return;
-            isRedirecting = true;
+        // Radar Manual Match (PRO Logic)
+        window.simulateRadarMatch = async (name, photo, country, gender) => {
+            if (hasMatched) return;
+            hasMatched = true; // Lock
             closeRadar();
             clearInterval(searchInterval);
             if(roomListenerUnsubscribe) roomListenerUnsubscribe();
@@ -439,72 +466,63 @@
             const fakeRoomId = 'radar_' + Date.now();
             await update(ref(db, 'users/' + currentUser.uid), { status: 'in-call', roomId: fakeRoomId });
             
-            // Bypass fetch and inject directly
-            injectDataToCard(name, photo, country, gender, true, isVerified, creatorHandle);
-            start5SecondReveal(fakeRoomId, true);
+            // Show cinematic with pre-filled data
+            injectMatchData(name, photo, country, gender, true, "TikTok: @" + name.toLowerCase());
+            start5SecondCountdown(fakeRoomId, true);
         };
 
-        // ==========================================
-        // 3. CINEMATIC 5-SECOND MATCH REVEAL
-        // ==========================================
-        async function showCinematicCard(targetUid, roomId, isCaller) {
-            // Hide Search UI
-            document.getElementById('searchingUI').style.opacity = 0;
-            setTimeout(() => { document.getElementById('searchingUI').style.display = 'none'; }, 500);
-
-            // Fetch opponent details
+        // --- 5.5 SECOND CINEMATIC REVEAL ANIMATION ---
+        async function triggerCinematicReveal(targetUid, roomId, isCaller) {
+            // Fetch Opponent Details
             let opp = {};
             if (targetUid) {
                 const snap = await get(ref(db, 'users/' + targetUid));
                 if (snap.exists()) opp = snap.val();
             }
 
-            // Realistic Mapping / Fallbacks
+            // Fallbacks & Realism logic
             const photo = opp.photoURL || `https://i.pravatar.cc/600?u=${targetUid || Math.random()}`;
             const name = opp.displayName || 'Guest User';
-            const country = opp.country || '🌍 Global Area';
-            const gender = opp.gender || 'Unknown';
+            const country = opp.country || '🌍 Unknown Area';
+            const gender = opp.gender || 'unknown';
             
-            // Simulated Probabilities for badges if not in DB
-            const isVerified = opp.isVerified !== undefined ? opp.isVerified : (Math.random() > 0.8);
-            const creatorHandle = opp.creatorName || (Math.random() > 0.9 ? "@creator" + Math.floor(Math.random()*99) : null);
-            const isPremiumUser = opp.isPremium !== undefined ? opp.isPremium : (Math.random() > 0.7);
+            // Randomly show badges if data missing (to make UI look alive)
+            const isVerified = opp.isVerified !== undefined ? opp.isVerified : (Math.random() > 0.85);
+            const isPremiumUser = opp.isPremium !== undefined ? opp.isPremium : (Math.random() > 0.75);
+            const creatorName = opp.creatorName || (Math.random() > 0.90 ? "TikTok: @creator" + Math.floor(Math.random()*99) : null);
 
-            injectDataToCard(name, photo, country, gender, isPremiumUser, isVerified, creatorHandle);
-            start5SecondReveal(roomId, isCaller);
+            injectMatchData(name, photo, country, gender, isPremiumUser, creatorName, isVerified);
+            start5SecondCountdown(roomId, isCaller);
         }
 
-        function injectDataToCard(name, photo, country, gender, isPremiumUser, isVerified, creatorHandle) {
-            document.getElementById('matchImageBg').src = photo;
-            document.getElementById('matchName').textContent = name;
-            document.getElementById('matchCountry').innerHTML = `📍 ${country}`;
-            
-            const gText = gender === 'male' ? '👨 Male' : (gender === 'female' ? '👩 Female' : '🧑 Human');
-            document.getElementById('matchGender').textContent = gText;
+        function injectMatchData(name, photo, country, gender, isPro, creatorName, isVerified) {
+            // Hide Search UI
+            document.getElementById('searchingUI').style.opacity = 0;
+            setTimeout(() => { document.getElementById('searchingUI').style.display = 'none'; }, 500);
 
+            // Populate Match Card
+            document.getElementById('matchImageBg').src = photo;
+            document.getElementById('matchName').innerHTML = name;
+            
             // Badges
             if (isVerified) document.getElementById('badgeVerified').style.display = 'block';
-            
-            const typeEl = document.getElementById('matchAccountType');
-            if (isPremiumUser) {
-                typeEl.innerHTML = '👑 PRO Member';
-                typeEl.className = 'info-chip pro';
-            } else {
-                typeEl.innerHTML = 'Standard';
+            if (isPro) document.getElementById('badgePro').style.display = 'inline-block';
+            if (creatorName) {
+                document.getElementById('badgeCreator').style.display = 'inline-flex';
+                document.getElementById('creatorName').textContent = creatorName.replace("TikTok: @", "");
             }
 
-            if (creatorHandle) {
-                document.getElementById('badgeCreator').style.display = 'inline-flex';
-                document.getElementById('creatorName').textContent = creatorHandle;
-            }
+            document.getElementById('matchCountry').innerHTML = `📍 ${country}`;
+            document.getElementById('matchGender').innerHTML = gender === 'male' ? '👨 Male' : (gender === 'female' ? '👩 Female' : '🧑 Unknown');
+            document.getElementById('compatScore').textContent = Math.floor(Math.random() * 15 + 85) + '%';
         }
 
-        function start5SecondReveal(roomId, isCaller) {
-            // Show Card (Triggers CSS zoom animation)
+        function start5SecondCountdown(roomId, isCaller) {
+            // Show Cinematic UI
             document.getElementById('matchUI').classList.add('show');
             
-            // Countdown Text Sync
-            let timeLeft = 5.0;
+            // 5.5 Second Countdown Logic
+            let timeLeft = 5.5;
             const textEl = document.getElementById('countdownText');
             const timer = setInterval(() => {
                 timeLeft -= 0.1;
@@ -516,10 +534,10 @@
                 }
             }, 100);
 
-            // Redirect exactly after 5 seconds
+            // Exact 5.5 seconds Redirect
             setTimeout(() => {
                 window.location.href = `video-call.html?room=${roomId}&caller=${isCaller}&mode=${matchMode}`;
-            }, 5000);
+            }, 5500);
         }
 
     </script>
