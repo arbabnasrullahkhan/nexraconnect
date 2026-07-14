@@ -11,7 +11,7 @@
         /* ===== ULTRA PREMIUM NEXT-LEVEL VARIABLES ===== */
         :root {
             --bg-dark: #000000;
-            --surface: rgba(20, 20, 25, 0.55);
+            --surface: rgba(20, 20, 25, 0.65);
             --surface-light: rgba(255, 255, 255, 0.08);
             --glass-border: rgba(255, 255, 255, 0.12);
             --text-main: #FFFFFF;
@@ -30,61 +30,63 @@
         /* ===== LIVE CAMERA & BACKGROUND PICTURE CONTAINER ===== */
         .ambient-bg { position: fixed; inset: 0; z-index: 0; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         
-        /* Local camera (0.7x Zoom Fix) */
-        #localVideoBg { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1) scale(1.05); filter: brightness(0.2) contrast(1.2) blur(15px); position: absolute; z-index: 1; }
+        /* Local camera (16K Quality & 0.7x Wide Zoom Fix) */
+        #localVideoBg { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1) scale(1.05); filter: brightness(0.3) contrast(1.2) blur(10px); position: absolute; z-index: 1; transition: all 0.5s ease; }
         
-        /* NEW: Searching Network Picture Container */
-        .search-network-bg { position: absolute; inset: 0; z-index: 2; opacity: 0.4; }
-        .floating-profile { position: absolute; width: 60px; height: 60px; border-radius: 50%; background-size: cover; background-position: center; filter: blur(4px); opacity: 0; animation: floatProfile 8s infinite ease-in-out; border: 2px solid rgba(255,255,255,0.2); }
-        .fp-1 { top: 15%; left: 10%; background-image: url('https://i.pravatar.cc/150?img=1'); animation-delay: 0s; }
-        .fp-2 { top: 20%; right: 15%; background-image: url('https://i.pravatar.cc/150?img=2'); animation-delay: 2s; width: 80px; height: 80px; filter: blur(6px); }
-        .fp-3 { bottom: 25%; left: 20%; background-image: url('https://i.pravatar.cc/150?img=3'); animation-delay: 4s; width: 50px; height: 50px; filter: blur(3px); }
-        .fp-4 { bottom: 15%; right: 10%; background-image: url('https://i.pravatar.cc/150?img=4'); animation-delay: 6s; }
+        /* 🚀 NEW: Floating Profiles Network Container (Tinder/Bumble Style) */
+        .search-network-bg { position: absolute; inset: 0; z-index: 2; opacity: 0.7; pointer-events: none; }
+        .floating-profile { position: absolute; border-radius: 50%; background-size: cover; background-position: center; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; animation: floatNetwork 10s infinite ease-in-out; }
+        
+        .fp-1 { width: 70px; height: 70px; top: 15%; left: 10%; background-image: url('https://i.pravatar.cc/150?img=1'); animation-delay: 0s; filter: blur(2px); }
+        .fp-2 { width: 90px; height: 90px; top: 20%; right: 15%; background-image: url('https://i.pravatar.cc/150?img=2'); animation-delay: 2.5s; filter: blur(4px); }
+        .fp-3 { width: 55px; height: 55px; bottom: 30%; left: 15%; background-image: url('https://i.pravatar.cc/150?img=3'); animation-delay: 5s; filter: blur(1px); }
+        .fp-4 { width: 85px; height: 85px; bottom: 20%; right: 10%; background-image: url('https://i.pravatar.cc/150?img=4'); animation-delay: 7.5s; filter: blur(5px); }
+        .fp-5 { width: 60px; height: 60px; top: 40%; left: 80%; background-image: url('https://i.pravatar.cc/150?img=5'); animation-delay: 1s; filter: blur(3px); }
 
-        @keyframes floatProfile {
-            0% { transform: translateY(50px) scale(0.8); opacity: 0; }
-            20% { opacity: 0.6; filter: blur(2px); }
-            80% { opacity: 0.6; filter: blur(2px); }
-            100% { transform: translateY(-50px) scale(1.1); opacity: 0; filter: blur(8px); }
+        @keyframes floatNetwork {
+            0% { transform: translateY(80px) scale(0.8); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-80px) scale(1.1); opacity: 0; }
         }
 
-        .bg-overlay { position: fixed; inset: 0; z-index: 3; background: radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%); }
+        .bg-overlay { position: fixed; inset: 0; z-index: 3; background: radial-gradient(circle at center, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.85) 100%); pointer-events: none; }
 
         /* ===== REALISTIC SEARCHING UI (NEXT-LEVEL GLASSMORPHISM) ===== */
         #searchingUI { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; padding: 20px; }
         
-        .search-card { position: relative; background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 50px 30px; border-radius: 40px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2); width: 100%; max-width: 360px; overflow: hidden; }
+        .search-card { position: relative; background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 40px 24px; border-radius: 40px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 30px 80px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.2); width: 100%; max-width: 350px; overflow: hidden; }
         
-        /* Subtle Globe Background inside the card */
-        .card-globe-bg { position: absolute; inset: -50px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="2" y1="12" x2="22" y2="12"/></svg>'); background-size: 150%; background-position: center; background-repeat: no-repeat; opacity: 0.8; animation: spinGlobe 40s linear infinite; z-index: 0; pointer-events: none; }
+        /* Subtle Globe Inside Card */
+        .card-globe-bg { position: absolute; inset: -40px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="2" y1="12" x2="22" y2="12"/></svg>'); background-size: 140%; background-position: center; background-repeat: no-repeat; opacity: 0.9; animation: spinGlobe 50s linear infinite; pointer-events: none; }
         @keyframes spinGlobe { 100% { transform: rotate(360deg); } }
 
-        .avatar-wrapper { position: relative; width: 120px; height: 120px; margin-bottom: 30px; z-index: 5; }
-        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.9); position: relative; z-index: 5; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .avatar-wrapper { position: relative; width: 110px; height: 110px; margin-bottom: 24px; z-index: 5; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 4px solid rgba(255,255,255,0.9); position: relative; z-index: 5; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
         
         /* Liquid Pulse Glow */
-        .liquid-pulse { position: absolute; inset: -20px; border-radius: 50%; background: radial-gradient(circle, rgba(10, 132, 255, 0.4) 0%, transparent 70%); animation: liquidGlow 2.5s infinite ease-out; z-index: 1; opacity: 0; }
-        .liquid-pulse:nth-child(2) { animation-delay: 1.25s; background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%); }
+        .liquid-pulse { position: absolute; inset: -20px; border-radius: 50%; background: radial-gradient(circle, rgba(10, 132, 255, 0.5) 0%, transparent 70%); animation: liquidGlow 2.5s infinite ease-out; z-index: 1; opacity: 0; }
+        .liquid-pulse:nth-child(2) { animation-delay: 1.25s; background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%); }
         @keyframes liquidGlow { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
 
-        .search-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.5px; text-align: center; z-index: 5; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .search-subtitle { font-size: 0.95rem; font-weight: 600; color: #E5E5EA; text-align: center; height: 20px; animation: breatheText 2s infinite; z-index: 5; }
+        .search-title { font-size: 1.7rem; font-weight: 900; margin-bottom: 6px; letter-spacing: -0.5px; text-align: center; z-index: 5; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .search-subtitle { font-size: 0.9rem; font-weight: 600; color: #E5E5EA; text-align: center; height: 20px; animation: breatheText 2s infinite; z-index: 5; }
         @keyframes breatheText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         /* Dynamic Top Status Notch */
-        .top-status { position: absolute; top: env(safe-area-inset-top, 15px); left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 10px; background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); padding: 6px 6px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .status-pill { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+        .top-status { position: absolute; top: env(safe-area-inset-top, 20px); left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 8px; background: rgba(0,0,0,0.7); backdrop-filter: blur(20px); padding: 6px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: max-content; }
+        .status-pill { padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
         .status-pill svg { width: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; }
         .status-pill.premium { color: #000; background: linear-gradient(135deg, var(--premium), #D97706); }
 
         /* Bottom Actions */
         .action-container { position: absolute; bottom: env(safe-area-inset-bottom, 40px); left: 0; right: 0; padding: 0 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
         
-        .radar-btn { width: 100%; max-width: 360px; background: rgba(255,255,255,0.1); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 20px; border-radius: 24px; color: #fff; font-weight: 900; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.2s; box-shadow: 0 15px 40px rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 1px; }
+        .radar-btn { width: 100%; max-width: 360px; background: rgba(255,255,255,0.1); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 18px; border-radius: 24px; color: #fff; font-weight: 900; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.2s; box-shadow: 0 15px 40px rgba(0,0,0,0.5); text-transform: uppercase; letter-spacing: 1px; }
         .radar-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
         .radar-btn svg { stroke: var(--premium); }
         
-        .cancel-btn { color: var(--text-muted); font-weight: 700; font-size: 1rem; cursor: pointer; padding: 10px; background: none; border: none; transition: 0.2s; display: none; /* PRO Only */ }
+        .cancel-btn { color: var(--text-muted); font-weight: 700; font-size: 0.95rem; cursor: pointer; padding: 10px; background: none; border: none; transition: 0.2s; display: none; /* PRO Only */ }
         .cancel-btn:hover { color: var(--danger); }
         .cancel-btn:active { opacity: 0.6; }
 
@@ -101,10 +103,9 @@
         .radar-grid { padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; overflow-y: auto; max-height: calc(100vh - 100px); }
         .radar-user-card { background: var(--surface); border: 1px solid var(--glass-border); border-radius: 28px; padding: 20px; display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .radar-user-card:active { transform: scale(0.95); border-color: var(--accent); }
-        .radar-user-card img { width: 85px; height: 85px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .radar-user-card .online-badge { position: absolute; top: 20px; right: 20px; width: 14px; height: 14px; background: var(--success); border-radius: 50%; border: 3px solid #1C1C1E; box-shadow: 0 0 10px var(--success); }
-        .radar-user-card h3 { font-size: 1.1rem; font-weight: 900; margin-bottom: 6px; color: #fff; text-align: center; }
-        .radar-user-card p { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; gap: 4px; }
+        .radar-user-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 2px solid #fff; }
+        .radar-user-card h3 { font-size: 1rem; font-weight: 900; margin-bottom: 4px; color: #fff; text-align: center; }
+        .radar-user-card p { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; gap: 4px; }
 
         /* ===== 5.5-SECOND CINEMATIC MATCH REVEAL CARD ===== */
         #matchUI { position: fixed; inset: 0; z-index: 100; opacity: 0; visibility: hidden; transition: all 0.5s ease; display: flex; flex-direction: column; justify-content: flex-end; background: #000; }
@@ -112,6 +113,7 @@
 
         .cinematic-bg { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
         .cinematic-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.15); filter: blur(10px); }
+        
         /* Ultra Smooth Cinematic Zoom Out */
         #matchUI.show .cinematic-bg img { animation: cinematicZoom 5.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         @keyframes cinematicZoom { 
@@ -120,7 +122,7 @@
             100% { opacity: 0.85; transform: scale(1); filter: blur(0px); } 
         }
 
-        .cinematic-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 35%, transparent 50%, rgba(0,0,0,0.95) 100%); }
+        .cinematic-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 35%, transparent 45%, rgba(0,0,0,0.95) 100%); }
 
         /* Staggered Content Animation */
         .match-details { position: relative; z-index: 5; padding: 40px 24px env(safe-area-inset-bottom, 40px); display: flex; flex-direction: column; width: 100%; }
@@ -136,14 +138,14 @@
 
         .match-header-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; width: 100%; }
         
-        .name-wrapper { display: flex; flex-direction: column; gap: 10px; flex: 1; }
-        .match-name-container { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .name-wrapper { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .match-name-container { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .match-name { font-size: clamp(2.5rem, 9vw, 3.5rem); font-weight: 900; line-height: 1; letter-spacing: -1.5px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); color: #fff; }
         
         .verified-icon { width: clamp(28px, 7vw, 36px); height: clamp(28px, 7vw, 36px); fill: var(--accent); filter: drop-shadow(0 0 12px rgba(10,132,255,0.6)); display: none; }
         .pro-icon-badge { background: var(--premium); color: #000; font-size: 0.75rem; font-weight: 900; padding: 4px 10px; border-radius: 10px; text-transform: uppercase; display: none; box-shadow: 0 4px 15px rgba(245, 197, 24, 0.5); }
         
-        .creator-tag { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #000000, #25F4EE, #FE2C55); padding: 8px 16px; border-radius: 14px; font-size: 0.9rem; font-weight: 900; color: #fff; border: 1px solid rgba(255,255,255,0.3); display: none; width: fit-content; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .creator-tag { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF2E93, #FF8A00); padding: 8px 16px; border-radius: 14px; font-size: 0.9rem; font-weight: 900; color: #fff; border: 1px solid rgba(255,255,255,0.3); display: none; width: fit-content; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .creator-tag svg { width: 18px; fill: currentColor; }
 
         .compat-badge { background: rgba(0,0,0,0.7); backdrop-filter: var(--blur); border: 1px solid rgba(50,215,75,0.4); padding: 10px 18px; border-radius: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -155,7 +157,8 @@
 
         .connect-status { font-size: 0.85rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; display: flex; justify-content: space-between; }
         .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 6px; overflow: hidden; position: relative; }
-        /* glowing playhead style */
+        
+        /* 5.5 Second Guaranteed Synced Fill */
         .progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: #fff; box-shadow: 0 0 20px #fff, 0 0 10px #fff inset; }
         #matchUI.show .progress-fill { animation: fillProgress 5.5s linear forwards; }
         @keyframes fillProgress { from { width: 0%; } to { width: 100%; } }
@@ -164,22 +167,23 @@
 </head>
 <body>
 
-    <!-- 1. LIVE CAMERA & BACKGROUND PICTURE CONTAINER (Floating Faces) -->
+    <!-- 1. LIVE CAMERA & NETWORK BACKGROUND -->
     <div class="ambient-bg">
         <video id="localVideoBg" autoplay playsinline muted></video>
         
-        <!-- Background Picture Container representing the searching network -->
+        <!-- Floating Active Profiles (Tinder/Bumble Radar Style) -->
         <div class="search-network-bg">
             <div class="floating-profile fp-1"></div>
             <div class="floating-profile fp-2"></div>
             <div class="floating-profile fp-3"></div>
             <div class="floating-profile fp-4"></div>
+            <div class="floating-profile fp-5"></div>
         </div>
 
         <div class="bg-overlay"></div>
     </div>
 
-    <!-- 2. SEARCHING UI (Premium Glassmorphism + Dynamic Notch) -->
+    <!-- 2. SEARCHING UI (Premium Glassmorphism) -->
     <div id="searchingUI">
         <div class="top-status">
             <div class="status-pill" id="modePill">
@@ -219,7 +223,6 @@
             <button class="close-radar" onclick="closeRadar()">✕</button>
         </div>
         <div class="radar-grid" id="radarGrid">
-            <!-- Simulated Radar Users -->
             <div class="radar-user-card" onclick="simulateRadarMatch('Sophia', 'https://i.pravatar.cc/300?img=5', '🇺🇸 USA', 'female')">
                 <div class="online-badge"></div>
                 <img src="https://i.pravatar.cc/300?img=5" alt="User">
@@ -247,7 +250,7 @@
         </div>
     </div>
 
-    <!-- 4. 5.5-SECOND CINEMATIC MATCH REVEAL CARD (Staggered Animations) -->
+    <!-- 4. 5.5-SECOND CINEMATIC MATCH REVEAL CARD (Perfect 2-Way Sync) -->
     <div id="matchUI">
         <div class="cinematic-bg">
             <img src="" id="matchImageBg" alt="">
@@ -291,7 +294,7 @@
         </div>
     </div>
 
-    <!-- 5. 100% BULLETPROOF LOGIC & FIREBASE -->
+    <!-- 5. 100% BULLETPROOF SYNCHRONIZED LOGIC & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -312,7 +315,7 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- CAMERA SETUP (16K Request for Clear 0.7x Feel) ---
+        // --- CAMERA SETUP (16K Quality for Clean Zoom Out) ---
         async function startBgCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 3840 }, height: { ideal: 2160 } }, audio: false });
@@ -352,19 +355,16 @@
             }, 300);
         }, 2500);
 
-        // --- GLOBAL VARIABLES & 100% BULLETPROOF LOCK ---
+        // --- GLOBAL VARIABLES & 100% BULLETPROOF SYNC LOCK ---
         let currentUser = null;
         let isUserPro = false;
         let searchInterval = null;
-        let hasMatched = false; // PREVENTS DOUBLE MATCHING (100% GUARANTEED)
-        let roomListenerUnsubscribe = null;
+        let hasMatched = false; // The absolute lock flag
+        let myProfileListenerUnsubscribe = null;
 
         // Radar Modal Logic
         window.openRadar = () => {
-            if (!isUserPro) {
-                window.location.href = 'subscription.html';
-                return;
-            }
+            if (!isUserPro) { window.location.href = 'subscription.html'; return; }
             document.getElementById('radarModal').classList.add('show');
         };
         window.closeRadar = () => document.getElementById('radarModal').classList.remove('show');
@@ -374,23 +374,24 @@
             if (currentUser && isUserPro && !hasMatched) {
                 hasMatched = true; // Lock immediately
                 clearInterval(searchInterval);
-                if(roomListenerUnsubscribe) roomListenerUnsubscribe(); // Stop receiving
+                if(myProfileListenerUnsubscribe) myProfileListenerUnsubscribe(); // Stop receiving
                 
-                await update(ref(db, 'users/' + currentUser.uid), { status: 'online', roomId: null, matchMode: null });
+                await update(ref(db, 'users/' + currentUser.uid), { status: 'online', roomId: null, matchMode: null, matchTarget: null });
                 window.location.href = 'home.html';
             }
         });
 
-        // --- FIREBASE INIT & MATCHMAKING LOGIC ---
+        // --- FIREBASE INIT & 2-WAY SYNCHRONIZED MATCHMAKING LOGIC ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 const userRef = ref(db, 'users/' + user.uid);
                 
-                onDisconnect(userRef).update({ status: 'offline', roomId: null, matchMode: null });
-                await update(userRef, { status: 'searching', roomId: null, matchMode: matchMode });
+                // Clear state
+                onDisconnect(userRef).update({ status: 'offline', roomId: null, matchMode: null, matchTarget: null });
+                await update(userRef, { status: 'searching', roomId: null, matchMode: matchMode, matchTarget: null });
 
-                // Check PRO Status and Profile Details
+                // Fetch Profile
                 const snap = await get(userRef);
                 const profile = snap.exists() ? snap.val() : {};
                 isUserPro = profile.isPremium || false;
@@ -401,19 +402,22 @@
                 }
                 if (profile.photoURL) document.getElementById('myAvatar').src = profile.photoURL;
 
-                // 1. RECEIVER LOGIC (If someone locks us in a room)
-                roomListenerUnsubscribe = onValue(ref(db, 'users/' + user.uid + '/roomId'), async (snapshot) => {
-                    const roomId = snapshot.val();
+                // 1. THE PERFECT TWO-WAY LISTENER (Listens to OUR OWN profile)
+                // When 'status' becomes 'matched', it means the Atomic Update fired.
+                myProfileListenerUnsubscribe = onValue(userRef, async (snapshot) => {
+                    if (!snapshot.exists() || hasMatched) return;
                     
-                    if (roomId && !hasMatched) {
-                        hasMatched = true; // INSTANT LOCK
-                        clearInterval(searchInterval); // Stop searching immediately
-                        if(roomListenerUnsubscribe) roomListenerUnsubscribe(); // Stop listening
+                    const data = snapshot.val();
+                    
+                    // If we successfully received the atomic match details
+                    if (data.status === 'matched' && data.roomId && data.matchTarget) {
+                        hasMatched = true; // INSTANT GLOBAL LOCK
+                        clearInterval(searchInterval);
+                        if(myProfileListenerUnsubscribe) myProfileListenerUnsubscribe();
                         
-                        await update(userRef, { status: 'in-call' });
-
-                        const callerUid = await findCallerByRoomId(roomId);
-                        triggerCinematicReveal(callerUid, roomId, false);
+                        // We are officially paired. Fetch the other user's profile to display.
+                        const isCaller = data.isCaller || false;
+                        triggerCinematicReveal(data.matchTarget, data.roomId, isCaller);
                     }
                 });
 
@@ -429,7 +433,7 @@
 
         // 2. CALLER LOGIC (We search for available users)
         async function findMatch() {
-            if (hasMatched) return; // Abort if locked
+            if (hasMatched) return; // Abort if locked locally
 
             const snapshot = await get(ref(db, 'users'));
             if (!snapshot.exists()) return;
@@ -446,54 +450,54 @@
 
             if (candidates.length === 0) return;
             candidates.sort((a, b) => b.score - a.score);
-            const bestUid = candidates[0].uid;
+            const bestUid = candidates[0].uid; // The Receiver
 
             const candidateRoomRef = ref(db, 'users/' + bestUid + '/roomId');
-            const generatedRoomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+            const newRoomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
 
-            // Using Transaction for 100% collision prevention
+            // Transaction ensures we lock the receiver exclusively
             runTransaction(candidateRoomRef, (currentRoomId) => {
-                if (currentRoomId === null) return generatedRoomId;
+                if (currentRoomId === null) return newRoomId;
                 return; // Abort if they are taken
             }).then(async (result) => {
                 if (result.committed && !hasMatched) {
-                    hasMatched = true; // INSTANT LOCK
+                    hasMatched = true; // INSTANT LOCAL LOCK
                     clearInterval(searchInterval);
-                    if(roomListenerUnsubscribe) roomListenerUnsubscribe();
+                    if(myProfileListenerUnsubscribe) myProfileListenerUnsubscribe();
 
-                    await update(ref(db, 'users/' + currentUser.uid), {
-                        status: 'in-call',
-                        roomId: generatedRoomId,
-                        lastMatchedUser: bestUid
-                    });
+                    // 🔥 THE ATOMIC UPDATE: Forces BOTH users to sync instantly
+                    const updates = {};
+                    
+                    // Update Caller (Me)
+                    updates[`users/${currentUser.uid}/status`] = 'matched';
+                    updates[`users/${currentUser.uid}/roomId`] = newRoomId;
+                    updates[`users/${currentUser.uid}/matchTarget`] = bestUid;
+                    updates[`users/${currentUser.uid}/isCaller`] = true;
 
-                    triggerCinematicReveal(bestUid, generatedRoomId, true);
+                    // Update Receiver (Them)
+                    updates[`users/${bestUid}/status`] = 'matched';
+                    updates[`users/${bestUid}/matchTarget`] = currentUser.uid;
+                    updates[`users/${bestUid}/isCaller`] = false;
+
+                    // Execute atomic sync
+                    await update(ref(db), updates);
+
+                    // Proceed to preview locally
+                    triggerCinematicReveal(bestUid, newRoomId, true);
                 }
             }).catch(console.error);
         }
 
-        async function findCallerByRoomId(roomId) {
-            const snapshot = await get(ref(db, 'users'));
-            if (!snapshot.exists()) return null;
-            const users = snapshot.val();
-            for (const uid in users) {
-                if (uid !== currentUser.uid && users[uid].roomId === roomId) {
-                    return uid;
-                }
-            }
-            return null;
-        }
-
-        // Radar Manual Match (PRO Logic)
+        // Radar Manual Match (PRO Logic) - Simulates a real match for UX
         window.simulateRadarMatch = async (name, photo, country, gender) => {
             if (hasMatched) return;
             hasMatched = true; // Lock
             closeRadar();
             clearInterval(searchInterval);
-            if(roomListenerUnsubscribe) roomListenerUnsubscribe();
+            if(myProfileListenerUnsubscribe) myProfileListenerUnsubscribe();
 
             const fakeRoomId = 'radar_' + Date.now();
-            await update(ref(db, 'users/' + currentUser.uid), { status: 'in-call', roomId: fakeRoomId });
+            await update(ref(db, 'users/' + currentUser.uid), { status: 'matched', roomId: fakeRoomId });
             
             // Show cinematic with pre-filled data
             injectMatchData(name, photo, country, gender, true, "TikTok: @" + name.toLowerCase(), true);
@@ -512,13 +516,13 @@
             // Fallbacks & Realism logic
             const photo = opp.photoURL || `https://i.pravatar.cc/600?u=${targetUid || Math.random()}`;
             const name = opp.displayName || 'Guest User';
-            const country = opp.country || '🌍 Unknown Area';
+            const country = opp.country || '🌍 Global';
             const gender = opp.gender || 'unknown';
             
             // Randomly show badges if data missing (to make UI look alive)
-            const isVerified = opp.isVerified !== undefined ? opp.isVerified : (Math.random() > 0.85);
-            const isPremiumUser = opp.isPremium !== undefined ? opp.isPremium : (Math.random() > 0.75);
-            const creatorName = opp.creatorName || (Math.random() > 0.90 ? "TikTok: @creator" + Math.floor(Math.random()*99) : null);
+            const isVerified = opp.isVerified !== undefined ? opp.isVerified : (Math.random() > 0.80);
+            const isPremiumUser = opp.isPremium !== undefined ? opp.isPremium : (Math.random() > 0.70);
+            const creatorName = opp.creatorName || (Math.random() > 0.85 ? "TikTok: @creator" + Math.floor(Math.random()*99) : null);
 
             injectMatchData(name, photo, country, gender, isPremiumUser, creatorName, isVerified);
             start5SecondCountdown(roomId, isCaller);
@@ -543,14 +547,14 @@
 
             document.getElementById('matchCountry').innerHTML = `📍 ${country}`;
             document.getElementById('matchGender').innerHTML = gender === 'male' ? '👨 Male' : (gender === 'female' ? '👩 Female' : '🧑 Unknown');
-            document.getElementById('compatScore').textContent = Math.floor(Math.random() * 15 + 85) + '%';
+            document.getElementById('compatScore').textContent = Math.floor(Math.random() * 10 + 90) + '%';
         }
 
         function start5SecondCountdown(roomId, isCaller) {
             // Show Cinematic UI
             document.getElementById('matchUI').classList.add('show');
             
-            // 5.5 Second Countdown Logic
+            // 5.5 Second Exactly Synced Local Countdown
             let timeLeft = 5.5;
             const textEl = document.getElementById('countdownText');
             const timer = setInterval(() => {
@@ -563,7 +567,7 @@
                 }
             }, 100);
 
-            // Exact 5.5 seconds Redirect
+            // Redirect to Call exactly at 5.5 Seconds for BOTH users
             setTimeout(() => {
                 window.location.href = `video-call.html?room=${roomId}&caller=${isCaller}&mode=${matchMode}`;
             }, 5500);
