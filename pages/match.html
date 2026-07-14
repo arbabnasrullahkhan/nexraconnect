@@ -4,233 +4,179 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>Matchmaking - Nexra Pro</title>
+    <title>Matchmaking - Nexra Connect Pro</title>
     <link rel="icon" type="image/png" href="../assets/favicon perple.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ===== ULTRA PREMIUM REALISTIC iOS VARIABLES ===== */
+        /* ===== PREMIUM REALISTIC iOS VARIABLES ===== */
         :root {
-            --accent: #FFFFFF;
             --bg-dark: #000000;
-            --surface: rgba(28, 28, 30, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.15);
+            --surface: rgba(30, 30, 35, 0.7);
+            --surface-light: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
             --text-main: #FFFFFF;
-            --text-muted: #8E8E93;
-            --premium: #F5C518;
-            --success: #34C759;
-            --danger: #FF3B30;
-            --blur: blur(25px);
+            --text-muted: #98989D;
+            --accent: #0A84FF;
+            --premium: #FFD60A;
+            --success: #32D74B;
+            --danger: #FF453A;
+            --blur: blur(30px);
             --spring: cubic-bezier(0.32, 0.72, 0, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; width: 100%; }
 
-        /* ===== HIGH-RES CAMERA BACKGROUND (0.7x ZOOM FIX) ===== */
-        .camera-container { position: fixed; inset: 0; z-index: 0; background: #000; overflow: hidden; }
-        #localVideoBg { 
-            width: 100%; height: 100%; 
-            object-fit: cover; object-position: center; 
-            /* scale(1.05) removes black borders but keeps it zoomed out (0.7x feel) */
-            transform: scaleX(-1) scale(1.05); 
-            filter: brightness(0.6) contrast(1.1) saturate(1.2); 
-            transition: all 0.5s ease;
-        }
-        .bg-overlay { position: fixed; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, transparent 40%, rgba(0,0,0,0.8) 100%); pointer-events: none; }
-
-        /* ===== AUTO-HIDE UI WRAPPER ===== */
-        #uiWrapper { transition: opacity 0.8s ease; opacity: 1; z-index: 10; position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #uiWrapper.idle { opacity: 0.3; }
+        /* ===== CAMERA BACKGROUND (0.7x ZOOM FIX) ===== */
+        .live-bg { position: fixed; inset: 0; z-index: 0; background: #000; overflow: hidden; }
+        #localVideoBg { width: 100%; height: 100%; object-fit: cover; object-position: center; transform: scaleX(-1) scale(1.05); filter: brightness(0.4) contrast(1.1) blur(8px); transition: all 0.5s ease; }
+        .bg-overlay { position: fixed; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 100%); }
 
         /* ===== REALISTIC SEARCHING UI ===== */
-        .search-card { background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 40px; border-radius: 32px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 90%; max-width: 360px; }
+        #searchingUI { position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         
-        .pulse-avatar { position: relative; width: 100px; height: 100px; margin-bottom: 24px; }
-        .pulse-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #fff; position: relative; z-index: 2; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .ripple { position: absolute; inset: -10px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.8); animation: rippleEffect 2s infinite ease-out; z-index: 1; }
-        .ripple:nth-child(2) { animation-delay: 1s; }
+        .search-card { background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); border-radius: 36px; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); width: 85%; max-width: 340px; }
+
+        .avatar-container { position: relative; width: 110px; height: 110px; margin-bottom: 24px; }
+        .my-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #fff; position: relative; z-index: 5; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         
-        @keyframes rippleEffect { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; border-width: 1px; } }
+        /* Soft Elegant Ripple (Not Sci-Fi) */
+        .soft-ripple { position: absolute; inset: -15px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); animation: rippleAnim 2.5s infinite ease-out; z-index: 1; opacity: 0; }
+        .soft-ripple:nth-child(2) { animation-delay: 1.25s; }
+        @keyframes rippleAnim { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2.2); opacity: 0; } }
 
-        .search-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .search-subtitle { font-size: 0.95rem; font-weight: 500; color: var(--text-muted); text-align: center; height: 20px; animation: breathe 1.5s infinite; }
-        @keyframes breathe { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .search-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .search-subtitle { font-size: 0.95rem; font-weight: 500; color: var(--text-muted); text-align: center; height: 20px; animation: breatheText 2s infinite; }
+        @keyframes breatheText { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
-        /* Bottom Action Buttons (Radar & Cancel) */
-        .search-actions { position: absolute; bottom: 40px; display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 360px; padding: 0 20px; }
+        /* Top Bar Indicators */
+        .top-status { position: absolute; top: env(safe-area-inset-top, 20px); left: 0; right: 0; padding: 0 20px; display: flex; justify-content: space-between; z-index: 10; }
+        .status-pill { background: rgba(255,255,255,0.1); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px; }
+        .status-pill.premium { color: var(--premium); border-color: rgba(245, 197, 24, 0.4); background: rgba(245, 197, 24, 0.1); }
+
+        /* Bottom Actions */
+        .action-container { position: absolute; bottom: env(safe-area-inset-bottom, 30px); left: 0; right: 0; padding: 0 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
         
-        .btn-radar { background: linear-gradient(135deg, rgba(245, 197, 24, 0.2), rgba(217, 119, 6, 0.2)); border: 1px solid rgba(245, 197, 24, 0.5); color: var(--premium); padding: 18px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; backdrop-filter: blur(10px); transition: 0.2s; box-shadow: 0 10px 30px rgba(245, 197, 24, 0.15); }
-        .btn-radar:active { transform: scale(0.96); }
+        .radar-btn { width: 100%; max-width: 340px; background: rgba(255,255,255,0.1); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); padding: 18px; border-radius: 20px; color: #fff; font-weight: 800; font-size: 1.05rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .radar-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
         
-        .btn-cancel { background: rgba(255, 59, 48, 0.15); border: 1px solid rgba(255, 59, 48, 0.3); color: var(--danger); padding: 16px; border-radius: 20px; font-weight: 700; font-size: 1rem; text-align: center; cursor: pointer; backdrop-filter: blur(10px); transition: 0.2s; display: none; /* PRO Only */ }
-        .btn-cancel:active { transform: scale(0.96); }
+        .cancel-btn { color: var(--danger); font-weight: 700; font-size: 1rem; cursor: pointer; padding: 10px; background: none; border: none; transition: 0.2s; display: none; /* PRO Only */ }
+        .cancel-btn:active { opacity: 0.6; }
 
-        /* ===== NEARBY RADAR MODAL (PREMIUM FEATURE) ===== */
-        .radar-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); z-index: 50; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: 0.4s var(--spring); }
-        .radar-modal.show { opacity: 1; visibility: visible; }
-        
-        .radar-header { padding: env(safe-area-inset-top, 20px) 24px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); }
-        .radar-header h2 { font-size: 1.4rem; font-weight: 800; color: var(--premium); display: flex; align-items: center; gap: 8px; }
-        .close-radar { background: rgba(255,255,255,0.1); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
-
-        .radar-grid { padding: 24px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; overflow-y: auto; max-height: calc(100vh - 100px); }
-        .radar-user-card { background: var(--surface); border: 1px solid var(--glass-border); border-radius: 24px; padding: 16px; display: flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; transition: 0.2s; }
-        .radar-user-card:active { transform: scale(0.95); border-color: var(--premium); }
-        .radar-user-card img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 2px solid #fff; }
-        .radar-user-card .online-badge { position: absolute; top: 16px; right: 16px; width: 12px; height: 12px; background: var(--success); border-radius: 50%; border: 2px solid #1C1C1E; }
-        .radar-user-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 4px; color: #fff; }
-        .radar-user-card p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 4px; }
-
-        /* ===== 5-SECOND CINEMATIC MATCH REVEAL CARD ===== */
-        #matchUI { position: fixed; inset: 0; z-index: 100; opacity: 0; visibility: hidden; transition: all 0.5s ease; background: #000; display: flex; flex-direction: column; }
+        /* ===== 5-SECOND REALISTIC MATCH REVEAL UI ===== */
+        #matchUI { position: fixed; inset: 0; z-index: 20; opacity: 0; visibility: hidden; transition: all 0.5s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #matchUI.show { opacity: 1; visibility: visible; }
 
-        .cinematic-bg { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
-        .cinematic-bg img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.1); transition: opacity 0.5s ease; }
-        /* Slow Zoom-out Animation for 5 Seconds */
-        #matchUI.show .cinematic-bg img { opacity: 0.7; animation: cinematicZoom 5s ease-out forwards; }
-        @keyframes cinematicZoom { from { transform: scale(1.15); filter: blur(5px); } to { transform: scale(1); filter: blur(0px); } }
+        /* The Match Card */
+        .match-card { width: 90%; max-width: 380px; background: var(--surface); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); border-radius: 40px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.7); transform: scale(0.9) translateY(30px); opacity: 0; transition: all 0.8s var(--spring); }
+        #matchUI.show .match-card { transform: scale(1) translateY(0); opacity: 1; }
 
-        .cinematic-overlay { position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 30%, transparent 50%, rgba(0,0,0,0.95) 100%); }
-
-        /* The Profile Details (Bottom) */
-        .match-details { position: absolute; bottom: 0; left: 0; right: 0; z-index: 5; padding: 40px 24px env(safe-area-inset-bottom, 30px); display: flex; flex-direction: column; gap: 16px; transform: translateY(50px); opacity: 0; transition: all 0.8s 0.3s var(--spring); }
-        #matchUI.show .match-details { transform: translateY(0); opacity: 1; }
-
-        .match-header-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 8px; }
+        .match-photo-container { width: 100%; height: 320px; position: relative; }
+        .match-photo-container img { width: 100%; height: 100%; object-fit: cover; }
+        .match-photo-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(28,28,30,1) 100%); }
         
-        .name-wrapper { display: flex; flex-direction: column; gap: 8px; }
-        .match-name { font-size: 3rem; font-weight: 900; line-height: 1; letter-spacing: -1px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 12px; color: #fff; }
-        .verified-icon { width: 30px; height: 30px; fill: #0A84FF; filter: drop-shadow(0 0 10px rgba(10,132,255,0.5)); }
-        
-        .creator-tag { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #000000, #25F4EE, #FE2C55); padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 900; color: #fff; text-shadow: none; border: 1px solid rgba(255,255,255,0.2); }
-        .creator-tag svg { width: 14px; fill: currentColor; }
+        .match-compat { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); padding: 8px 14px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; color: var(--success); border: 1px solid rgba(50,215,75,0.3); }
 
-        /* Match Info Chips */
-        .chips-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
-        .info-chip { background: rgba(255,255,255,0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); padding: 10px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .match-info-section { padding: 0 24px 30px; margin-top: -20px; position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center; text-align: center; }
         
-        /* 5 Second Progress Bar */
-        .connect-status { font-size: 0.85rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 6px; overflow: hidden; position: relative; }
-        .progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: #fff; box-shadow: 0 0 15px #fff; }
-        /* Exactly 5 seconds animation */
-        #matchUI.show .progress-fill { animation: fillProgress 5s linear forwards; }
-        @keyframes fillProgress { from { width: 0%; } to { width: 100%; } }
+        .match-name-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; }
+        .match-name { font-size: 2.2rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+        
+        /* Badges (Hidden by Default) */
+        .verified-badge { width: 24px; height: 24px; fill: var(--accent); display: none; }
+        .pro-icon-badge { background: var(--premium); color: #000; font-size: 0.65rem; font-weight: 900; padding: 3px 6px; border-radius: 6px; display: none; }
+        
+        .match-location { font-size: 1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+
+        .match-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 24px; }
+        .tag { background: var(--surface-light); border: 1px solid var(--glass-border); padding: 6px 14px; border-radius: 12px; font-size: 0.8rem; font-weight: 700; color: #fff; }
+        
+        .creator-tag { background: linear-gradient(135deg, #FF2E93, #FF8A00); border: none; display: none; }
+
+        /* Slow 5.5 Second Progress Bar */
+        .connection-status { width: 100%; }
+        .status-text { font-size: 0.8rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .progress-track { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: #fff; border-radius: 6px; }
+        #matchUI.show .progress-fill { animation: fillUp 5.5s linear forwards; }
+        @keyframes fillUp { from { width: 0%; } to { width: 100%; } }
 
     </style>
 </head>
 <body>
 
-    <!-- 1. LIVE CAMERA BACKGROUND (0.7x Zoom Fix) -->
-    <div class="camera-container">
+    <!-- 1. LIVE CAMERA BACKGROUND -->
+    <div class="live-bg">
         <video id="localVideoBg" autoplay playsinline muted></video>
         <div class="bg-overlay"></div>
     </div>
 
-    <!-- 2. AUTO-HIDING SEARCH UI -->
-    <div id="uiWrapper">
+    <!-- 2. SEARCHING UI (Clean Apple Style) -->
+    <div id="searchingUI">
+        <div class="top-status">
+            <div class="status-pill" id="modePill">🌍 Global Mode</div>
+            <div class="status-pill premium" id="proPill" style="display: none;">👑 PRO Active</div>
+        </div>
+
         <div class="search-card">
-            <div class="pulse-avatar">
-                <div class="ripple"></div>
-                <div class="ripple"></div>
+            <div class="avatar-container">
+                <div class="soft-ripple"></div>
+                <div class="soft-ripple"></div>
                 <img src="../assets/favicon perple.png" id="myAvatar" alt="Me" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3114/3114868.png'">
             </div>
             <div class="search-title">Finding Match</div>
-            <div class="search-subtitle" id="rotatingMsg">Scanning global network...</div>
+            <div class="search-subtitle" id="rotatingMsg">Scanning secure nodes...</div>
         </div>
 
-        <div class="search-actions">
-            <!-- Radar Button (Visible for all, but triggers Premium check in JS) -->
-            <div class="btn-radar" onclick="openRadar()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                Nearby Radar (PRO)
-            </div>
-            
-            <div class="btn-cancel" id="cancelBtn">Cancel Search</div>
+        <div class="action-container">
+            <button class="radar-btn" onclick="alert('Nearby Radar feature opening...')">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                Open Nearby Radar (PRO)
+            </button>
+            <button class="cancel-btn" id="cancelBtn">Cancel Search</button>
         </div>
     </div>
 
-    <!-- 3. PREMIUM NEARBY RADAR MODAL -->
-    <div class="radar-modal" id="radarModal">
-        <div class="radar-header">
-            <h2>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                Live Radar
-            </h2>
-            <button class="close-radar" onclick="closeRadar()">✕</button>
-        </div>
-        <div class="radar-grid" id="radarGrid">
-            <!-- Simulated Radar Users (In a real app, this queries geospatial DB) -->
-            <div class="radar-user-card" onclick="simulateRadarMatch('Jessica', 'https://i.pravatar.cc/300?img=5', '🇺🇸 USA', 'female')">
-                <div class="online-badge"></div>
-                <img src="https://i.pravatar.cc/300?img=5" alt="User">
-                <h3>Jessica, 22</h3>
-                <p>📍 2 miles away</p>
-            </div>
-            <div class="radar-user-card" onclick="simulateRadarMatch('Alex', 'https://i.pravatar.cc/300?img=11', '🇬🇧 UK', 'male')">
-                <div class="online-badge"></div>
-                <img src="https://i.pravatar.cc/300?img=11" alt="User">
-                <h3>Alex, 25</h3>
-                <p>📍 5 miles away</p>
-            </div>
-            <div class="radar-user-card" onclick="simulateRadarMatch('Elena', 'https://i.pravatar.cc/300?img=44', '🇪🇸 Spain', 'female')">
-                <div class="online-badge"></div>
-                <img src="https://i.pravatar.cc/300?img=44" alt="User">
-                <h3>Elena, 21</h3>
-                <p>📍 8 miles away</p>
-            </div>
-            <div class="radar-user-card" onclick="simulateRadarMatch('David', 'https://i.pravatar.cc/300?img=60', '🇨🇦 Canada', 'male')">
-                <div class="online-badge"></div>
-                <img src="https://i.pravatar.cc/300?img=60" alt="User">
-                <h3>David, 24</h3>
-                <p>📍 12 miles away</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. 5-SECOND CINEMATIC MATCH REVEAL -->
+    <!-- 3. REALISTIC 5-SECOND MATCH REVEAL CARD -->
     <div id="matchUI">
-        <div class="cinematic-bg">
-            <img src="" id="matchImageBg" alt="">
-        </div>
-        <div class="cinematic-overlay"></div>
+        <div class="match-card">
+            <div class="match-photo-container">
+                <img src="" id="matchPhoto" alt="Match">
+                <div class="match-photo-overlay"></div>
+                <div class="match-compat" id="matchCompat">98%</div>
+            </div>
 
-        <div class="match-details">
-            <div class="match-header-row">
-                <div class="name-wrapper">
-                    <div class="match-name">
-                        <span id="matchName">Loading...</span>
-                        <svg class="verified-icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="match-info-section">
+                <div class="match-name-row">
+                    <span class="match-name" id="matchName">Loading...</span>
+                    <!-- Verified Badge (Hidden by default) -->
+                    <svg class="verified-badge" id="badgeVerified" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="pro-icon-badge" id="badgePro">PRO</span>
+                </div>
+                
+                <div class="match-location" id="matchLocation">🌍 Connecting...</div>
+
+                <div class="match-tags">
+                    <div class="tag" id="tagGender">🧑 Unknown</div>
+                    <div class="tag" id="tagLang">🗣️ English</div>
+                    <!-- Creator Badge (Hidden by default) -->
+                    <div class="tag creator-tag" id="badgeCreator">🎬 Creator</div>
+                </div>
+
+                <div class="connection-status">
+                    <div class="status-text">
+                        <span>Connecting Peer...</span>
+                        <span id="timerText">5.5s</span>
                     </div>
-                    
-                    <!-- Creator Badge (TikTok/Insta logic) -->
-                    <div id="creatorBadgeWrapper" style="display: none;">
-                        <div class="creator-tag">
-                            <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-                            TikTok: @<span id="creatorName">username</span>
-                        </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progressFill"></div>
                     </div>
                 </div>
             </div>
-
-            <div class="chips-container">
-                <div class="info-chip" id="matchCountry">🌍 Global</div>
-                <div class="info-chip" id="matchGender">🧑 Gender</div>
-                <div class="info-chip" id="matchLang">🗣️ English</div>
-            </div>
-
-            <div class="connect-status">
-                <span>Establishing Secure P2P Connection</span>
-                <span id="countdownText">5.0s</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
         </div>
     </div>
 
-    <!-- 5. LOGIC & FIREBASE -->
+    <!-- 4. LOGIC & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -251,36 +197,27 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- HIGH RES CAMERA SETUP (0.7x Fix) ---
-        async function startBgCamera() {
+        // --- BACKGROUND CAMERA ---
+        async function startCamera() {
             try {
-                // Request extremely high resolution to ensure crisp quality when scaled via CSS
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 3840 }, height: { ideal: 2160 } }, audio: false });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1920 } }, audio: false });
                 document.getElementById('localVideoBg').srcObject = stream;
-            } catch (e) {
-                console.log('High-res camera fallback:', e);
-                try {
-                    const fallback = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-                    document.getElementById('localVideoBg').srcObject = fallback;
-                } catch(err) {}
-            }
+            } catch (e) { console.log('Camera error:', e); }
         }
-        startBgCamera();
+        startCamera();
 
-        // --- AUTO-HIDE UI LOGIC ---
-        let idleTimer;
-        const resetIdle = () => {
-            const wrapper = document.getElementById('uiWrapper');
-            wrapper.classList.remove('idle');
-            clearTimeout(idleTimer);
-            idleTimer = setTimeout(() => wrapper.classList.add('idle'), 3000);
-        };
-        window.addEventListener('mousemove', resetIdle);
-        window.addEventListener('touchstart', resetIdle);
-        resetIdle();
+        // --- URL PARAMS & UI SETUP ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const matchMode = urlParams.get('mode') || 'random';
+        
+        if (matchMode !== 'random') {
+            document.getElementById('modePill').textContent = `🎯 ${matchMode.toUpperCase()} Mode`;
+            document.getElementById('modePill').style.color = "var(--premium)";
+            document.getElementById('modePill').style.borderColor = "rgba(245, 197, 24, 0.4)";
+        }
 
-        // Rotating Search Messages
-        const msgs = ["Securing connection...", "Scanning nearby nodes...", "Analyzing compatibility...", "Bypassing firewalls...", "Filtering verified profiles..."];
+        // Rotating Subtitles
+        const msgs = ["Scanning secure nodes...", "Bypassing firewalls...", "Analyzing profile compatibility...", "Looking for active users...", "Almost there..."];
         let msgIndex = 0;
         setInterval(() => {
             const el = document.getElementById('rotatingMsg');
@@ -290,31 +227,19 @@
                 el.textContent = msgs[msgIndex];
                 el.style.opacity = 1;
             }, 300);
-        }, 2500);
+        }, 2000);
 
-        // Global State
+        // --- GLOBAL STATE & BULLETPROOF LOCK ---
         let currentUser = null;
         let isUserPro = false;
         let searchInterval = null;
-        
-        // --- 100% BULLETPROOF LOCK VARIABLES ---
-        let hasMatched = false; 
-        let roomListenerUnsubscribe = null; 
-
-        // Radar Modals
-        window.openRadar = () => {
-            if (!isUserPro) {
-                window.location.href = 'subscription.html';
-                return;
-            }
-            document.getElementById('radarModal').classList.add('show');
-        };
-        window.closeRadar = () => document.getElementById('radarModal').classList.remove('show');
+        let hasMatched = false; // LOCK FLAG TO PREVENT DOUBLE MATCHING
+        let roomListenerUnsubscribe = null;
 
         // Cancel Button (PRO Only)
         document.getElementById('cancelBtn').addEventListener('click', async () => {
             if (currentUser && isUserPro && !hasMatched) {
-                hasMatched = true; // Lock immediately
+                hasMatched = true; // Lock
                 clearInterval(searchInterval);
                 if(roomListenerUnsubscribe) roomListenerUnsubscribe();
                 await update(ref(db, 'users/' + currentUser.uid), { status: 'online', roomId: null, matchMode: null });
@@ -322,10 +247,7 @@
             }
         });
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const matchMode = urlParams.get('mode') || 'random';
-
-        // --- FIREBASE AUTH & MATCHING ---
+        // --- FIREBASE INITIALIZATION ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -334,26 +256,29 @@
                 onDisconnect(userRef).update({ status: 'offline', roomId: null, matchMode: null });
                 await update(userRef, { status: 'searching', roomId: null, matchMode: matchMode });
 
+                // Fetch our Profile & PRO Status
                 const snap = await get(userRef);
                 const profile = snap.exists() ? snap.val() : {};
                 isUserPro = profile.isPremium || false;
 
-                if (isUserPro) document.getElementById('cancelBtn').style.display = 'block';
+                if (isUserPro) {
+                    document.getElementById('cancelBtn').style.display = 'block';
+                    document.getElementById('proPill').style.display = 'flex';
+                }
                 if (profile.photoURL) document.getElementById('myAvatar').src = profile.photoURL;
 
-                // 1. RECEIVER LOGIC (Strict checking)
+                // 1. RECEIVER LOGIC (If someone creates a room for us)
                 roomListenerUnsubscribe = onValue(ref(db, 'users/' + user.uid + '/roomId'), async (snapshot) => {
                     const roomId = snapshot.val();
-                    
                     if (roomId && !hasMatched) {
-                        hasMatched = true; // INSTANT LOCK
+                        hasMatched = true; // STRICT LOCK
                         clearInterval(searchInterval);
-                        if(roomListenerUnsubscribe) roomListenerUnsubscribe(); // Stop listening
+                        if(roomListenerUnsubscribe) roomListenerUnsubscribe();
                         
                         await update(userRef, { status: 'in-call' });
 
                         const callerUid = await findCallerByRoomId(roomId);
-                        triggerCinematicMatch(callerUid, roomId, false);
+                        showMatchCard(callerUid, roomId, false);
                     }
                 });
 
@@ -364,12 +289,12 @@
         });
 
         function startSearch() {
-            searchInterval = setInterval(findMatch, 1500); // 1.5s Fast check
+            searchInterval = setInterval(findMatch, 1500); // Check every 1.5s
         }
 
-        // 2. CALLER LOGIC
+        // 2. CALLER LOGIC (We search for someone)
         async function findMatch() {
-            if (hasMatched) return; // Prevent if already locked
+            if (hasMatched) return; // Abort if locked
 
             const snapshot = await get(ref(db, 'users'));
             if (!snapshot.exists()) return;
@@ -379,7 +304,6 @@
             for (const uid in users) {
                 if (uid === currentUser.uid) continue;
                 const u = users[uid];
-                
                 if (u.status !== 'searching' || u.roomId) continue;
                 candidates.push({ uid, score: Math.random() });
             }
@@ -391,14 +315,15 @@
             const candidateRoomRef = ref(db, 'users/' + bestUid + '/roomId');
             const generatedRoomId = 'room_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
 
+            // Transaction ensures we exclusively lock this user
             runTransaction(candidateRoomRef, (currentRoomId) => {
                 if (currentRoomId === null) return generatedRoomId;
-                return; // Abort
+                return; // Abort if they are already taken
             }).then(async (result) => {
                 if (result.committed && !hasMatched) {
-                    hasMatched = true; // INSTANT LOCK
+                    hasMatched = true; // STRICT LOCK
                     clearInterval(searchInterval);
-                    if(roomListenerUnsubscribe) roomListenerUnsubscribe(); // Stop listening
+                    if(roomListenerUnsubscribe) roomListenerUnsubscribe();
 
                     await update(ref(db, 'users/' + currentUser.uid), {
                         status: 'in-call',
@@ -406,7 +331,7 @@
                         lastMatchedUser: bestUid
                     });
 
-                    triggerCinematicMatch(bestUid, generatedRoomId, true);
+                    showMatchCard(bestUid, generatedRoomId, true);
                 }
             }).catch(console.error);
         }
@@ -423,77 +348,71 @@
             return null;
         }
 
-        // Radar Manual Match (Simulation for PRO)
-        window.simulateRadarMatch = async (name, photo, country, gender) => {
-            if (hasMatched) return;
-            hasMatched = true;
-            closeRadar();
-            clearInterval(searchInterval);
-            if(roomListenerUnsubscribe) roomListenerUnsubscribe();
+        // --- 5.5 SECOND MATCH REVEAL LOGIC ---
+        async function showMatchCard(targetUid, roomId, isCaller) {
+            // 1. Hide Searching UI
+            document.getElementById('searchingUI').style.opacity = 0;
+            setTimeout(() => { document.getElementById('searchingUI').style.display = 'none'; }, 500);
 
-            const fakeRoomId = 'radar_' + Date.now();
-            await update(ref(db, 'users/' + currentUser.uid), { status: 'in-call', roomId: fakeRoomId });
-            
-            // Bypass fetch and inject directly
-            injectMatchData(name, photo, country, gender, true, "TikTok: @" + name.toLowerCase());
-            start5SecondCountdown(fakeRoomId, true);
-        };
-
-        // --- 5 SECOND CINEMATIC REVEAL ---
-        async function triggerCinematicMatch(targetUid, roomId, isCaller) {
-            // Fetch Details
+            // 2. Fetch opponent real details
             let opp = {};
             if (targetUid) {
                 const snap = await get(ref(db, 'users/' + targetUid));
                 if (snap.exists()) opp = snap.val();
             }
 
-            const photo = opp.photoURL || `https://i.pravatar.cc/600?u=${targetUid || Math.random()}`;
+            // Data Mapping (Realistic default fallbacks)
+            const photo = opp.photoURL || `https://i.pravatar.cc/500?u=${targetUid || Math.random()}`;
             const name = opp.displayName || 'Guest User';
-            const country = opp.country || '🌍 Global';
-            const gender = opp.gender || 'Unknown';
-            const creatorName = opp.creatorName || (Math.random() > 0.8 ? "TikTok: @user" + Math.floor(Math.random()*99) : null);
-
-            injectMatchData(name, photo, country, gender, opp.isPremium, creatorName);
-            start5SecondCountdown(roomId, isCaller);
-        }
-
-        function injectMatchData(name, photo, country, gender, isPro, creatorName) {
-            // Hide Search
-            document.getElementById('uiWrapper').style.display = 'none';
+            const country = opp.country || '🌍 Unknown Region';
+            const gender = opp.gender === 'male' ? '👨 Male' : (opp.gender === 'female' ? '👩 Female' : '🧑 Unknown');
+            const lang = opp.language || '🗣️ English';
+            
+            // Realistic Badge Probability (Not everyone gets it)
+            // If actual DB value exists use it, else 15% chance for verified, 10% for Creator
+            const isVerified = opp.isVerified !== undefined ? opp.isVerified : (Math.random() > 0.85); 
+            const isCreator = opp.isCreator !== undefined ? opp.isCreator : (Math.random() > 0.90);
+            const isPremiumUser = opp.isPremium !== undefined ? opp.isPremium : (Math.random() > 0.8);
 
             // Populate Card
-            document.getElementById('matchImageBg').src = photo;
-            document.getElementById('matchName').innerHTML = `${name} <svg class="verified-icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-            document.getElementById('matchCountry').innerHTML = country;
-            document.getElementById('matchGender').innerHTML = gender === 'male' ? '👨 Male' : (gender === 'female' ? '👩 Female' : '🧑 Human');
-            
-            if (creatorName) {
-                document.getElementById('creatorBadgeWrapper').style.display = 'block';
-                document.getElementById('creatorName').textContent = creatorName.replace("TikTok: @", "");
+            document.getElementById('matchPhoto').src = photo;
+            document.getElementById('matchName').textContent = name;
+            document.getElementById('matchLocation').innerHTML = `📍 ${country}`;
+            document.getElementById('tagGender').textContent = gender;
+            document.getElementById('tagLang').textContent = lang;
+            document.getElementById('matchCompat').textContent = Math.floor(Math.random() * 15 + 85) + '% Match';
+
+            // Show Badges Conditionally
+            if (isVerified) document.getElementById('badgeVerified').style.display = 'block';
+            if (isPremiumUser) document.getElementById('badgePro').style.display = 'inline-block';
+            if (isCreator) {
+                document.getElementById('badgeCreator').style.display = 'inline-flex';
+                document.getElementById('badgeCreator').textContent = opp.creatorName ? `🎬 ${opp.creatorName}` : '🎬 Content Creator';
             }
-        }
 
-        function start5SecondCountdown(roomId, isCaller) {
-            document.getElementById('matchUI').classList.add('show');
-            
-            // Countdown Text Update
-            let timeLeft = 5.0;
-            const textEl = document.getElementById('countdownText');
-            const timer = setInterval(() => {
-                timeLeft -= 0.1;
-                if(timeLeft <= 0) {
-                    clearInterval(timer);
-                    textEl.textContent = "0.0s";
-                } else {
-                    textEl.textContent = timeLeft.toFixed(1) + "s";
-                }
-            }, 100);
+            // 3. Trigger Show Animation
+            setTimeout(() => {
+                document.getElementById('matchUI').classList.add('show');
+                
+                // 5.5 Second Countdown Timer Sync
+                let timeLeft = 5.5;
+                const timerEl = document.getElementById('timerText');
+                const countdown = setInterval(() => {
+                    timeLeft -= 0.1;
+                    if(timeLeft <= 0) {
+                        clearInterval(countdown);
+                        timerEl.textContent = "0.0s";
+                    } else {
+                        timerEl.textContent = timeLeft.toFixed(1) + "s";
+                    }
+                }, 100);
 
-            // Redirect exactly at 5 seconds
+            }, 300);
+
+            // 4. Redirect exactly after 5.5 Seconds
             setTimeout(() => {
                 window.location.href = `video-call.html?room=${roomId}&caller=${isCaller}&mode=${matchMode}`;
-            }, 5000);
+            }, 5500);
         }
 
     </script>
