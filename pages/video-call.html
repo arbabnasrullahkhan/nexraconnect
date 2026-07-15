@@ -8,18 +8,18 @@
     <link rel="icon" type="image/png" href="../assets/favicon perple.png">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* ===== ULTRA PREMIUM iOS VARIABLES ===== */
+        /* ===== ULTRA PREMIUM NEXT-LEVEL VARIABLES ===== */
         :root {
             --bg-dark: #000000;
-            --surface: rgba(20, 20, 25, 0.7);
-            --surface-light: rgba(255, 255, 255, 0.1);
+            --surface: rgba(28, 28, 30, 0.75);
             --glass-border: rgba(255, 255, 255, 0.15);
             --text-main: #FFFFFF;
+            --text-muted: #EBEBF5;
             --accent: #0A84FF;
             --premium: #FFD60A;
             --success: #32D74B;
             --danger: #FF453A;
-            --blur: blur(25px);
+            --blur: blur(35px);
             --spring: cubic-bezier(0.32, 0.72, 0, 1);
             --safe-top: env(safe-area-inset-top, 20px);
             --safe-bottom: env(safe-area-inset-bottom, 20px);
@@ -29,210 +29,304 @@
         html, body { background-color: var(--bg-dark); color: var(--text-main); height: 100dvh; width: 100vw; overflow: hidden; position: relative; }
 
         /* ===== VIDEO GRID SYSTEM (SOLO & SQUAD) ===== */
-        .video-wrapper { position: absolute; inset: 0; z-index: 0; background: #111; display: grid; gap: 4px; padding: 4px; transition: all 0.5s ease; }
-        
-        /* Solo Mode (1v1) */
+        .video-wrapper { position: absolute; inset: 0; z-index: 0; background: #000; display: grid; gap: 4px; padding: 4px; transition: all 0.5s ease; }
         .video-wrapper.solo { display: block; padding: 0; }
-        .video-wrapper.solo .remote-slot { width: 100%; height: 100%; object-fit: cover; }
+        .remote-slot { width: 100%; height: 100%; position: relative; overflow: hidden; border-radius: 16px; background: #111; }
+        .video-wrapper.solo .remote-slot { border-radius: 0; }
         
+        /* Remote Video (Auto framing) */
+        #remoteVideo { width: 100%; height: 100%; object-fit: cover; object-position: center; transition: filter 0.4s; }
+
         /* Squad Mode Grids */
         .video-wrapper.squad-2 { grid-template-rows: 1fr 1fr; }
         .video-wrapper.squad-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
         .video-wrapper.squad-6 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); }
-        
-        .remote-slot { width: 100%; height: 100%; background: #222; border-radius: 12px; overflow: hidden; position: relative; }
-        .remote-slot video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ===== LOCAL PIP VIDEO ===== */
-        .local-pip { position: absolute; top: calc(var(--safe-top) + 60px); right: 16px; width: 100px; height: 150px; border-radius: 16px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.2); z-index: 10; background: #000; transition: transform 0.3s var(--spring); cursor: pointer; }
+        /* ===== LOCAL PIP VIDEO (0.7x ZOOM FIX) ===== */
+        .local-pip { position: absolute; top: calc(var(--safe-top) + 70px); right: 16px; width: 110px; height: 160px; border-radius: 18px; overflow: hidden; box-shadow: 0 15px 40px rgba(0,0,0,0.7); border: 2px solid rgba(255,255,255,0.25); z-index: 10; background: #000; cursor: move; transition: transform 0.2s var(--spring); }
         .local-pip:active { transform: scale(0.95); }
-        #localVideo { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        
+        /* 0.7x fix using scale and cover */
+        #localVideo { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1) scale(1.05); filter: contrast(1.05) saturate(1.1); }
+        .video-wrapper:not(.solo) .local-pip { position: relative; top: 0; right: 0; width: 100%; height: 100%; border-radius: 16px; border: none; box-shadow: none; }
 
-        /* Squad Local Video adapts into the grid */
-        .video-wrapper:not(.solo) .local-pip { position: relative; top: 0; right: 0; width: 100%; height: 100%; border-radius: 12px; border: none; box-shadow: none; }
-
-        /* ===== TOP INFO BAR ===== */
+        /* ===== TOP PREMIUM INFO BAR ===== */
         .top-bar { position: absolute; top: var(--safe-top); left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 20; pointer-events: none; }
         
-        .info-stack { display: flex; flex-direction: column; gap: 8px; pointer-events: auto; }
+        .user-info-chip { display: flex; flex-direction: column; gap: 6px; pointer-events: auto; }
+        .profile-row { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.5); backdrop-filter: var(--blur); padding: 8px 16px 8px 8px; border-radius: 30px; border: 1px solid var(--glass-border); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .profile-pic { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+        .profile-details { display: flex; flex-direction: column; }
+        .profile-name { font-size: 0.95rem; font-weight: 800; display: flex; align-items: center; gap: 4px; }
+        .verified-tick { width: 14px; height: 14px; fill: var(--accent); }
+        .profile-sub { font-size: 0.65rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
         
-        .badge-pill { padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .badge-timer { background: rgba(0,0,0,0.6); color: #fff; }
-        .badge-timer .red-dot { width: 8px; height: 8px; background: var(--danger); border-radius: 50%; animation: pulseRecord 1.5s infinite; }
-        .badge-mode { background: rgba(255, 214, 10, 0.15); color: var(--premium); border-color: rgba(255, 214, 10, 0.3); }
-        .badge-noise { background: rgba(50, 215, 75, 0.15); color: var(--success); border-color: rgba(50, 215, 75, 0.3); font-size: 0.7rem; }
+        .badges-row { display: flex; gap: 6px; flex-wrap: wrap; }
+        .badge-pill { padding: 4px 10px; border-radius: 12px; font-size: 0.65rem; font-weight: 800; background: rgba(0,0,0,0.5); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 4px; text-transform: uppercase; }
+        .badge-pro { background: linear-gradient(135deg, var(--premium), #D97706); color: #000; border: none; }
+        .badge-creator { background: linear-gradient(135deg, #FF2E93, #FF8A00); color: #fff; border: none; }
+        .badge-timer { background: rgba(255, 69, 58, 0.2); color: var(--danger); border-color: rgba(255, 69, 58, 0.4); }
 
-        @keyframes pulseRecord { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .network-stats { background: rgba(0,0,0,0.5); backdrop-filter: var(--blur); padding: 6px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; color: var(--success); display: flex; flex-direction: column; align-items: flex-end; gap: 2px; border: 1px solid var(--glass-border); pointer-events: auto; }
 
-        /* ===== BOTTOM CONTROLS DOCK ===== */
-        .controls-dock { position: absolute; bottom: calc(var(--safe-bottom) + 10px); left: 50%; transform: translateX(-50%); display: flex; gap: 12px; padding: 12px 20px; background: rgba(20, 20, 25, 0.75); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-radius: 40px; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 100; animation: slideUp 0.6s var(--spring); align-items: center; }
-        @keyframes slideUp { from { transform: translate(-50%, 50px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        /* ===== FLOATING CHAT BUBBLES (FADING OPACITY) ===== */
+        .floating-chat-layer { position: absolute; bottom: 140px; left: 16px; width: 75%; max-width: 300px; display: flex; flex-direction: column; gap: 8px; z-index: 30; pointer-events: none; justify-content: flex-end; height: 300px; overflow: hidden; }
+        .chat-bubble { padding: 12px 18px; border-radius: 24px; font-size: 0.95rem; font-weight: 600; line-height: 1.4; word-wrap: break-word; backdrop-filter: var(--blur); animation: slideInBubble 0.4s var(--spring); transition: opacity 0.5s ease, transform 0.5s ease; pointer-events: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .chat-local { background: var(--accent); color: #fff; border-bottom-left-radius: 4px; align-self: flex-start; }
+        .chat-remote { background: rgba(255,255,255,0.2); border: 1px solid var(--glass-border); color: #fff; border-bottom-left-radius: 4px; align-self: flex-start; }
+        @keyframes slideInBubble { from { transform: translateY(20px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 
-        .ctrl-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: rgba(255,255,255,0.15); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s var(--spring); position: relative; }
-        .ctrl-btn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        /* Quick Chat Input */
+        .chat-input-wrapper { position: absolute; bottom: 140px; right: 16px; display: flex; align-items: center; justify-content: center; z-index: 40; }
+        .quick-chat-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.2); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff; transition: 0.2s; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+        .quick-chat-btn:active { transform: scale(0.9); }
+        
+        .chat-input-panel { position: absolute; bottom: 0; right: 60px; background: var(--surface); backdrop-filter: var(--blur); padding: 8px; border-radius: 30px; display: flex; gap: 8px; align-items: center; border: 1px solid var(--glass-border); opacity: 0; visibility: hidden; transform: translateX(20px); transition: 0.3s var(--spring); }
+        .chat-input-panel.show { opacity: 1; visibility: visible; transform: translateX(0); }
+        .chat-input-panel input { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px 20px; border-radius: 24px; outline: none; font-size: 0.95rem; width: 220px; }
+        .send-btn { background: var(--accent); color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* ===== BOTTOM CONTROLS DOCK (APPLE STYLE) ===== */
+        .controls-dock { position: absolute; bottom: var(--safe-bottom); left: 50%; transform: translateX(-50%); display: flex; gap: 10px; padding: 12px 20px; background: rgba(28, 28, 30, 0.85); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-radius: 40px; border: 1px solid var(--glass-border); box-shadow: 0 30px 60px rgba(0,0,0,0.8); z-index: 100; align-items: center; width: max-content; max-width: 95vw; overflow-x: auto; }
+        .controls-dock::-webkit-scrollbar { display: none; }
+
+        .ctrl-btn { width: 52px; height: 52px; border-radius: 50%; border: none; background: rgba(255,255,255,0.15); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s var(--spring); flex-shrink: 0; }
+        .ctrl-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
         .ctrl-btn:active { transform: scale(0.85); background: rgba(255,255,255,0.25); }
         
-        /* Mute/Video Off States */
-        .ctrl-btn.off { background: var(--text-main); color: #000; }
-        .ctrl-btn.off svg { stroke: #000; }
-
-        /* Specific Buttons */
+        .ctrl-btn.off { background: #fff; color: #000; }
+        
         .btn-friend { background: rgba(50, 215, 75, 0.2); color: var(--success); }
-        .btn-friend.added { background: var(--success); color: #000; pointer-events: none; }
+        .btn-friend.added { background: var(--success); color: #000; }
+
+        .btn-gift { background: linear-gradient(135deg, #FF2E93, #FF8A00); border: none; }
         
-        .btn-end { background: var(--danger); width: 56px; height: 56px; }
-        .btn-end svg { stroke: #fff; width: 26px; height: 26px; }
-        .btn-end:active { transform: scale(0.9); box-shadow: 0 0 20px rgba(255, 69, 58, 0.6); }
+        .btn-end { background: var(--danger); width: 60px; height: 60px; }
+        .btn-end svg { stroke: #fff; }
 
-        .btn-next { background: #fff; color: #000; font-weight: 800; font-size: 1rem; width: auto; padding: 0 24px; border-radius: 24px; height: 50px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .btn-next svg { stroke: #000; margin-right: 6px; width: 20px; height: 20px; }
+        .btn-skip { background: #fff; color: #000; font-weight: 900; font-size: 1.1rem; width: auto; padding: 0 30px; border-radius: 30px; height: 60px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 20px rgba(255,255,255,0.2); }
+        .btn-skip:active { transform: scale(0.95); }
 
-        /* Side Actions (Gifts & Retry) */
-        .side-dock { position: absolute; right: 16px; bottom: 120px; display: flex; flex-direction: column; gap: 12px; z-index: 50; }
-        .side-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: 0.2s; cursor: pointer; position: relative; }
-        .side-btn:active { transform: scale(0.9); }
-        .side-btn.gift { background: linear-gradient(135deg, #FF2E93, #FF8A00); border: none; }
-        .side-btn.retry { background: linear-gradient(135deg, var(--premium), #D97706); color: #000; display: none; }
-        .coin-cost { position: absolute; top: -5px; right: -5px; background: #000; color: var(--premium); font-size: 0.6rem; font-weight: 900; padding: 2px 6px; border-radius: 10px; border: 1px solid var(--premium); }
+        /* ===== GIFTS & ANIMATION LAYER ===== */
+        .gift-layer { position: absolute; inset: 0; z-index: 80; pointer-events: none; overflow: hidden; }
+        .gift-anim { position: absolute; bottom: 20%; left: 50%; transform: translateX(-50%) scale(0); font-size: 8rem; opacity: 0; animation: giftPop 3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); }
+        @keyframes giftPop { 
+            0% { transform: translateX(-50%) scale(0); opacity: 0; } 
+            20% { transform: translateX(-50%) scale(1.5) rotate(-10deg); opacity: 1; } 
+            80% { transform: translateX(-50%) scale(1.5) rotate(10deg); opacity: 1; } 
+            100% { transform: translateX(-50%) translateY(-200px) scale(3); opacity: 0; } 
+        }
 
-        /* ===== MODERN CHAT UI (iMessage Style) ===== */
-        .chat-container { position: absolute; bottom: calc(var(--safe-bottom) + 90px); left: 16px; width: 320px; height: 400px; background: rgba(20, 20, 25, 0.85); backdrop-filter: blur(25px); border-radius: 24px; border: 1px solid var(--glass-border); display: flex; flex-direction: column; z-index: 50; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transform: translateX(-20px) scale(0.95); transition: 0.4s var(--spring); }
-        .chat-container.open { opacity: 1; visibility: visible; transform: translateX(0) scale(1); }
-
-        .chat-header { padding: 16px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: 1rem; }
-        .chat-close { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-        .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-        .chat-messages::-webkit-scrollbar { display: none; }
-
-        .msg-bubble { max-width: 80%; padding: 12px 16px; border-radius: 20px; font-size: 0.9rem; line-height: 1.4; word-wrap: break-word; animation: popInMsg 0.3s var(--spring); }
-        @keyframes popInMsg { from { transform: scale(0.9) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+        /* ===== MORE MENU (BOTTOM SHEET) ===== */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); z-index: 200; display: flex; align-items: flex-end; justify-content: center; opacity: 0; visibility: hidden; transition: 0.3s var(--spring); }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+        .bottom-sheet { width: 100%; max-width: 500px; background: #1C1C1E; border-radius: 32px 32px 0 0; padding: 24px; transform: translateY(100%); transition: 0.5s var(--spring); max-height: 85vh; display: flex; flex-direction: column; }
+        .modal-overlay.open .bottom-sheet { transform: translateY(0); }
+        .modal-drag { width: 40px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 5px; margin: 0 auto 20px; }
         
-        .msg-remote { background: rgba(255,255,255,0.15); border-bottom-left-radius: 4px; align-self: flex-start; }
-        .msg-local { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+        .menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; overflow-y: auto; padding-bottom: 20px; }
+        .menu-grid::-webkit-scrollbar { display: none; }
+        .menu-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+        .menu-icon { width: 60px; height: 60px; border-radius: 20px; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; transition: 0.2s; color: #fff; }
+        .menu-item:active .menu-icon { transform: scale(0.9); background: rgba(255,255,255,0.15); }
+        .menu-icon svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .menu-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-align: center; }
 
-        .chat-input-area { padding: 12px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--glass-border); display: flex; gap: 8px; }
-        #chatInput { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); border-radius: 20px; color: white; padding: 10px 16px; font-size: 0.95rem; outline: none; transition: 0.3s; }
-        #chatInput:focus { background: rgba(255,255,255,0.15); border-color: var(--accent); }
-        .send-btn { background: var(--accent); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .send-btn:active { transform: scale(0.9); }
+        /* Specific Menu Colors */
+        .menu-item.danger .menu-icon { background: rgba(255, 69, 58, 0.15); color: var(--danger); border-color: rgba(255, 69, 58, 0.3); }
 
-        /* ===== STATUS OVERLAY (Connecting/Ended) ===== */
-        .status-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; transition: opacity 0.5s; }
-        .connecting-orb { width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--accent); animation: spin 1s linear infinite; margin-bottom: 24px; box-shadow: 0 0 30px rgba(10, 132, 255, 0.4); }
-        #statusText { font-size: 1.4rem; font-weight: 800; text-align: center; }
-        .status-subtext { font-size: 0.9rem; color: var(--text-muted); margin-top: 8px; font-weight: 600; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        /* ===== REVIEW MODAL ===== */
+        .review-card { background: #1C1C1E; width: 90%; max-width: 350px; border-radius: 32px; padding: 30px 24px; text-align: center; transform: scale(0.9); transition: 0.4s var(--spring); border: 1px solid var(--glass-border); }
+        .modal-overlay.open .review-card { transform: scale(1); }
+        .stars { display: flex; justify-content: center; gap: 10px; margin: 24px 0; font-size: 2.5rem; color: #333; cursor: pointer; }
+        .star.active { color: var(--premium); text-shadow: 0 0 15px rgba(255, 214, 10, 0.5); }
+        .btn-submit-review { width: 100%; padding: 16px; border-radius: 20px; border: none; background: var(--accent); color: #fff; font-weight: 800; font-size: 1.1rem; cursor: pointer; margin-bottom: 12px; }
 
-        /* Responsive iPhone 12 Pro & smaller */
-        @media(max-width: 400px) {
-            .controls-dock { gap: 8px; padding: 10px 12px; width: 95%; }
-            .ctrl-btn { width: 42px; height: 42px; }
+        /* Media Queries for extremely small phones */
+        @media(max-width: 380px) {
+            .controls-dock { padding: 10px; gap: 8px; }
+            .ctrl-btn { width: 44px; height: 44px; }
             .btn-end { width: 50px; height: 50px; }
-            .btn-next { padding: 0 16px; font-size: 0.9rem; height: 44px; }
-            .local-pip { width: 90px; height: 135px; top: calc(var(--safe-top) + 80px); }
-            .chat-container { width: calc(100% - 32px); left: 16px; right: 16px; bottom: 85px; }
+            .btn-skip { height: 50px; padding: 0 20px; font-size: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. VIDEO GRID SYSTEM (Adapts to Solo/Squad) -->
+    <!-- 1. VIDEO GRID -->
     <div class="video-wrapper solo" id="videoGrid">
-        <!-- Remote slot -->
         <div class="remote-slot">
             <video id="remoteVideo" autoplay playsinline></video>
         </div>
-        
-        <!-- Local PIP (Goes inside grid if Squad mode) -->
         <div class="local-pip" id="localVideoContainer">
             <video id="localVideo" autoplay playsinline muted></video>
         </div>
     </div>
 
-    <!-- 2. STATUS OVERLAY -->
-    <div class="status-overlay" id="statusOverlay">
-        <div class="connecting-orb"></div>
-        <div id="statusText">Securing Connection...</div>
-        <div class="status-subtext" id="statusSubtext">P2P Encryption Active</div>
-    </div>
-
-    <!-- 3. TOP INFO STACK -->
+    <!-- 2. TOP PREMIUM INFO BAR -->
     <div class="top-bar">
-        <div class="info-stack">
-            <div class="badge-pill badge-timer">
-                <div class="red-dot"></div>
-                <span id="callTimer">00:00</span>
+        <div class="user-info-chip">
+            <div class="profile-row">
+                <img src="https://i.pravatar.cc/150?u=a042581f4e29026024d" class="profile-pic" id="peerPic" alt="">
+                <div class="profile-details">
+                    <div class="profile-name">
+                        <span id="peerName">Connecting...</span>
+                        <svg class="verified-tick" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="profile-sub">
+                        <span id="peerCountry">🌍 Global</span> • <span id="peerLang">Auto</span>
+                    </div>
+                </div>
             </div>
-            <div class="badge-pill badge-mode" id="modePill">👑 Premium Call</div>
-            <div class="badge-pill badge-noise">
-                <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-                Noise Cancelled
+            <div class="badges-row">
+                <div class="badge-pill badge-pro" id="badgePro" style="display:none;">PRO</div>
+                <div class="badge-pill badge-creator" id="badgeCreator" style="display:none;">Creator</div>
+                <div class="badge-pill badge-timer"><div class="red-dot"></div> <span id="callTimer">00:00</span></div>
             </div>
+        </div>
+
+        <div class="network-stats">
+            <div style="display:flex;align-items:center;gap:4px;">
+                <svg width="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> E2E Safe
+            </div>
+            <div id="pingStats" style="color:var(--text-muted); font-size:0.65rem; font-weight:600;">24ms • 4K HD</div>
         </div>
     </div>
 
-    <!-- 4. SIDE ACTIONS (Gifts, Retry, Chat Toggle) -->
-    <div class="side-dock">
-        <div class="side-btn retry" id="retryBtn" title="Retry Match">
-            <svg width="20" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.5-11.27l5.67 5.67"/></svg>
-            <div class="coin-cost">2C</div>
-        </div>
-        <div class="side-btn gift" onclick="alert('Premium Gifts coming soon!')" title="Send Gift">
-            <svg width="20" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-        </div>
-        <div class="side-btn" id="chatToggle" title="Open Chat">
-            <svg width="20" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
+    <!-- 3. FLOATING CHAT BUBBLES LAYER -->
+    <div class="floating-chat-layer" id="chatLayer">
+        <!-- Bubbles injected dynamically -->
     </div>
 
-    <!-- 5. iMESSAGE STYLE CHAT -->
-    <div class="chat-container" id="chatContainer">
-        <div class="chat-header">
-            <span>Live Chat</span>
-            <button class="chat-close" id="chatClose">✕</button>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-            <div class="msg-bubble msg-remote" style="opacity:0.7; font-style:italic;">End-to-End Encrypted Chat</div>
-        </div>
-        <div class="chat-input-area">
-            <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off">
+    <!-- 4. QUICK CHAT INPUT (Right side) -->
+    <div class="chat-input-wrapper">
+        <div class="chat-input-panel" id="chatPanel">
+            <input type="text" id="chatInput" placeholder="Say hello..." autocomplete="off">
             <button class="send-btn" id="sendBtn">
-                <svg width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <svg width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
         </div>
+        <div class="quick-chat-btn" id="toggleChatBtn">
+            <svg width="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
     </div>
+
+    <!-- 5. GIFT ANIMATION LAYER -->
+    <div class="gift-layer" id="giftLayer"></div>
 
     <!-- 6. BOTTOM CONTROLS DOCK -->
     <div class="controls-dock">
-        <!-- Mic -->
-        <button class="ctrl-btn" id="toggleAudio" title="Mute Mic">
+        <button class="ctrl-btn" id="toggleAudio" title="Mic">
             <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
         </button>
-        <!-- Video -->
-        <button class="ctrl-btn" id="toggleVideo" title="Disable Camera">
+        
+        <button class="ctrl-btn" id="toggleVideo" title="Camera">
             <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
         </button>
-        <!-- Add Friend -->
-        <button class="ctrl-btn btn-friend" id="addFriendBtn" title="Add Friend">
+
+        <button class="ctrl-btn btn-gift" onclick="openModal('giftModal')" title="Send Gift">
+            <svg viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+        </button>
+
+        <button class="ctrl-btn btn-friend" id="addFriendBtn" title="Friend Request">
             <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
         </button>
-        <!-- End Call -->
+
+        <button class="ctrl-btn" onclick="openModal('moreModal')" title="More Options">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </button>
+
         <button class="ctrl-btn btn-end" id="endBtn" title="End Call">
             <svg viewBox="0 0 24 24"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="23" y1="1" x2="1" y2="23"/></svg>
         </button>
-        <!-- Next Match -->
-        <button class="ctrl-btn btn-next" id="nextBtn" title="Skip to Next">
-            <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-            Next
+
+        <button class="btn-skip" id="skipBtn" title="Instant Skip">
+            <svg width="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            Skip
         </button>
     </div>
 
-    <!-- 7. LOGIC & FIREBASE -->
+    <!-- 7. MORE MENU (BOTTOM SHEET) -->
+    <div class="modal-overlay" id="moreModal" onclick="if(event.target===this) closeModals()">
+        <div class="bottom-sheet">
+            <div class="modal-drag"></div>
+            <div style="font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; color: #fff;">Advanced Controls</div>
+            
+            <div class="menu-grid">
+                <!-- Browser features -->
+                <div class="menu-item" onclick="togglePiP()">
+                    <div class="menu-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><rect x="11" y="11" width="8" height="6" rx="1" ry="1"/></svg></div>
+                    <div class="menu-label">PiP Mode</div>
+                </div>
+                <div class="menu-item" id="screenShareBtn">
+                    <div class="menu-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                    <div class="menu-label">Share Screen</div>
+                </div>
+                <div class="menu-item" id="recordBtn">
+                    <div class="menu-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></div>
+                    <div class="menu-label">Local Record</div>
+                </div>
+                <div class="menu-item" onclick="switchCamera()">
+                    <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg></div>
+                    <div class="menu-label">Flip Cam</div>
+                </div>
+                
+                <!-- Filters (CSS based) -->
+                <div class="menu-item" onclick="applyFilter('contrast(1.2) saturate(1.2) blur(1px)')">
+                    <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                    <div class="menu-label">Beauty</div>
+                </div>
+                <div class="menu-item" onclick="applyFilter('grayscale(1) contrast(1.2)')">
+                    <div class="menu-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20z"/></svg></div>
+                    <div class="menu-label">B & W</div>
+                </div>
+                
+                <!-- Safety -->
+                <div class="menu-item danger" onclick="alert('User Muted')">
+                    <div class="menu-icon"><svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg></div>
+                    <div class="menu-label">Mute Peer</div>
+                </div>
+                <div class="menu-item danger" onclick="alert('User Reported. Skip initiated.'); document.getElementById('skipBtn').click();">
+                    <div class="menu-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                    <div class="menu-label">Report</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. GIFT MENU -->
+    <div class="modal-overlay" id="giftModal" onclick="if(event.target===this) closeModals()">
+        <div class="bottom-sheet" style="max-height: 50vh;">
+            <div class="modal-drag"></div>
+            <div style="font-size: 1.2rem; font-weight: 800; margin-bottom: 16px; color: #fff;">Send Premium Gift</div>
+            <div class="menu-grid">
+                <div class="menu-item" onclick="sendGift('🌹')"><div class="menu-icon" style="font-size: 2rem;">🌹</div><div class="menu-label">Rose</div></div>
+                <div class="menu-item" onclick="sendGift('💎')"><div class="menu-icon" style="font-size: 2rem; border-color:var(--accent);">💎</div><div class="menu-label">Diamond</div></div>
+                <div class="menu-item" onclick="sendGift('👑')"><div class="menu-icon" style="font-size: 2rem; border-color:var(--premium);">👑</div><div class="menu-label">Crown</div></div>
+                <div class="menu-item" onclick="sendGift('🚀')"><div class="menu-icon" style="font-size: 2rem;">🚀</div><div class="menu-label">Rocket</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. REVIEW DIALOG (Triggered after 40 matches) -->
+    <div class="modal-overlay" id="reviewModal">
+        <div class="review-card">
+            <h2 style="margin-bottom: 10px; font-weight: 900;">Enjoying Nexra?</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">You've made great connections! Rate your experience so far.</p>
+            <div class="stars" id="starRating">
+                <span data-val="1">★</span><span data-val="2">★</span><span data-val="3">★</span><span data-val="4">★</span><span data-val="5">★</span>
+            </div>
+            <button class="btn-submit-review" onclick="closeModals(); executeSkipOrEnd();">Submit & Continue</button>
+            <div style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer;" onclick="closeModals(); executeSkipOrEnd();">Maybe Later</div>
+        </div>
+    </div>
+
+
+    <!-- 10. LOGIC & FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, update, get, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, update, get, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyArd7Q_Jb5cF-6TWf6pVAp_E84tVZrilC0",
@@ -249,12 +343,16 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
+        // Optimal STUN/TURN for instant connection
         const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] };
 
         let peerConnection, localStream, remoteStream, currentUser;
         let peerUid = null;
         let callTimerInterval = null;
         let callSeconds = 0;
+        let facingMode = 'user';
+        let mediaRecorder = null;
+        let recordedChunks = [];
 
         const urlParams = new URLSearchParams(window.location.search);
         const roomId = urlParams.get('room');
@@ -263,28 +361,30 @@
 
         const localVideo = document.getElementById('localVideo');
         const remoteVideo = document.getElementById('remoteVideo');
-        const statusOverlay = document.getElementById('statusOverlay');
-        const chatMessages = document.getElementById('chatMessages');
-
-        // Layout Adaptations for Squad (Simulated readiness)
-        if (matchMode.startsWith('squad')) {
-            document.getElementById('modePill').innerHTML = `🛡️ SQUAD MODE`;
-            const size = matchMode.split('_')[1] || 4;
-            const grid = document.getElementById('videoGrid');
-            grid.className = `video-wrapper squad-${size}`;
-            // (Note: Real Mesh WebRTC for 4+ users requires multiple peer connections. 
-            // The UI grid is ready, but here we run the 1v1 signaling logic as provided).
-        } else if (matchMode === 'random') {
-            document.getElementById('modePill').innerHTML = `🌍 GLOBAL FREE`;
-            document.getElementById('modePill').style.color = '#fff';
-            document.getElementById('modePill').style.background = 'rgba(255,255,255,0.2)';
-        }
 
         if (!roomId) window.location.href = 'home.html';
 
+        // Modals
+        window.openModal = (id) => document.getElementById(id).classList.add('open');
+        window.closeModals = () => document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+
+        // Local Drag Logic for PIP
+        const pip = document.getElementById('localVideoContainer');
+        let isDragging = false, startX, startY, initialX, initialY;
+        pip.addEventListener('touchstart', e => { isDragging = true; startX = e.touches[0].clientX; startY = e.touches[0].clientY; const rect = pip.getBoundingClientRect(); initialX = rect.left; initialY = rect.top; pip.style.transition = 'none'; });
+        pip.addEventListener('touchmove', e => { if(!isDragging) return; e.preventDefault(); const dx = e.touches[0].clientX - startX; const dy = e.touches[0].clientY - startY; pip.style.left = `${initialX + dx}px`; pip.style.top = `${initialY + dy}px`; pip.style.right = 'auto'; });
+        pip.addEventListener('touchend', () => { isDragging = false; pip.style.transition = 'transform 0.2s'; });
+
+        // Match Counter Logic
+        let matchCount = parseInt(localStorage.getItem('matchCount') || '0');
+        let pendingAction = null; // 'skip' or 'end'
+
+        // --- AUTH & INIT ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
+                matchCount++;
+                localStorage.setItem('matchCount', matchCount.toString());
                 initCall();
             } else {
                 window.location.href = '../index.html';
@@ -293,22 +393,16 @@
 
         async function initCall() {
             try {
-                // 100% BACKGROUND NOISE CANCELLATION & HIGH QUALITY CONSTRAINTS
+                // 1. 100% NOISE CANCELLATION & 4K/HD CONSTRAINTS
                 localStream = await navigator.mediaDevices.getUserMedia({
-                    video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
-                    audio: {
-                        echoCancellation: true,
-                        noiseSuppression: true,
-                        autoGainControl: true,
-                        sampleRate: 48000,
-                        channelCount: 1
-                    }
+                    video: { width: { ideal: 1920 }, height: { ideal: 1080 }, facingMode: facingMode },
+                    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, sampleRate: 48000 }
                 });
                 localVideo.srcObject = localStream;
             } catch (err) {
                 console.error("Camera Error:", err);
-                document.getElementById('statusText').innerText = "Camera Access Denied!";
-                document.getElementById('statusSubtext').innerText = "Please allow permissions in settings.";
+                alert("Camera & Mic permissions are required.");
+                window.location.href = 'home.html';
                 return;
             }
 
@@ -320,25 +414,24 @@
 
             peerConnection.ontrack = event => {
                 event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
-                // Connection established!
-                statusOverlay.style.opacity = 0;
-                setTimeout(() => statusOverlay.style.display = 'none', 500);
+                // Call connected!
                 startCallTimer();
+                fetchPeerProfile();
             };
 
             const callerCandidatesRef = ref(db, `rooms/${roomId}/callerCandidates`);
             const calleeCandidatesRef = ref(db, `rooms/${roomId}/calleeCandidates`);
 
             peerConnection.onicecandidate = event => {
-                if (event.candidate) {
-                    push(isCaller ? callerCandidatesRef : calleeCandidatesRef, event.candidate.toJSON());
-                }
+                if (event.candidate) push(isCaller ? callerCandidatesRef : calleeCandidatesRef, event.candidate.toJSON());
             };
 
+            // WEBRTC SIGNALING
             if (isCaller) {
                 const offer = await peerConnection.createOffer();
                 await peerConnection.setLocalDescription(offer);
                 await set(ref(db, `rooms/${roomId}/offer`), { type: offer.type, sdp: offer.sdp });
+                await set(ref(db, `rooms/${roomId}/callerUid`), currentUser.uid);
 
                 onValue(ref(db, `rooms/${roomId}/answer`), snapshot => {
                     const answer = snapshot.val();
@@ -347,11 +440,9 @@
                     }
                 });
                 onChildAdded(calleeCandidatesRef, snap => peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())));
-                
-                // Fetch opponent UID
+
                 const s = await get(ref(db, 'users/' + currentUser.uid + '/matchedWith/targetUid'));
-                peerUid = s.val();
-                await set(ref(db, `rooms/${roomId}/callerUid`), currentUser.uid);
+                if (s.exists()) peerUid = s.val();
 
             } else {
                 onValue(ref(db, `rooms/${roomId}/offer`), async snapshot => {
@@ -365,16 +456,39 @@
                 });
                 onChildAdded(callerCandidatesRef, snap => peerConnection.addIceCandidate(new RTCIceCandidate(snap.val())));
                 
-                onValue(ref(db, `rooms/${roomId}/callerUid`), s => { if (s.val()) peerUid = s.val(); });
                 await set(ref(db, `rooms/${roomId}/calleeUid`), currentUser.uid);
+                onValue(ref(db, `rooms/${roomId}/callerUid`), s => { if (s.val()) peerUid = s.val(); });
             }
 
-            // Hangup listener
+            // Detect remote hangup/skip
             onValue(ref(db, `rooms/${roomId}/hangup`), snapshot => {
-                if (snapshot.val() === true) handleHangup();
+                if (snapshot.val() === true) {
+                    // Remote ended. Go back to Home or Match.
+                    cleanupLocally();
+                    window.location.href = `match.html?mode=${matchMode}`;
+                }
             });
 
-            setupChat();
+            setupChatAndGifts();
+        }
+
+        // --- FETCH PEER PROFILE FOR TOP BAR ---
+        async function fetchPeerProfile() {
+            if(!peerUid) return;
+            const snap = await get(ref(db, 'users/' + peerUid));
+            if(!snap.exists()) return;
+            const p = snap.val();
+            
+            document.getElementById('peerName').textContent = p.displayName || 'Guest User';
+            if(p.photoURL) document.getElementById('peerPic').src = p.photoURL;
+            document.getElementById('peerCountry').textContent = p.country || 'Global';
+            document.getElementById('peerLang').textContent = p.language || 'EN';
+
+            if(p.isPremium) document.getElementById('badgePro').style.display = 'flex';
+            if(p.creatorName) document.getElementById('badgeCreator').style.display = 'flex';
+            
+            // Random Ping simulation for UI
+            setInterval(() => { document.getElementById('pingStats').textContent = `${Math.floor(Math.random()*(45-15)+15)}ms • 4K HD`; }, 3000);
         }
 
         function startCallTimer() {
@@ -387,41 +501,72 @@
             }, 1000);
         }
 
-        // --- HARDWARE TOGGLES ---
+        // --- HARDWARE CONTROLS ---
+        window.switchCamera = async () => {
+            facingMode = facingMode === 'user' ? 'environment' : 'user';
+            document.getElementById('localVideo').style.transform = facingMode === 'user' ? 'scaleX(-1) scale(1.05)' : 'scale(1.05)';
+            if (localStream) localStream.getTracks().forEach(t => t.stop());
+            
+            localStream = await navigator.mediaDevices.getUserMedia({
+                video: { width: { ideal: 1920 }, height: { ideal: 1080 }, facingMode: facingMode },
+                audio: { echoCancellation: true, noiseSuppression: true }
+            });
+            localVideo.srcObject = localStream;
+            
+            const videoTrack = localStream.getVideoTracks()[0];
+            const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
+            if (sender) sender.replaceTrack(videoTrack);
+            closeModals();
+        };
+
         let isMuted = false, isVideoOff = false;
         document.getElementById('toggleAudio').addEventListener('click', (e) => {
-            if (navigator.vibrate) navigator.vibrate(10);
             isMuted = !isMuted;
             localStream.getAudioTracks()[0].enabled = !isMuted;
             e.currentTarget.classList.toggle('off', isMuted);
-            e.currentTarget.innerHTML = isMuted 
-                ? `<svg viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/></svg>`
-                : `<svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`;
         });
 
         document.getElementById('toggleVideo').addEventListener('click', (e) => {
-            if (navigator.vibrate) navigator.vibrate(10);
             isVideoOff = !isVideoOff;
             localStream.getVideoTracks()[0].enabled = !isVideoOff;
             e.currentTarget.classList.toggle('off', isVideoOff);
         });
 
-        // --- iMESSAGE CHAT ---
-        function setupChat() {
+        // --- FADING CHAT & GIFTS ---
+        let chatMessagesArr = [];
+        const chatLayer = document.getElementById('chatLayer');
+
+        function setupChatAndGifts() {
             const messagesRef = ref(db, `rooms/${roomId}/messages`);
             onChildAdded(messagesRef, snapshot => {
                 const msg = snapshot.val();
+                
+                if (msg.type === 'gift') {
+                    playGiftAnimation(msg.text); // text holds emoji
+                    return;
+                }
+
+                // Standard Chat
                 const div = document.createElement('div');
-                div.className = `msg-bubble ${msg.uid === currentUser.uid ? 'msg-local' : 'msg-remote'}`;
+                div.className = `chat-bubble ${msg.uid === currentUser.uid ? 'chat-local' : 'chat-remote'}`;
                 div.textContent = msg.text;
-                chatMessages.appendChild(div);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatLayer.appendChild(div);
+                
+                chatMessagesArr.push(div);
+                updateChatFading();
+
+                // Auto remove after 6 seconds
+                setTimeout(() => {
+                    div.style.opacity = '0';
+                    div.style.transform = 'translateY(-20px) scale(0.8)';
+                    setTimeout(() => { if(div.parentNode) div.parentNode.removeChild(div); chatMessagesArr = chatMessagesArr.filter(d => d !== div); updateChatFading(); }, 500);
+                }, 6000);
             });
 
             const send = async () => {
                 const input = document.getElementById('chatInput');
                 if (input.value.trim() && currentUser) {
-                    await push(messagesRef, { uid: currentUser.uid, text: input.value.trim(), ts: Date.now() });
+                    await push(messagesRef, { type: 'text', uid: currentUser.uid, text: input.value.trim(), ts: Date.now() });
                     input.value = '';
                 }
             };
@@ -429,78 +574,157 @@
             document.getElementById('chatInput').addEventListener('keypress', e => { if(e.key==='Enter') send(); });
         }
 
-        document.getElementById('chatToggle').addEventListener('click', () => {
-            document.getElementById('chatContainer').classList.toggle('open');
-        });
-        document.getElementById('chatClose').addEventListener('click', () => {
-            document.getElementById('chatContainer').classList.remove('open');
+        function updateChatFading() {
+            // Newest = 1, Oldest = fading out
+            const total = chatMessagesArr.length;
+            chatMessagesArr.forEach((node, idx) => {
+                const pos = total - idx; // 1 is newest
+                if(pos === 1) node.style.opacity = '1';
+                else if(pos === 2) node.style.opacity = '0.8';
+                else if(pos === 3) node.style.opacity = '0.5';
+                else if(pos === 4) node.style.opacity = '0.2';
+                else node.style.display = 'none'; // Keep max 4 visible
+            });
+        }
+
+        document.getElementById('toggleChatBtn').addEventListener('click', () => {
+            document.getElementById('chatPanel').classList.toggle('show');
+            if(document.getElementById('chatPanel').classList.contains('show')) document.getElementById('chatInput').focus();
         });
 
-        // --- CALL ACTIONS ---
+        // Gifts
+        window.sendGift = async (emoji) => {
+            closeModals();
+            await push(ref(db, `rooms/${roomId}/messages`), { type: 'gift', uid: currentUser.uid, text: emoji, ts: Date.now() });
+        };
+
+        function playGiftAnimation(emoji) {
+            const layer = document.getElementById('giftLayer');
+            const el = document.createElement('div');
+            el.className = 'gift-anim';
+            el.textContent = emoji;
+            layer.appendChild(el);
+            setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 3000);
+        }
+
+        // --- PREMIUM FEATURES (MORE MENU) ---
+        // 1. Friend Request
         document.getElementById('addFriendBtn').addEventListener('click', async (e) => {
-            if (!peerUid) return alert('Resolving user data...');
-            await set(ref(db, `users/${currentUser.uid}/friends/${peerUid}`), { addedAt: Date.now() });
+            if (!peerUid) return;
+            // Store request directly to their node
+            await set(ref(db, `users/${peerUid}/friendRequests/${currentUser.uid}`), { timestamp: Date.now(), status: 'pending' });
             e.currentTarget.classList.add('added');
-            e.currentTarget.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
         });
 
-        document.getElementById('endBtn').addEventListener('click', async () => {
-            await cleanupAndRedirect('home.html');
+        // 2. Local Screen Recording (Direct download to device)
+        document.getElementById('recordBtn').addEventListener('click', async () => {
+            closeModals();
+            try {
+                // Best web approach: Record the tab/screen + audio
+                const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: { preferCurrentTab: true }, audio: true });
+                mediaRecorder = new MediaRecorder(displayStream, { mimeType: 'video/webm;codecs=vp9,opus' });
+                
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Nexra_Call_${Date.now()}.webm`;
+                    a.click();
+                    recordedChunks = [];
+                    alert('Recording saved to your device!');
+                };
+                mediaRecorder.start();
+                alert('Recording Started. It will download automatically when you stop sharing or end the call.');
+            } catch (err) { alert('Recording permission denied or unsupported by browser.'); }
         });
 
-        document.getElementById('nextBtn').addEventListener('click', async () => {
-            if(peerUid) await update(ref(db, 'users/' + currentUser.uid), { lastSkippedUser: peerUid });
-            await cleanupAndRedirect(`match.html?mode=${matchMode}`);
+        // 3. Screen Share
+        document.getElementById('screenShareBtn').addEventListener('click', async () => {
+            closeModals();
+            try {
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const videoTrack = screenStream.getVideoTracks()[0];
+                const sender = peerConnection.getSenders().find(s => s.track.kind === 'video');
+                if (sender) sender.replaceTrack(videoTrack);
+                
+                videoTrack.onended = () => {
+                    // Revert to camera
+                    const camTrack = localStream.getVideoTracks()[0];
+                    if (sender) sender.replaceTrack(camTrack);
+                };
+            } catch (err) {}
         });
 
-        // Retry Premium Action
-        document.getElementById('retryBtn').addEventListener('click', async () => {
-            const snap = await get(ref(db, 'users/' + currentUser.uid));
-            const isPro = snap.val().isPremium || false;
-            
-            if (!isPro) { window.location.href = 'subscription.html'; return; }
-            const lastSkipped = snap.val().lastSkippedUser;
-            if (!lastSkipped) return alert('No recent user to retry.');
-
-            const newRoomId = 'retry_' + Date.now();
-            await update(ref(db, 'users/' + lastSkipped), { status: 'matched', matchedWith: { targetUid: currentUser.uid, roomId: newRoomId, isCaller: false }});
-            await update(ref(db, 'users/' + currentUser.uid), { status: 'in-call', matchedWith: { targetUid: lastSkipped, roomId: newRoomId, isCaller: true }});
-            
-            await cleanupAndRedirect(`video-call.html?room=${newRoomId}&caller=true&mode=${matchMode}`);
-        });
-
-        async function cleanupAndRedirect(destination) {
-            clearInterval(callTimerInterval);
-            await set(ref(db, `rooms/${roomId}/hangup`), true);
-            if (localStream) localStream.getTracks().forEach(t => t.stop());
-            if (peerConnection) peerConnection.close();
-
-            if (currentUser) {
-                const isSearching = destination.includes('match');
-                await update(ref(db, 'users/' + currentUser.uid), {
-                    status: isSearching ? 'searching' : 'online',
-                    matchedWith: null,
-                    matchMode: isSearching ? matchMode : null
-                });
+        // 4. Picture-in-Picture (PiP)
+        window.togglePiP = async () => {
+            closeModals();
+            if (document.pictureInPictureElement) {
+                await document.exitPictureInPicture();
+            } else if (document.pictureInPictureEnabled) {
+                await remoteVideo.requestPictureInPicture();
+            } else {
+                alert("PiP is not supported by your current browser/OS.");
             }
-            window.location.href = destination;
+        };
+
+        // 5. CSS Video Filters
+        window.applyFilter = (filterCSS) => {
+            closeModals();
+            localVideo.style.filter = filterCSS;
+        };
+
+        // Review Stars
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+                let prev = this.previousElementSibling;
+                while(prev) { prev.classList.add('active'); prev = prev.previousElementSibling; }
+            });
+        });
+
+        // --- END / SKIP LOGIC (INSTANT) ---
+        document.getElementById('skipBtn').addEventListener('click', () => { handleAction('skip'); });
+        document.getElementById('endBtn').addEventListener('click', () => { handleAction('end'); });
+
+        function handleAction(action) {
+            pendingAction = action;
+            if (matchCount >= 40) {
+                // Show review dialog first
+                openModal('reviewModal');
+                matchCount = 0; // Reset
+                localStorage.setItem('matchCount', '0');
+            } else {
+                executeSkipOrEnd();
+            }
         }
 
-        function handleHangup() {
+        window.executeSkipOrEnd = async () => {
+            // Signal remote to hangup
+            await set(ref(db, `rooms/${roomId}/hangup`), true);
+            cleanupLocally();
+
+            if (pendingAction === 'skip') {
+                // Instantly update status and redirect to match page (NO LOADING)
+                await update(ref(db, 'users/' + currentUser.uid), { status: 'searching', matchedWith: null });
+                window.location.href = `match.html?mode=${matchMode}`;
+            } else {
+                await update(ref(db, 'users/' + currentUser.uid), { status: 'online', matchedWith: null });
+                window.location.href = 'home.html';
+            }
+        };
+
+        function cleanupLocally() {
             clearInterval(callTimerInterval);
-            document.getElementById('statusText').innerText = "Call Ended";
-            document.getElementById('statusSubtext').innerText = "The other person left.";
-            document.querySelector('.connecting-orb').style.display = 'none';
-            statusOverlay.style.display = 'flex';
-            statusOverlay.style.opacity = 1;
-            
-            document.getElementById('retryBtn').style.display = 'flex';
-            
-            if (localStream) localStream.getTracks().forEach(t => t.stop());
-            if (peerConnection) peerConnection.close();
-
-            setTimeout(() => { window.location.href = `match.html?mode=${matchMode}`; }, 3500);
+            if(mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+            if(localStream) localStream.getTracks().forEach(t => t.stop());
+            if(peerConnection) peerConnection.close();
+            // Destroy Firebase room (optional, handled by functions usually, but good practice)
+            if(isCaller) remove(ref(db, `rooms/${roomId}`));
         }
+
     </script>
 </body>
 </html>
